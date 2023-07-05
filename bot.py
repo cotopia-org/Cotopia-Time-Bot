@@ -1,6 +1,7 @@
 # This example requires the 'message_content' intent.
 
 import discord
+import log_processor
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -22,14 +23,7 @@ async def on_message(message):
 
 @client.event
 async def on_voice_state_update(member, before, after):
-    guild = member.guild
-    if guild.system_channel is not None:
-            to_send = f'Welcome {member.mention} to the voice channel: {after.channel.name}!'
-            await guild.system_channel.send(to_send)
-    print("someone is here!")
-    print(member)
-    print(before)
-    print(after)
+   log_processor.process(member, before, after)
 
 
 client.run('MTEyNjAzNzQ2NDMxOTAxMjg4NQ.Ge8WYb.DEdu-Bpd9boEAlsVlMbdK5xEgOEhVhSlyk96GY')
