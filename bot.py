@@ -24,6 +24,8 @@ async def on_message(message):
 @client.event
 async def on_voice_state_update(member, before, after):
    log_processor.process(member, before, after)
+   guild = member.guild
+   await guild.system_channel.send('SESSION PAUSED')
 
 
 client.run('MTEyNjAzNzQ2NDMxOTAxMjg4NQ.Ge8WYb.DEdu-Bpd9boEAlsVlMbdK5xEgOEhVhSlyk96GY')
