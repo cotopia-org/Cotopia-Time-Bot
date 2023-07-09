@@ -1,3 +1,5 @@
 .venv
 token
 __pycache__
+*.db
+*.txt
