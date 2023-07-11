@@ -33,16 +33,16 @@ async def on_voice_state_update(member, before, after):
    raw_logger.record(member, before, after)
 
    m = member.guild.fetch_members
-#    print (m)
+   print (m)
 
-#    member = (await member.guild.query_members([member.id], presences=True))[0]
-#    m = member.guild.get_member(member.id)
-#    print("is_on_mobile():    " + str(m.is_on_mobile()))
-#    print("raw_status:    " + m.raw_status)
-#    print("status:    " + str(m.status))
-#    print("web_status:    " + str(m.web_status))
-#    print("desktop_status:    " + str(m.desktop_status))
-#    print("mobile_status:    " + str(m.mobile_status))
+   member = (await member.guild.query_members([member.id], presences=True))[0]
+   m = member.guild.get_member(member.id)
+   print("is_on_mobile():    " + str(m.is_on_mobile()))
+   print("raw_status:    " + m.raw_status)
+   print("status:    " + str(m.status))
+   print("web_status:    " + str(m.web_status))
+   print("desktop_status:    " + str(m.desktop_status))
+   print("mobile_status:    " + str(m.mobile_status))
 #    await guild.system_channel.send('SESSION PAUSED')
 
 @client.event
