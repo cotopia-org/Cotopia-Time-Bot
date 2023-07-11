@@ -1,5 +1,7 @@
 .venv
+.env
 token
 __pycache__
 *.db
 *.txt
+.vscode/
