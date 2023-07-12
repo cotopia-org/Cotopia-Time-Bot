@@ -35,16 +35,16 @@ def run():
 
     @bot.event
     async def on_voice_state_update(member, before, after):
-        log_processor.process(member, before, after)
+        log_processor.record(member, before, after)
         raw_logger.record(member, before, after)
-        
-        m = member.guild.get_member(member.id)
-        print("is_on_mobile():    " + str(m.is_on_mobile()))
-        print("raw_status:    " + m.raw_status)
-        print("status:    " + str(m.status))
-        print("web_status:    " + str(m.web_status))
-        print("desktop_status:    " + str(m.desktop_status))
-        print("mobile_status:    " + str(m.mobile_status))
+
+        # m = member.guild.get_member(member.id)
+        # print("is_on_mobile():    " + str(m.is_on_mobile()))
+        # print("raw_status:    " + m.raw_status)
+        # print("status:    " + str(m.status))
+        # print("web_status:    " + str(m.web_status))
+        # print("desktop_status:    " + str(m.desktop_status))
+        # print("mobile_status:    " + str(m.mobile_status))
 
     @bot.event
     async def on_presence_update(before, after):
@@ -53,6 +53,16 @@ def run():
     @bot.hybrid_command()
     async def ping(ctx):
         await ctx.send("pong")
+
+    @bot.hybrid_command()
+    async def viewstats(ctx):
+        guild = ctx.guild
+        view = discord.ui.View()
+        async for member in guild.fetch_members(limit=150):
+            b = discord.ui.Button(label=str(member))
+            view.add_item(b)
+        
+        await ctx.send(view=view)
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
 

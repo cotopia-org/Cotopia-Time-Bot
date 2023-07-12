@@ -2,7 +2,7 @@ from discord import VoiceState, Member
 from datetime import datetime
 import time
 
-def process(member: Member, before: VoiceState, after: VoiceState):
+def record(member: Member, before: VoiceState, after: VoiceState):
     
     if (before.channel is None):
         # start new session
