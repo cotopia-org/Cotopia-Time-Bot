@@ -136,6 +136,6 @@ def duration_sum(username:str):
 
 
 # makefiles("navid.madadi")
-# duration_calculator("navid.madadi")
-# line_counter("LunaBot🌙#9997")
-# duration_sum("navid.madadi")
+# duration_calculator("ajabimahdi")
+# line_counter("ajabimahdi")
+# duration_sum("ajabimahdi")

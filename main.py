@@ -35,6 +35,10 @@ def run():
 
     @bot.event
     async def on_voice_state_update(member, before, after):
+
+        # print("before:  "+ str(before))
+        # print("after:  "+ str(after))
+
         log_processor.record(member, before, after)
         raw_logger.record(member, before, after)
 
@@ -63,6 +67,17 @@ def run():
             view.add_item(b)
         
         await ctx.send(view=view)
+
+    # @bot.hybrid_command()
+    # async def week0(ctx):
+    #     await ctx.send(file=discord.File("./plogs/reports/LunaBot🌙#9997.txt"))
+    #     await ctx.send(file=discord.File("./plogs/reports/ajabimahdi.txt"))
+    #     await ctx.send(file=discord.File("./plogs/reports/armanhr.txt"))
+    #     await ctx.send(file=discord.File("./plogs/reports/imebneali.txt"))
+    #     await ctx.send(file=discord.File("./plogs/reports/kharrati.txt"))
+    #     await ctx.send(file=discord.File("./plogs/reports/m.habibi.txt"))
+    #     await ctx.send(file=discord.File("./plogs/reports/mamreez_tn#5785.txt"))
+    #     await ctx.send(file=discord.File("./plogs/reports/navid.madadi.txt"))
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
 

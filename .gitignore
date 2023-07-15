@@ -8,4 +8,5 @@ __pycache__
 logs/
 oldlogs/
 plogs/
+.DS_Store
 
