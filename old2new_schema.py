@@ -16,6 +16,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS discord_event(
             isPair boolean DEFAULT FALSE,
             pairID integer null,
             isValid boolean DEFAULT TRUE,
+            duration integer DEFAULT -1,
             note json null
 );
 """)

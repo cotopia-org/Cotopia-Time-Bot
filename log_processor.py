@@ -133,6 +133,7 @@ def write_event_to_db(epoch: int, kind: str, doer: str, isPair: bool, note: str)
             isPair boolean DEFAULT FALSE,
             pairID integer null,
             isValid boolean DEFAULT TRUE,
+            duration integer DEFAULT -1,
             note json null);""")
     cur.execute("INSERT INTO discord_event (epoch, kind, doer, isPair, note) VALUES (%s, %s, %s, %s, %s) RETURNING id;",
                     (epoch, kind, doer, isPair, note))

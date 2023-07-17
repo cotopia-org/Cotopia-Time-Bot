@@ -8,4 +8,5 @@ doer varchar(255) null,
 isPair boolean DEFAULT FALSE,
 pairID integer null,
 isValid boolean DEFAULT TRUE,
+duration integer DEFAULT -1,
 note json null
