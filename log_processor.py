@@ -162,11 +162,24 @@ def write_pending_to_db(doer: str, kind: str, pendingID: int):
     
 
 def add_pairid_to_db(start: int, stop: int):
+
+    # print("start    :" +str(start))
+    # print("stop    :" +str(stop))
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
     cur.execute("UPDATE discord_event SET pairid = %s WHERE id = %s;", (start, stop))
     cur.execute("UPDATE discord_event SET pairid = %s WHERE id = %s;", (stop, start))
+
+    cur.execute("SELECT epoch From discord_event WHERE id = ANY(ARRAY[%s, %s]) ORDER BY id;", (start, stop))
+    epochs = cur.fetchall()
+
+    duration = epochs[1][0] - epochs[0][0]
+    # print("epoches: " + str(epochs))
+    # print("duration "+ str(duration))
+    cur.execute("UPDATE discord_event SET duration = %s WHERE id = %s", (duration, start))
+    cur.execute("UPDATE discord_event SET duration = %s WHERE id = %s", (duration, stop))
+
     conn.commit()
     cur.close()
     conn.close()
