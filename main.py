@@ -2,11 +2,15 @@ import settings
 import discord
 from discord.ext import commands
 
+import asyncio
+import datetime
+
 import log_processor
 import raw_logger
 
 
 logger = settings.logging.getLogger("bot")
+
 
 def run():
     intents = discord.Intents.default()
@@ -28,10 +32,12 @@ def run():
         if message.author == bot.user:
             return
 
-        if message.content.startswith('📜'):
-            async for member in guild.fetch_members(limit=150):
-                # print(member.name)
-                await message.channel.send(member)
+        # if message.content.startswith(":zombie:"):
+            # await message.author.move_to(None, reason="You have been reported a zombie and didn't respond!")
+            # await guild.kick(message.author, reason="You have been reported a zombie and didn't respond!")
+            # async for member in guild.fetch_members(limit=150):
+            #     print(member.name)
+            #     await message.channel.send(member)
 
     @bot.event
     async def on_voice_state_update(member, before, after):
@@ -59,7 +65,9 @@ def run():
         await ctx.send("pong")
 
     @bot.hybrid_command()
-    async def viewstats(ctx):
+    async def viewstats(ctx, member: discord.Member, start: str , end: str):
+
+        # <t:1689574445:D>
         guild = ctx.guild
         view = discord.ui.View()
         async for member in guild.fetch_members(limit=150):
@@ -67,6 +75,28 @@ def run():
             view.add_item(b)
         
         await ctx.send(view=view)
+
+    @bot.hybrid_command()
+    async def zombie(ctx, member: discord.Member):
+        task1 = None
+        async def dc_user():
+            await asyncio.sleep(20)
+            await member.move_to(None, reason="You have been reported a zombie and didn't respond!")
+            await ctx.send(member.mention+"'s session terminated because they acted like a zombie!")
+
+        
+
+        if (ctx.author != member):
+            await ctx.send(member.mention+" you have been called a zombie. Show up or you would be disconnected!")
+            task1 = asyncio.create_task(dc_user(), name="dc zombie")
+            await task1
+        else:
+            task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
+            task.cancel()
+            await ctx.send("Well well you are not a zombie " + member.mention + "!")
+
+
+
 
     # @bot.hybrid_command()
     # async def week0(ctx):
@@ -80,6 +110,9 @@ def run():
     #     await ctx.send(file=discord.File("./plogs/reports/navid.madadi.txt"))
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
+
+
+
 
 if __name__ == "__main__":
     run()
