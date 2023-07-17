@@ -7,6 +7,7 @@ import datetime
 
 import log_processor
 import raw_logger
+import report
 
 
 logger = settings.logging.getLogger("bot")
@@ -48,16 +49,36 @@ def run():
         await ctx.send("pong")
 
     @bot.hybrid_command()
-    async def viewstats(ctx, member: discord.Member, start: str , end: str):
+    async def viewstats(ctx, member: discord.Member, start_yyyy: int, start_mm: int, start_dd: int, end_yyyy: int, end_mm: int, end_dd: int):
 
-        # <t:1689574445:D>
-        guild = ctx.guild
-        view = discord.ui.View()
-        async for member in guild.fetch_members(limit=150):
-            b = discord.ui.Button(label=str(member))
-            view.add_item(b)
+        start_epoch = datetime.datetime(
+            year=start_yyyy, month=start_mm, day=start_dd, hour=0, minute=0).strftime('%s')
+        end_epoch = datetime.datetime(
+            year=end_yyyy, month=end_mm, day=end_dd, hour=0, minute=0).strftime('%s')
         
-        await ctx.send(view=view)
+        thereport = report.make_report(str(member), start_epoch, end_epoch)
+        discordDate_from = "<t:" + thereport["From"] + ":D>"
+        discordDate_to = "<t:" + thereport["To"] + ":D>"
+        text = ("Report for " + member.mention + "\n" + 
+                "From: " + discordDate_from + "\n" +
+                "To: " + discordDate_to + "\n" +
+                "------------------------------\n")
+
+        for line in thereport:
+            if (line == "User"):
+                pass
+            elif (line == "From"):
+                pass
+            elif (line == "To"):
+                pass
+            else:
+                text = text + str(line)+": "+str(thereport[line]) + "\n"
+            
+
+        await ctx.send(text)
+
+
+
 
     @bot.hybrid_command()
     async def zombie(ctx, member: discord.Member):

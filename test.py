@@ -1,10 +1,19 @@
 import psycopg2
 import report
 import time
-from datetime import datetime
+import datetime
+
+text = report.make_report("kharrati",0 ,1689424634)
+for i in text:
+    print(str(i)+"  "+str(text[i]))
 
 
-print(report.make_report("kharrati",0 ,1689424634))
+# def epoch_generator(year: int, month: int, day: int):
+#     ts= datetime.datetime(year=year, month=month, day=day, hour=0, minute=0).strftime('%s')
+#     return ts
+
+
+# print(epoch_generator(2023, int("07"), int("07")))
 
 # datetime_object = datetime.fromtimestamp(1689424634)
 # print(datetime_object)
@@ -40,4 +49,12 @@ print(report.make_report("kharrati",0 ,1689424634))
         # print("desktop_status:    " + str(m.desktop_status))
         # print("mobile_status:    " + str(m.mobile_status))
 
+
+
+# guild = ctx.guild
+#         view = discord.ui.View()
+#         async for member in guild.fetch_members(limit=150):
+#             b = discord.ui.Button(label=str(member))
+#             view.add_item(b)
         
+#         await ctx.send(view=view)

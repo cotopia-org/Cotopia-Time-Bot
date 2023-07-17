@@ -1,7 +1,5 @@
 import psycopg2
 import json
-from datetime import datetime
-
 
 
 def make_report (doer: str, start_epoch: int, end_epoch: int):
@@ -47,9 +45,11 @@ def make_report (doer: str, start_epoch: int, end_epoch: int):
     total_td_hours = round((total_talking_duration/3600), 2)
     net_sd_hours = total_sd_hours - total_pd_hours
 
+
+
     report_dic = {"User": doer,
-                  "From": str(datetime.fromtimestamp(start_epoch)),
-                  "To": str(datetime.fromtimestamp(end_epoch)),
+                  "From": start_epoch,
+                  "To": end_epoch,
                   "Number Of Rows": rows_count,
                   "Number Of Sessions": sessions_count,
                   "Number Of Pausings": pausings_count,
@@ -59,10 +59,10 @@ def make_report (doer: str, start_epoch: int, end_epoch: int):
                   "Total Talking Hours": total_td_hours,
                   "Net Session Hours": net_sd_hours}
     
-    report = json.dumps(report_dic)
+    # report = json.dumps(report_dic)
 
     conn.commit()
     cur.close()
     conn.close()
 
-    return report
+    return report_dic
