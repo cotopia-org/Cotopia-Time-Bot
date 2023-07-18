@@ -12,8 +12,13 @@ import report
 
 logger = settings.logging.getLogger("bot")
 
+the_zombie = None
+
 
 def run():
+
+    
+
     intents = discord.Intents.default()
     intents.message_content = True
     intents.presences = True
@@ -30,11 +35,30 @@ def run():
     async def on_message(message):
         if message.author == bot.user:
             return
+        global the_zombie
+        if (message.author == the_zombie):
+            task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
+            task.cancel()
+            await message.channel.send("Well well you are not a zombie " + message.author.mention + "!")
+            the_zombie = None
 
         
 
     @bot.event
     async def on_voice_state_update(member, before, after):
+
+        global the_zombie
+        if (member == the_zombie):
+            task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
+            task.cancel()
+            
+            guild = member.guild
+            
+            await guild.system_channel.send("Well well you are not a zombie " + member.mention + "!")
+            the_zombie = None
+
+
+        
         log_processor.record(member, before, after)
         raw_logger.record(member, before, after)
 
@@ -82,22 +106,29 @@ def run():
 
     @bot.hybrid_command()
     async def zombie(ctx, member: discord.Member):
+
+        global the_zombie
+        the_zombie = member
+        
         task1 = None
         async def dc_user():
             await asyncio.sleep(20)
             await member.move_to(None, reason="You have been reported a zombie and didn't respond!")
-            await ctx.send(member.mention+"'s session terminated because they acted like a zombie!")
+            await ctx.guild.system_channel.send(member.mention+"'s session terminated because they acted like a zombie!")
 
         
 
         if (ctx.author != member):
-            await ctx.send(member.mention+" you have been called a zombie. Show up or you would be disconnected!")
+            await ctx.send("You reported " + member.mention + " as a zombie!")
+            await ctx.guild.system_channel.send(member.mention+" you have been called a zombie. Show up in 3 minutes or you would be disconnected!")
             task1 = asyncio.create_task(dc_user(), name="dc zombie")
             await task1
         else:
-            task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
-            task.cancel()
-            await ctx.send("Well well you are not a zombie " + member.mention + "!")
+            await ctx.send("You can not name yourself a zombie! Take a break!")
+
+            # task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
+            # task.cancel()
+            # await ctx.send("Well well you are not a zombie " + member.mention + "!")
 
 
 
