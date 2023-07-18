@@ -62,6 +62,7 @@ def run():
         log_processor.record(member, before, after)
         raw_logger.record(member, before, after)
 
+
        
 
     @bot.event
@@ -110,25 +111,36 @@ def run():
         global the_zombie
         the_zombie = member
         
+        # func that does the job after a while
         task1 = None
         async def dc_user():
             await asyncio.sleep(20)
             await member.move_to(None, reason="You have been reported a zombie and didn't respond!")
             await ctx.guild.system_channel.send(member.mention+"'s session terminated because they acted like a zombie!")
 
-        
 
+        # repoting the zombie!
         if (ctx.author != member):
-            await ctx.send("You reported " + member.mention + " as a zombie!")
-            await ctx.guild.system_channel.send(member.mention+" you have been called a zombie. Show up in 3 minutes or you would be disconnected!")
-            task1 = asyncio.create_task(dc_user(), name="dc zombie")
-            await task1
+
+            try:
+                members_channel = member.voice.channel
+            except:
+                members_channel = None
+
+            if (members_channel != None and member.voice.self_deaf == False):
+                await ctx.send("You reported " + member.mention + " as a zombie!")
+                await ctx.guild.system_channel.send(member.mention+" you have been called a zombie. Show up in 3 minutes or you would be disconnected!")
+                task1 = asyncio.create_task(dc_user(), name="dc zombie")
+                await task1
+            
+            else:
+                await ctx.send("Well obviously " + member.mention + " is NOT a zombie!")
+
+
+        # reporting yourself!
         else:
             await ctx.send("You can not name yourself a zombie! Take a break!")
 
-            # task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
-            # task.cancel()
-            # await ctx.send("Well well you are not a zombie " + member.mention + "!")
 
 
 
