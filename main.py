@@ -35,6 +35,8 @@ def run():
     async def on_message(message):
         if message.author == bot.user:
             return
+        
+        # cancelling the zombie
         global the_zombie
         if (message.author == the_zombie):
             task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
@@ -47,6 +49,7 @@ def run():
     @bot.event
     async def on_voice_state_update(member, before, after):
 
+        # cancelling the zombie
         global the_zombie
         if (member == the_zombie):
             task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
@@ -107,16 +110,16 @@ def run():
 
     @bot.hybrid_command()
     async def zombie(ctx, member: discord.Member):
-
-        global the_zombie
-        the_zombie = member
         
         # func that does the job after a while
         task1 = None
         async def dc_user():
-            await asyncio.sleep(20)
+            await asyncio.sleep(10)
+            global the_zombie
+            the_zombie = None
             await member.move_to(None, reason="You have been reported a zombie and didn't respond!")
-            await ctx.guild.system_channel.send(member.mention+"'s session terminated because they acted like a zombie!")
+            await ctx.guild.system_channel.send(member.mention+"'s session terminated because they acted like a :zombie:!")
+            
 
 
         # repoting the zombie!
@@ -128,10 +131,15 @@ def run():
                 members_channel = None
 
             if (members_channel != None and member.voice.self_deaf == False):
+
+                global the_zombie
+                the_zombie = member
+
                 await ctx.send("You reported " + member.mention + " as a zombie!")
                 await ctx.guild.system_channel.send(member.mention+" you have been called a zombie. Show up in 3 minutes or you would be disconnected!")
                 task1 = asyncio.create_task(dc_user(), name="dc zombie")
                 await task1
+
             
             else:
                 await ctx.send("Well obviously " + member.mention + " is NOT a zombie!")

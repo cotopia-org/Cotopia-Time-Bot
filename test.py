@@ -2,10 +2,20 @@ import psycopg2
 import report
 import time
 import datetime
+import asyncio
 
-text = report.make_report("kharrati",0 ,1689424634)
-for i in text:
-    print(str(i)+"  "+str(text[i]))
+
+the_zombie = "Yooooooooo"
+
+async def dc_user():
+            await asyncio.sleep(10)
+            print("print 1")
+            print("print2")
+            global the_zombie
+            # the_zombie = None
+            print(the_zombie)
+
+asyncio.run(dc_user())
 
 
 # def epoch_generator(year: int, month: int, day: int):
