@@ -23,6 +23,7 @@ def run():
     intents.message_content = True
     intents.presences = True
     intents.members = True
+    intents.reactions = True
 
     bot = commands.Bot(command_prefix="/", intents=intents)
 
@@ -65,6 +66,18 @@ def run():
         log_processor.record(member, before, after)
         raw_logger.record(member, before, after)
 
+
+    @bot.event
+    async def on_raw_reaction_add(payload):
+        
+        global the_zombie
+        # cancelling the zombie
+        if (payload.member == the_zombie):
+            channel = bot.get_channel(payload.channel_id)
+            task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
+            task.cancel()
+            the_zombie = None
+            await channel.send("Well well you are not a zombie " + payload.member.mention + "!")
 
        
 
@@ -114,7 +127,7 @@ def run():
         # func that does the job after a while
         task1 = None
         async def dc_user():
-            await asyncio.sleep(10)
+            await asyncio.sleep(180)
             global the_zombie
             the_zombie = None
             await member.move_to(None, reason="You have been reported a zombie and didn't respond!")
