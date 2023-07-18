@@ -68,10 +68,18 @@ def run():
             await guild.system_channel.send("Well well you are not a zombie " + member.mention + "!")
             the_zombie = None
 
-
+        extra = {
+            "is_on_mobile": member.is_on_mobile(),
+            "raw_status": str(member.raw_status),
+            "status": str(member.status),
+            "web_status": str(member.web_status),
+            "desktop_status": str(member.desktop_status),
+            "mobile_status": str(member.mobile_status)
+        }
         
-        log_processor.record(member, before, after)
+        log_processor.record(member, before, after, extra)
         raw_logger.record(member, before, after)
+
 
 
     @bot.event

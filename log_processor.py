@@ -11,53 +11,56 @@ import json
 # def better_record(member: Member, before: VoiceState, after: VoiceState):
 #     write_event_to_db(rightnow(), kind, str(member), isPair, note)
 
-def record(member: Member, before: VoiceState, after: VoiceState):
+def record(member: Member, before: VoiceState, after: VoiceState, extra: dict):
     
     if (before.channel is None):
         # start new session
-        session_start(member, after.channel.name)
+        session_start(member, after.channel.name, extra)
         if (after.self_deaf == True):
             # pause the session
-            session_pause(member, after.channel.name)
+            session_pause(member, after.channel.name, extra)
         elif (after.self_mute == False):
-            talking_start(member, after.channel.name)
+            talking_start(member, after.channel.name, extra)
         return
     elif (after.channel is None):
         # end session
-        talking_stop(member, before.channel.name)
-        session_resume(member, before.channel.name)
-        session_end(member, before.channel.name)
+        talking_stop(member, before.channel.name, extra)
+        session_resume(member, before.channel.name, extra)
+        session_end(member, before.channel.name, extra)
         return
 
     if (before.channel != after.channel):
         # channel changed
-        channel_change(member, after.channel.name)
+        channel_change(member, after.channel.name, extra)
     elif (before.channel == after.channel):
         # mute or defen changed
         if (before.self_deaf == False and after.self_deaf == True):
             if (before.self_mute == False):
-                talking_stop(member, after.channel.name)
-            session_pause(member, after.channel.name)
+                talking_stop(member, after.channel.name, extra)
+            session_pause(member, after.channel.name, extra)
         elif (before.self_deaf == True and after.self_deaf == False):
             if (after.self_mute == False):
-                talking_start(member, after.channel.name)
-            session_resume(member, after.channel.name)
+                talking_start(member, after.channel.name, extra)
+            session_resume(member, after.channel.name, extra)
         elif (before.self_mute == True and after.self_mute == False):
-            talking_start(member, after.channel.name)
+            talking_start(member, after.channel.name, extra)
         elif (before.self_mute == False and after.self_mute == True):
-            talking_stop(member, after.channel.name)    
+            talking_stop(member, after.channel.name, extra)    
             
     return
 
-def session_start(m: Member, channel: str):
+
+def session_start(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
+    notedic = notedic | e
     note = json.dumps(notedic)
     print ('SESSION STARTED')
     pendingID = write_event_to_db(rightnow(), "SESSION STARTED", str(m), True, note)
     write_pending_to_db(str(m), "SESSION STARTED", pendingID)
 
-def session_end(m: Member, channel: str):
+def session_end(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
+    notedic = notedic | e
     note = json.dumps(notedic)
     print ('SESSION ENDED')
     stop = write_event_to_db(rightnow(), "SESSION ENDED", str(m), True, note)
@@ -69,16 +72,18 @@ def session_end(m: Member, channel: str):
     delete_all_pending_from_db(str(m))
 
 
-def session_pause(m: Member, channel: str):
+def session_pause(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
+    notedic = notedic | e
     note = json.dumps(notedic)
     print('DEAFENED')
     print ('SESSION PAUSED')
     pendingID = write_event_to_db(rightnow(), "SESSION PAUSED", str(m), True, note)
     write_pending_to_db(str(m), "SESSION PAUSED", pendingID)
 
-def session_resume(m: Member, channel: str):
+def session_resume(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
+    notedic = notedic | e
     note = json.dumps(notedic)
     print('UNDEAFENED')
     print ('SESSION RESUMED')
@@ -88,15 +93,17 @@ def session_resume(m: Member, channel: str):
         add_pairid_to_db(start, stop)
 
 
-def channel_change(m: Member, channel: str):
+def channel_change(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
+    notedic = notedic | e
     note = json.dumps(notedic)
     print ('CHANEL CHANGED')
     write_event_to_db(rightnow(), "CHANEL CHANGED", str(m), False, note)
 
 
-def talking_start(m: Member, channel: str):
+def talking_start(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
+    notedic = notedic | e
     note = json.dumps(notedic)
     print('UNMUTED')
     print('TALKING STARTED')
@@ -104,8 +111,9 @@ def talking_start(m: Member, channel: str):
     write_pending_to_db(str(m), "TALKING STARTED", pendingID)
 
 
-def talking_stop(m: Member, channel: str):
+def talking_stop(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
+    notedic = notedic | e
     note = json.dumps(notedic)
     stop = write_event_to_db(rightnow(), "TALKING STOPPED", str(m), True, note)
     start = get_pair_start_id(str(m), "TALKING STARTED")

@@ -58,11 +58,20 @@ import asyncio
 
 
 
-def today():
-        the_string = datetime.datetime.today().strftime('%Y-%m-%d')
-        slices = the_string.split("-")
-        dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
-        return dic
+# def today():
+#         the_string = datetime.datetime.today().strftime('%Y-%m-%d')
+#         slices = the_string.split("-")
+#         dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
+#         return dic
 
-print(today())
+# print(today())
+
+dic1 = {"channel": "e"}
+
+dic2 = {"key": 12}
+
+dic1 = dic1 | dic2
+
+print(dic1)
+
 
