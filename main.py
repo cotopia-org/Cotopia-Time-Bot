@@ -4,6 +4,7 @@ from discord.ext import commands
 
 import asyncio
 import datetime
+import typing
 
 import log_processor
 import raw_logger
@@ -26,6 +27,12 @@ def run():
     intents.reactions = True
 
     bot = commands.Bot(command_prefix="/", intents=intents)
+
+    def today():
+        the_string = datetime.datetime.today().strftime('%Y-%m-%d')
+        slices = the_string.split("-")
+        dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
+        return dic
 
     @bot.event
     async def on_ready():
@@ -90,12 +97,24 @@ def run():
         await ctx.send("pong")
 
     @bot.hybrid_command()
-    async def viewstats(ctx, member: discord.Member, start_yyyy: int, start_mm: int, start_dd: int, end_yyyy: int, end_mm: int, end_dd: int):
+    async def viewstats(ctx, member: discord.Member,
+                        start_yyyy: typing.Optional[int]=today()["y"], start_mm: typing.Optional[int]=today()["m"]-1, start_dd: typing.Optional[int]=today()["d"],
+                        end_yyyy: typing.Optional[int]=today()["y"], end_mm: typing.Optional[int]=today()["m"], end_dd: typing.Optional[int]=today()["d"]):
 
         start_epoch = datetime.datetime(
             year=start_yyyy, month=start_mm, day=start_dd, hour=0, minute=0).strftime('%s')
         end_epoch = datetime.datetime(
             year=end_yyyy, month=end_mm, day=end_dd, hour=0, minute=0).strftime('%s')
+        
+
+        if (int(start_epoch) >= int(end_epoch)):
+            await ctx.send("**Start Date** should be before **End Date**! Try Again!")
+            return
+        # max int value in postgres is 	-2147483648 to 2147483647
+        elif (int(end_epoch) > 2147400000):
+            await ctx.send("**End Date** is too far in the future! Try Again!")
+            return
+        
         
         thereport = report.make_report(str(member), start_epoch, end_epoch)
         discordDate_from = "<t:" + thereport["From"] + ":D>"
@@ -127,7 +146,7 @@ def run():
         # func that does the job after a while
         task1 = None
         async def dc_user():
-            await asyncio.sleep(180)
+            await asyncio.sleep(180)    # 3 minutes
             global the_zombie
             the_zombie = None
             await member.move_to(None, reason="You have been reported a zombie and didn't respond!")

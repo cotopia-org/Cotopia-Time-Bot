@@ -5,19 +5,6 @@ import datetime
 import asyncio
 
 
-the_zombie = "Yooooooooo"
-
-async def dc_user():
-            await asyncio.sleep(10)
-            print("print 1")
-            print("print2")
-            global the_zombie
-            # the_zombie = None
-            print(the_zombie)
-
-asyncio.run(dc_user())
-
-
 # def epoch_generator(year: int, month: int, day: int):
 #     ts= datetime.datetime(year=year, month=month, day=day, hour=0, minute=0).strftime('%s')
 #     return ts
@@ -68,3 +55,14 @@ asyncio.run(dc_user())
 #             view.add_item(b)
         
 #         await ctx.send(view=view)
+
+
+
+def today():
+        the_string = datetime.datetime.today().strftime('%Y-%m-%d')
+        slices = the_string.split("-")
+        dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
+        return dic
+
+print(today())
+
