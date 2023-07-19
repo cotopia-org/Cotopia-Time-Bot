@@ -43,7 +43,7 @@ def make_report (doer: str, start_epoch: int, end_epoch: int):
     total_sd_hours = round((total_session_duration/3600), 2)
     total_pd_hours = round((total_pausing_duration/3600), 2)
     total_td_hours = round((total_talking_duration/3600), 2)
-    net_sd_hours = total_sd_hours - total_pd_hours
+    net_sd_hours = round((total_sd_hours - total_pd_hours), 2)
 
 
 
