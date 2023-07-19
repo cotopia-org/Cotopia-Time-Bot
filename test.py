@@ -5,8 +5,8 @@ conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
 cur = conn.cursor()
 
 cur.execute("""
-                SELECT * From discord_event
-                WHERE epoch > 1689702404
+                SELECT id, epoch, kind, doer, ispair, pairid, duration FROM discord_event
+                WHERE kind = ANY(ARRAY['SESSION PAUSED', 'SESSION RESUMED'])
                 ORDER BY id
                 """)
 
