@@ -4,13 +4,9 @@ import psycopg2
 import json
 
 
-
-
-
-
-# def better_record(member: Member, before: VoiceState, after: VoiceState):
-#     write_event_to_db(rightnow(), kind, str(member), isPair, note)
-
+# the discord bot calls this on_voice_state_update
+# it checks the event kind
+# and calls the methods of each kind when needed
 def record(member: Member, before: VoiceState, after: VoiceState, extra: dict):
     
     if (before.channel is None):
@@ -110,7 +106,6 @@ def talking_start(m: Member, channel: str, e: dict):
     pendingID = write_event_to_db(rightnow(), "TALKING STARTED", str(m), True, note)
     write_pending_to_db(str(m), "TALKING STARTED", pendingID)
 
-
 def talking_stop(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
     notedic = notedic | e
@@ -123,11 +118,15 @@ def talking_stop(m: Member, channel: str, e: dict):
     print('TALKING STOPPED')
 
 
-
+# returns epoch of NOW: int
 def rightnow():
     epoch = int(time.time())
     return epoch
 
+
+# CREATES TABLE IF NOT EXISTS
+# INSERTS INTO discord_event (epoch, kind, doer, isPair, note)
+# retuns the id of the added row
 def write_event_to_db(epoch: int, kind: str, doer: str, isPair: bool, note: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
@@ -151,6 +150,9 @@ def write_event_to_db(epoch: int, kind: str, doer: str, isPair: bool, note: str)
     conn.close()
     return id_of_added_row
 
+# CREATES TABLE IF NOT EXISTS pending_event
+# should be replaced with redis or something
+# INSERTS INTO pending_event (doer, kind, pendingID)
 def write_pending_to_db(doer: str, kind: str, pendingID: int):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
@@ -166,9 +168,10 @@ def write_pending_to_db(doer: str, kind: str, pendingID: int):
     conn.commit()
     cur.close()
     conn.close()
-    
-    
 
+
+# adds pairID to events, both starting and ending event.
+# calculates duration time in secons and writes it to both starting and ending event   
 def add_pairid_to_db(start: int, stop: int):
 
     # print("start    :" +str(start))
@@ -193,7 +196,10 @@ def add_pairid_to_db(start: int, stop: int):
     conn.close()
 
 
-# Returns -1 if not found
+# CREATES TABLE IF NOT EXISTS pending_event
+# finds and returns the starting pair id from pendings
+# if found, deletes the pending row
+# returns -1 if not found
 def get_pair_start_id(doer: str, kind: str):
     pair_start_id = 0
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
@@ -224,6 +230,8 @@ def get_pair_start_id(doer: str, kind: str):
         conn.close()
         return pair_start_id
 
+
+# deletes all the pendings of a doer from pending_event table
 def delete_all_pending_from_db(doer: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
@@ -232,3 +240,6 @@ def delete_all_pending_from_db(doer: str):
     conn.commit()
     cur.close()
     conn.close()
+
+
+# in buge folan ro dorost mikone
