@@ -6,7 +6,6 @@ def make_report (doer: str, start_epoch: int, end_epoch: int):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
-
     cur.execute("""
                 SELECT * From discord_event
                 WHERE pairid IS NOT NULL
@@ -43,7 +42,10 @@ def make_report (doer: str, start_epoch: int, end_epoch: int):
     total_sd_hours = round((total_session_duration/3600), 2)
     total_pd_hours = round((total_pausing_duration/3600), 2)
     total_td_hours = round((total_talking_duration/3600), 2)
-    net_sd_hours = round((total_sd_hours - total_pd_hours), 2)
+    
+    on_mobile_hours = round((on_mobile_duration(doer, start_epoch, end_epoch, cur)/3600), 2)
+
+    net_sd_hours = round((total_sd_hours - total_pd_hours - on_mobile_hours), 2)
 
 
 
@@ -54,9 +56,11 @@ def make_report (doer: str, start_epoch: int, end_epoch: int):
                   "Number Of Sessions": sessions_count,
                   "Number Of Pausings": pausings_count,
                   "Number Of Talkings": talkings_count,
+                  "Number Of On Moblies": on_mobile_count(doer, start_epoch, end_epoch, cur),
                   "Raw Session Hours": total_sd_hours,
                   "Total Puasing Hours": total_pd_hours,
                   "Total Talking Hours": total_td_hours,
+                  "On Mobile Hours": on_mobile_hours,
                   "Net Session Hours": net_sd_hours}
     
     # report = json.dumps(report_dic)
@@ -66,3 +70,42 @@ def make_report (doer: str, start_epoch: int, end_epoch: int):
     conn.close()
 
     return report_dic
+
+
+
+def on_mobile_count(doer: str, start_epoch: int, end_epoch: int, cursor):
+    cursor.execute("""
+                SELECT COUNT(note->>'is_on_mobile') FROM discord_event
+                WHERE doer = %s
+                AND epoch >= %s
+                AND epoch <= %s
+                AND kind = 'SESSION STARTED'
+                AND duration != -1
+                AND note->>'is_on_mobile' = 'true'
+                """, (doer, start_epoch, end_epoch))
+    number_of_on_mobile = cursor.fetchone()[0]
+    if(number_of_on_mobile == None):
+        return 0
+    else:
+        return number_of_on_mobile
+
+
+
+def on_mobile_duration(doer: str, start_epoch: int, end_epoch: int, cursor):
+    cursor.execute("""
+                   SELECT SUM(duration) FROM discord_event
+                   WHERE doer = %s
+                   AND epoch >= %s
+                   AND epoch <= %s
+                   AND kind = 'SESSION STARTED'
+                   AND duration != -1
+                   AND note->>'is_on_mobile' = 'true'
+                   """, (doer, start_epoch, end_epoch))
+    
+    duration_of_on_mobile = cursor.fetchone()[0]
+    
+    if(duration_of_on_mobile == None):
+        return 0
+    else:
+        return duration_of_on_mobile
+    
