@@ -2,6 +2,9 @@ import settings
 import discord
 from discord.ext import commands
 
+from persiantools.jdatetime import JalaliDate
+from persiantools.jdatetime import JalaliDateTime
+import pytz
 import asyncio
 import datetime
 import typing
@@ -28,8 +31,16 @@ def run():
 
     bot = commands.Bot(command_prefix="/", intents=intents)
 
+
+
     def today():
         the_string = datetime.datetime.today().strftime('%Y-%m-%d')
+        slices = the_string.split("-")
+        dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
+        return dic
+    
+    def today_jalali():
+        the_string = str(JalaliDate.today())
         slices = the_string.split("-")
         dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
         return dic
@@ -110,9 +121,9 @@ def run():
                         end_yyyy: typing.Optional[int]=today()["y"], end_mm: typing.Optional[int]=today()["m"], end_dd: typing.Optional[int]=today()["d"]):
 
         start_epoch = datetime.datetime(
-            year=start_yyyy, month=start_mm, day=start_dd, hour=0, minute=0).strftime('%s')
+            year=start_yyyy, month=start_mm, day=start_dd, hour=0, minute=0, second=0).strftime('%s')
         end_epoch = datetime.datetime(
-            year=end_yyyy, month=end_mm, day=end_dd, hour=0, minute=0).strftime('%s')
+            year=end_yyyy, month=end_mm, day=end_dd, hour=23, minute=59, second=59).strftime('%s')
         
 
         if (int(start_epoch) >= int(end_epoch)):
@@ -127,6 +138,52 @@ def run():
         thereport = report.make_report(str(member), start_epoch, end_epoch)
         discordDate_from = "<t:" + thereport["From"] + ":D>"
         discordDate_to = "<t:" + thereport["To"] + ":D>"
+        text = ("Report for " + member.mention + "\n" + 
+                "From: " + discordDate_from + "\n" +
+                "To: " + discordDate_to + "\n" +
+                "------------------------------\n")
+
+        for line in thereport:
+            if (line == "User"):
+                pass
+            elif (line == "From"):
+                pass
+            elif (line == "To"):
+                pass
+            else:
+                text = text + str(line)+": "+str(thereport[line]) + "\n"
+            
+
+        await ctx.send(text)
+
+    
+    @bot.hybrid_command()
+    async def viewgozaresh(ctx, member: discord.Member,
+                        start_ssss: typing.Optional[int]=today_jalali()["y"], start_mm: typing.Optional[int]=today_jalali()["m"], start_rr: typing.Optional[int]=1,
+                        end_ssss: typing.Optional[int]=today_jalali()["y"], end_mm: typing.Optional[int]=today_jalali()["m"], end_rr: typing.Optional[int]=today_jalali()["d"]):
+
+        
+        start_epoch = JalaliDateTime(
+            year=start_ssss, month=start_mm, day=start_rr, hour=0, minute=0, second=0,
+              tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+        end_epoch = JalaliDateTime(
+            year=end_ssss, month=end_mm, day=end_rr, hour=23, minute=59, second=59,
+              tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+
+        
+        
+        if (int(start_epoch) >= int(end_epoch)):
+            await ctx.send("**Start Date** should be before **End Date**! Try Again!")
+            return
+        # max int value in postgres is 	-2147483648 to 2147483647
+        elif (int(end_epoch) > 2147400000):
+            await ctx.send("**End Date** is too far in the future! Try Again!")
+            return
+        
+        
+        thereport = report.make_report(str(member), start_epoch, end_epoch)
+        discordDate_from = JalaliDateTime.fromtimestamp(int(thereport["From"]), pytz.timezone("Asia/Tehran")).strftime("%c")
+        discordDate_to = JalaliDateTime.fromtimestamp(int(thereport["To"]), pytz.timezone("Asia/Tehran")).strftime("%c")
         text = ("Report for " + member.mention + "\n" + 
                 "From: " + discordDate_from + "\n" +
                 "To: " + discordDate_to + "\n" +
