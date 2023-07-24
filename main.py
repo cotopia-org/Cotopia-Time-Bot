@@ -18,10 +18,20 @@ logger = settings.logging.getLogger("bot")
 
 the_zombie = None
 
+def today():
+    the_string = datetime.datetime.today().strftime('%Y-%m-%d')
+    slices = the_string.split("-")
+    dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
+    return dic
+    
+def today_jalali():
+    the_string = str(JalaliDate.today())
+    slices = the_string.split("-")
+    dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
+    return dic
+
 
 def run():
-
-    
 
     intents = discord.Intents.default()
     intents.message_content = True
@@ -30,20 +40,6 @@ def run():
     intents.reactions = True
 
     bot = commands.Bot(command_prefix="/", intents=intents)
-
-
-
-    def today():
-        the_string = datetime.datetime.today().strftime('%Y-%m-%d')
-        slices = the_string.split("-")
-        dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
-        return dic
-    
-    def today_jalali():
-        the_string = str(JalaliDate.today())
-        slices = the_string.split("-")
-        dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
-        return dic
 
     @bot.event
     async def on_ready():
@@ -117,13 +113,26 @@ def run():
 
     @bot.hybrid_command()
     async def viewstats(ctx, member: discord.Member,
-                        start_yyyy: typing.Optional[int]=today()["y"], start_mm: typing.Optional[int]=today()["m"]-1, start_dd: typing.Optional[int]=today()["d"],
-                        end_yyyy: typing.Optional[int]=today()["y"], end_mm: typing.Optional[int]=today()["m"], end_dd: typing.Optional[int]=today()["d"]):
+                        start_yyyy: typing.Optional[int]=1971, start_mm: typing.Optional[int]=1, start_dd: typing.Optional[int]=1,
+                        end_yyyy: typing.Optional[int]=2037, end_mm: typing.Optional[int]=1, end_dd: typing.Optional[int]=29):
 
-        start_epoch = datetime.datetime(
-            year=start_yyyy, month=start_mm, day=start_dd, hour=0, minute=0, second=0).strftime('%s')
-        end_epoch = datetime.datetime(
-            year=end_yyyy, month=end_mm, day=end_dd, hour=23, minute=59, second=59).strftime('%s')
+        now = today()
+
+        # I want to set today as default end value, but passing it in Args didnt work. So I do this:
+        if (end_yyyy == 2037 and end_mm == 12 and end_dd == 29):
+            end_epoch = datetime.datetime(
+                year=now["y"], month=now["m"], day=now["d"], hour=23, minute=59, second=59).strftime('%s')
+        else:
+            end_epoch = datetime.datetime(
+                year=end_yyyy, month=end_mm, day=end_dd, hour=23, minute=59, second=59).strftime('%s')
+        
+
+        if (start_yyyy == 1971 and start_mm == 1 and start_dd == 1):
+            start_epoch = datetime.datetime(
+                year=now["y"], month=now["m"], day=1, hour=0, minute=0, second=0).strftime('%s')
+        else:
+            start_epoch = datetime.datetime(
+                year=start_yyyy, month=start_mm, day=start_dd, hour=0, minute=0, second=0).strftime('%s')
         
 
         if (int(start_epoch) >= int(end_epoch)):
@@ -133,6 +142,12 @@ def run():
         elif (int(end_epoch) > 2147400000):
             await ctx.send("**End Date** is too far in the future! Try Again!")
             return
+        elif (int(start_epoch) < 0):
+            await ctx.send("I wasn't even born back then! Try Again!")
+            return
+        
+        print("start epoch: " + str(start_epoch))
+        print("end epoch: " + str(end_epoch))
         
         
         thereport = report.make_report(str(member), start_epoch, end_epoch)
@@ -159,18 +174,33 @@ def run():
     
     @bot.hybrid_command()
     async def viewgozaresh(ctx, member: discord.Member,
-                        start_ssss: typing.Optional[int]=today_jalali()["y"], start_mm: typing.Optional[int]=today_jalali()["m"], start_rr: typing.Optional[int]=1,
-                        end_ssss: typing.Optional[int]=today_jalali()["y"], end_mm: typing.Optional[int]=today_jalali()["m"], end_rr: typing.Optional[int]=today_jalali()["d"]):
+                        start_ssss: typing.Optional[int]=1349, start_mm: typing.Optional[int]=1, start_rr: typing.Optional[int]=1,
+                        end_ssss: typing.Optional[int]=1415, end_mm: typing.Optional[int]=12, end_rr: typing.Optional[int]=29):
 
         
-        start_epoch = JalaliDateTime(
-            year=start_ssss, month=start_mm, day=start_rr, hour=0, minute=0, second=0,
-              tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
-        end_epoch = JalaliDateTime(
-            year=end_ssss, month=end_mm, day=end_rr, hour=23, minute=59, second=59,
-              tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+        now = today_jalali()        
 
-        
+        # I want to set today as default end value, but passing it in Args didnt work. So I do this:
+        if (end_ssss == 1415 and end_mm == 12 and end_rr == 29):
+            end_epoch = JalaliDateTime(
+                year=now["y"], month=now["m"], day=now["d"], hour=23, minute=59, second=59,
+                tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+        else:
+            end_epoch = JalaliDateTime(
+                year=end_ssss, month=end_mm, day=end_rr, hour=23, minute=59, second=59,
+                tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+
+         
+        if (start_ssss == 1349 and start_mm == 1 and start_rr == 1):
+            start_epoch = JalaliDateTime(
+                year=now["y"], month=now["m"], day=1, hour=0, minute=0, second=0,
+                tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+        else:
+            start_epoch = JalaliDateTime(
+                year=start_ssss, month=start_mm, day=start_rr, hour=0, minute=0, second=0,
+                tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+
+
         
         if (int(start_epoch) >= int(end_epoch)):
             await ctx.send("**Start Date** should be before **End Date**! Try Again!")
@@ -179,6 +209,13 @@ def run():
         elif (int(end_epoch) > 2147400000):
             await ctx.send("**End Date** is too far in the future! Try Again!")
             return
+        elif (int(start_epoch) < 0):
+            await ctx.send("I wasn't even born back then! Try Again!")
+            return
+
+        
+        print("start epoch: " + str(start_epoch))
+        print("end epoch: " + str(end_epoch))
         
         
         thereport = report.make_report(str(member), start_epoch, end_epoch)
@@ -245,6 +282,7 @@ def run():
         # reporting yourself!
         else:
             await ctx.send("You can not name yourself a zombie! Take a break!")
+
 
 
 
