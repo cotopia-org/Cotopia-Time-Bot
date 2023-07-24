@@ -123,16 +123,24 @@ def run():
             end_epoch = datetime.datetime(
                 year=now["y"], month=now["m"], day=now["d"], hour=23, minute=59, second=59).strftime('%s')
         else:
-            end_epoch = datetime.datetime(
-                year=end_yyyy, month=end_mm, day=end_dd, hour=23, minute=59, second=59).strftime('%s')
+            try:
+                end_epoch = datetime.datetime(
+                    year=end_yyyy, month=end_mm, day=end_dd, hour=23, minute=59, second=59).strftime('%s')
+            except:
+                await ctx.send("Please enter a valid date!")
+                return
         
 
         if (start_yyyy == 1971 and start_mm == 1 and start_dd == 1):
             start_epoch = datetime.datetime(
                 year=now["y"], month=now["m"], day=1, hour=0, minute=0, second=0).strftime('%s')
         else:
-            start_epoch = datetime.datetime(
-                year=start_yyyy, month=start_mm, day=start_dd, hour=0, minute=0, second=0).strftime('%s')
+            try:
+                start_epoch = datetime.datetime(
+                    year=start_yyyy, month=start_mm, day=start_dd, hour=0, minute=0, second=0).strftime('%s')
+            except:
+                await ctx.send("Please enter a valid date!")
+                return
         
 
         if (int(start_epoch) >= int(end_epoch)):
@@ -186,9 +194,13 @@ def run():
                 year=now["y"], month=now["m"], day=now["d"], hour=23, minute=59, second=59,
                 tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
         else:
-            end_epoch = JalaliDateTime(
-                year=end_ssss, month=end_mm, day=end_rr, hour=23, minute=59, second=59,
-                tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+            try:
+                end_epoch = JalaliDateTime(
+                    year=end_ssss, month=end_mm, day=end_rr, hour=23, minute=59, second=59,
+                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+            except:
+                await ctx.send("Please enter a valid date!")
+                return
 
          
         if (start_ssss == 1349 and start_mm == 1 and start_rr == 1):
@@ -196,9 +208,13 @@ def run():
                 year=now["y"], month=now["m"], day=1, hour=0, minute=0, second=0,
                 tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
         else:
-            start_epoch = JalaliDateTime(
-                year=start_ssss, month=start_mm, day=start_rr, hour=0, minute=0, second=0,
-                tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+            try:
+                start_epoch = JalaliDateTime(
+                    year=start_ssss, month=start_mm, day=start_rr, hour=0, minute=0, second=0,
+                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+            except:
+                await ctx.send("Please enter a valid date!")
+                return
 
 
         
@@ -285,10 +301,7 @@ def run():
 
 
 
-
-
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
-
 
 
 
