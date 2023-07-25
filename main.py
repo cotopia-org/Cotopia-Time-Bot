@@ -108,11 +108,11 @@ def run():
     async def on_presence_update(before, after):
         pass
 
-    @bot.hybrid_command()
+    @bot.hybrid_command(description="Replies with pong!")
     async def ping(ctx):
         await ctx.send("pong")
 
-    @bot.hybrid_command()
+    @bot.hybrid_command(description="Generates report. default date: current month")
     async def viewstats(ctx, member: discord.Member,
                         start_yyyy: typing.Optional[int]=1971, start_mm: typing.Optional[int]=1, start_dd: typing.Optional[int]=1,
                         end_yyyy: typing.Optional[int]=2037, end_mm: typing.Optional[int]=1, end_dd: typing.Optional[int]=29):
@@ -181,7 +181,7 @@ def run():
         await ctx.send(text)
 
     
-    @bot.hybrid_command()
+    @bot.hybrid_command(description="گزارش ایجاد می کند. تاریخ پیش فرض: ماه جاری")
     async def viewgozaresh(ctx, member: discord.Member,
                         start_ssss: typing.Optional[int]=1349, start_mm: typing.Optional[int]=1, start_rr: typing.Optional[int]=1,
                         end_ssss: typing.Optional[int]=1415, end_mm: typing.Optional[int]=12, end_rr: typing.Optional[int]=29):
@@ -259,7 +259,7 @@ def run():
 
 
 
-    @bot.hybrid_command()
+    @bot.hybrid_command(description="If someone is in not deafen and doesn't answer, report them as a zombie!")
     async def zombie(ctx, member: discord.Member):
         
         # func that does the job after a while
@@ -304,7 +304,7 @@ def run():
 
     
 
-    @bot.hybrid_command()
+    @bot.hybrid_command(description="داده خام یک کاربر در یک بازه زمانی. تاریخ پیش فرض: ماه جاری")
     async def rawdata(ctx, member: discord.Member,
                         start_ssss: typing.Optional[int]=1349, start_mm: typing.Optional[int]=1, start_rr: typing.Optional[int]=1,
                         end_ssss: typing.Optional[int]=1415, end_mm: typing.Optional[int]=12, end_rr: typing.Optional[int]=29):
@@ -361,8 +361,6 @@ def run():
 
 
         await ctx.send(file=discord.File(thereport))
-
-
 
 
 
