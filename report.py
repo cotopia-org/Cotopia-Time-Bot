@@ -109,3 +109,45 @@ def on_mobile_duration(doer: str, start_epoch: int, end_epoch: int, cursor):
     else:
         return duration_of_on_mobile
     
+
+
+
+def make_raw_file(doer: str, start_epoch: int, end_epoch: int):
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+                    SELECT * From discord_event
+                    WHERE doer = %s
+                    AND epoch >= %s
+                    AND epoch <= %s
+                    ORDER BY id
+                    """, (doer, start_epoch, end_epoch))
+        data = cur.fetchall()
+
+        filename = doer + "_" + str(int(((start_epoch + end_epoch)/17)))
+        reportfile = open("./rawreports/" + filename + ".txt", "w")
+        reportfile.write("(id SERIAL NOT NULL PRIMARY KEY, ts TIMESTAMPTZ NOT NULL DEFAULT NOW(), epoch integer null, kind varchar(255) null, doer varchar(255) null, isPair boolean DEFAULT FALSE, pairID integer null, isValid boolean DEFAULT TRUE, note json null, duration integer DEFAULT -1)\n")
+        reportfile.write("_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________\n")
+        reportfile.write("doer = " + doer + "\nFrom: " + str(start_epoch)+ "\nTo: " + str(end_epoch) + "\n" )
+        reportfile.write("_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________\n")
+
+        for row in data:
+            reportfile.write(str(row)+"\n")
+
+        filepath = "./rawreports/" + filename + ".txt"
+
+    except:
+        filepath = "./rawreports/error.log"
+
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    reportfile.close()
+
+    return filepath
+
+
