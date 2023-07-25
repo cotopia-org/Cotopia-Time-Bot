@@ -12,6 +12,7 @@ import typing
 import log_processor
 import raw_logger
 import report
+import zombie_hunter
 
 
 logger = settings.logging.getLogger("bot")
@@ -267,6 +268,7 @@ def run():
             await asyncio.sleep(180)    # 3 minutes
             global the_zombie
             the_zombie = None
+            zombie_hunter.record_hunt(reporter=str(ctx.author), zombie=str(member))
             await member.move_to(None, reason="You have been reported a zombie and didn't respond!")
             await ctx.guild.system_channel.send(member.mention+"'s session terminated because they acted like a :zombie:!")
             
@@ -298,6 +300,9 @@ def run():
         # reporting yourself!
         else:
             await ctx.send("You can not name yourself a zombie! Take a break!")
+            
+
+    
 
     @bot.hybrid_command()
     async def rawdata(ctx, member: discord.Member,
