@@ -1,5 +1,6 @@
 import psycopg2
-import json
+from persiantools.jdatetime import JalaliDateTime
+import pytz
 
 
 def make_report (doer: str, start_epoch: int, end_epoch: int):
@@ -113,11 +114,14 @@ def on_mobile_duration(doer: str, start_epoch: int, end_epoch: int, cursor):
 
 
 def make_raw_file(doer: str, start_epoch: int, end_epoch: int):
-    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
-                        password="Tp\ZS?gfLr|]'a", port=5432)
-    cur = conn.cursor()
+
+    from_date = JalaliDateTime.fromtimestamp(int(start_epoch), pytz.timezone("Asia/Tehran")).strftime("%c")
+    to_date = JalaliDateTime.fromtimestamp(int(end_epoch), pytz.timezone("Asia/Tehran")).strftime("%c")
 
     try:
+        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+        cur = conn.cursor()
         cur.execute("""
                     SELECT * From discord_event
                     WHERE doer = %s
@@ -131,7 +135,7 @@ def make_raw_file(doer: str, start_epoch: int, end_epoch: int):
         reportfile = open("./rawreports/" + filename + ".txt", "w")
         reportfile.write("(id SERIAL NOT NULL PRIMARY KEY, ts TIMESTAMPTZ NOT NULL DEFAULT NOW(), epoch integer null, kind varchar(255) null, doer varchar(255) null, isPair boolean DEFAULT FALSE, pairID integer null, isValid boolean DEFAULT TRUE, note json null, duration integer DEFAULT -1)\n")
         reportfile.write("_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________\n")
-        reportfile.write("doer = " + doer + "\nFrom: " + str(start_epoch)+ "\nTo: " + str(end_epoch) + "\n" )
+        reportfile.write("doer = " + doer + "\nFrom: " + from_date + "\nTo: " + to_date + "\n" )
         reportfile.write("_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________\n")
 
         for row in data:
@@ -139,15 +143,20 @@ def make_raw_file(doer: str, start_epoch: int, end_epoch: int):
 
         filepath = "./rawreports/" + filename + ".txt"
 
-    except:
+        conn.commit()
+        cur.close()
+        conn.close()
+        reportfile.close()
+
+    except Exception as e:
         filepath = "./rawreports/error.log"
+        print(e)
 
 
-    conn.commit()
-    cur.close()
-    conn.close()
-    reportfile.close()
+    
 
     return filepath
+
+
 
 
