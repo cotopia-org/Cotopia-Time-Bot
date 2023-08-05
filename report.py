@@ -1,7 +1,7 @@
 import psycopg2
 from persiantools.jdatetime import JalaliDateTime
 import pytz
-
+import datetime
 
 def make_report (doer: str, start_epoch: int, end_epoch: int):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
@@ -73,7 +73,6 @@ def make_report (doer: str, start_epoch: int, end_epoch: int):
     return report_dic
 
 
-
 def on_mobile_count(doer: str, start_epoch: int, end_epoch: int, cursor):
     cursor.execute("""
                 SELECT COUNT(note->>'is_on_mobile') FROM discord_event
@@ -83,13 +82,13 @@ def on_mobile_count(doer: str, start_epoch: int, end_epoch: int, cursor):
                 AND kind = 'SESSION STARTED'
                 AND duration != -1
                 AND note->>'is_on_mobile' = 'true'
+                AND note->>'mobile_status' = 'online'
                 """, (doer, start_epoch, end_epoch))
     number_of_on_mobile = cursor.fetchone()[0]
     if(number_of_on_mobile == None):
         return 0
     else:
         return number_of_on_mobile
-
 
 
 def on_mobile_duration(doer: str, start_epoch: int, end_epoch: int, cursor):
@@ -101,6 +100,7 @@ def on_mobile_duration(doer: str, start_epoch: int, end_epoch: int, cursor):
                    AND kind = 'SESSION STARTED'
                    AND duration != -1
                    AND note->>'is_on_mobile' = 'true'
+                   AND note->>'mobile_status' = 'online'
                    """, (doer, start_epoch, end_epoch))
     
     duration_of_on_mobile = cursor.fetchone()[0]
@@ -109,8 +109,6 @@ def on_mobile_duration(doer: str, start_epoch: int, end_epoch: int, cursor):
         return 0
     else:
         return duration_of_on_mobile
-    
-
 
 
 def make_raw_file(doer: str, start_epoch: int, end_epoch: int):
@@ -158,5 +156,41 @@ def make_raw_file(doer: str, start_epoch: int, end_epoch: int):
     return filepath
 
 
+def make_heat_map():
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+
+
+def get_doers_list():
+    doers = []
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+
+    cur.execute("SELECT DISTINCT doer From discord_event ORDER BY doer;")
+    data = cur.fetchall()
+
+    for row in data:
+        if (row[0] != None):
+            doers.append(row[0])
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return doers
+
+def get_starts_epochs(doer: str):
+    pass
+
+def get_stops_epochs(doer: str):
+    pass
+
+
+def get_hour(epoch: int):
+
+    jtime = JalaliDateTime.fromtimestamp(epoch, pytz.timezone("Asia/Tehran"))
+    return jtime.strftime("%H:%M")
 
 
