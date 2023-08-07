@@ -151,24 +151,27 @@ def make_raw_file(doer: str, start_epoch: int, end_epoch: int):
         print(e)
 
 
-    
-
     return filepath
 
 
-def make_heat_map():
-    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
-                        password="Tp\ZS?gfLr|]'a", port=5432)
-    cur = conn.cursor()
+# def make_heat_map():
+#     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+#                         password="Tp\ZS?gfLr|]'a", port=5432)
+#     cur = conn.cursor()
 
 
-def get_doers_list():
+def get_doers_list(start_epoch: int, end_epoch: int):
     doers = []
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
 
-    cur.execute("SELECT DISTINCT doer From discord_event ORDER BY doer;")
+    cur.execute("""
+                SELECT DISTINCT doer From discord_event
+                WHERE epoch >= %s
+                AND epoch <= %s
+                ORDER BY doer;
+                """, (start_epoch, end_epoch))
     data = cur.fetchall()
 
     for row in data:
@@ -181,16 +184,51 @@ def get_doers_list():
 
     return doers
 
-def get_starts_epochs(doer: str):
-    pass
+# def get_starts_epochs(doer: str):
+#     pass
 
-def get_stops_epochs(doer: str):
-    pass
+# def get_stops_epochs(doer: str):
+#     pass
 
 
-def get_hour(epoch: int):
+# def get_hour(epoch: int):
 
-    jtime = JalaliDateTime.fromtimestamp(epoch, pytz.timezone("Asia/Tehran"))
-    return jtime.strftime("%H:%M")
+#     jtime = JalaliDateTime.fromtimestamp(epoch, pytz.timezone("Asia/Tehran"))
+#     return jtime.strftime("%H:%M")
+
+
+
+def make_board(start_epoch: int, end_epoch: int):
+    doers = []
+    the_board = {}
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+
+    cur.execute("""
+                SELECT DISTINCT doer From discord_event
+                WHERE epoch >= %s
+                AND epoch <= %s
+                ORDER BY doer;
+                """, (start_epoch, end_epoch))
+    data = cur.fetchall()
+
+    for row in data:
+        if (row[0] != None):
+            doers.append(row[0])
+
+    for user in doers:
+        user_report = make_report(doer=user, start_epoch=start_epoch, end_epoch=end_epoch)
+        the_board[user] = user_report["Net Session Hours"]
+    
+    sorted_board = sorted(the_board.items(), key=lambda x: x[1], reverse=True) 
+        
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return sorted_board
+
 
 
