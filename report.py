@@ -214,7 +214,7 @@ def make_board(start_epoch: int, end_epoch: int):
     data = cur.fetchall()
 
     for row in data:
-        if (row[0] != None):
+        if (row[0] != None and row[0] != "/today"):
             doers.append(row[0])
 
     for user in doers:

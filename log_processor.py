@@ -171,7 +171,7 @@ def write_pending_to_db(doer: str, kind: str, pendingID: int):
 
 
 # adds pairID to events, both starting and ending event.
-# calculates duration time in secons and writes it to both starting and ending event   
+# calculates duration time in seconds and writes it to both starting and ending event   
 def add_pairid_to_db(start: int, stop: int):
 
     # print("start    :" +str(start))
@@ -242,4 +242,54 @@ def delete_all_pending_from_db(doer: str):
     conn.close()
 
 
-# in buge folan ro dorost mikone
+# we need a function that gets all the pendings, finish them and renew them!
+# this would be used to produce live /today report
+def renew_pendings():
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+
+    renew_epoch = rightnow()
+
+    cur.execute("INSERT INTO discord_event (epoch, kind, doer, isPair) VALUES (%s, %s, %s, %s) RETURNING id;",
+                    (renew_epoch, "PENDING RENEW", "/today", True))
+    id_of_slash_today_row = cur.fetchone()[0]
+
+
+    cur.execute("SELECT * FROM pending_event")
+    current_pendings = cur.fetchall()
+
+
+    for each in current_pendings:
+        cur.execute("UPDATE discord_event SET pairid = %s WHERE id = %s;", (id_of_slash_today_row, each[4]))
+
+        cur.execute("SELECT epoch FROM discord_event WHERE id = %s", [each[4]])
+        pending_epoch = cur.fetchone()[0]
+
+        duration = renew_epoch - pending_epoch
+        cur.execute("UPDATE discord_event SET duration = %s WHERE id = %s", (duration, each[4]))
+
+        cur.execute("DELETE FROM pending_event WHERE id = %s", [each[0]])
+
+        
+        #readd the event
+        cur.execute("SELECT * FROM discord_event WHERE id = %s", [each[4]])
+        old_event = cur.fetchone()
+        notedic = old_event[8]
+        notedic["renew"] = "Renewed Automatically by renew_pendings()"
+        note = json.dumps(notedic)
+        cur.execute("INSERT INTO discord_event (epoch, kind, doer, isPair, note) VALUES (%s, %s, %s, %s, %s) RETURNING id;",
+                    (renew_epoch, old_event[3], old_event[4], old_event[5], note))
+        id_of_renewed_event = cur.fetchone()[0]
+        
+        # readd the pending
+        cur.execute("INSERT INTO pending_event (doer, kind, pendingID) VALUES (%s, %s, %s);",
+                 (each[2], each[3], id_of_renewed_event))
+
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+

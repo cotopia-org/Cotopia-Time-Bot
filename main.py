@@ -364,6 +364,11 @@ def run():
 
     @bot.hybrid_command(description="جدول مدت سشن های تمام شده در امروز")
     async def today(ctx):
+
+        log_processor.renew_pendings()
+
+
+
         now = today_jalali()
         start_epoch = int(
                 JalaliDateTime(
@@ -393,9 +398,6 @@ def run():
             text = text + string + "\n"
 
         await ctx.send(text)
-
-        
-
 
 
 
