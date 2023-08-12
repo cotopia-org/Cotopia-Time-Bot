@@ -40,13 +40,13 @@ def make_report (doer: str, start_epoch: int, end_epoch: int):
             talkings_count += 1
             total_talking_duration = total_talking_duration + row[9]
 
-    total_sd_hours = round((total_session_duration/3600), 2)
-    total_pd_hours = round((total_pausing_duration/3600), 2)
-    total_td_hours = round((total_talking_duration/3600), 2)
+    total_sd_hours = round((total_session_duration/3600), 1)
+    total_pd_hours = round((total_pausing_duration/3600), 1)
+    total_td_hours = round((total_talking_duration/3600), 1)
     
-    on_mobile_hours = round((on_mobile_duration(doer, start_epoch, end_epoch, cur)/3600), 2)
+    on_mobile_hours = round((on_mobile_duration(doer, start_epoch, end_epoch, cur)/3600), 1)
 
-    net_sd_hours = round((total_sd_hours - total_pd_hours - on_mobile_hours), 2)
+    net_sd_hours = round((total_sd_hours - total_pd_hours - on_mobile_hours), 1)
 
 
 
