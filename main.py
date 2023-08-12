@@ -462,6 +462,11 @@ def run():
 
 
 
+    @bot.hybrid_command()
+    async def status(ctx, member: discord.Member):
+        status = report.get_status(str(member))
+        await ctx.send(member.mention + "'s current status: \n" + status)
+
 
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)

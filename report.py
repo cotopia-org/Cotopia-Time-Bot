@@ -232,3 +232,31 @@ def make_board(start_epoch: int, end_epoch: int):
 
 
 
+
+def get_status(doer: str):
+    doers_list = get_doers_list(start_epoch=0, end_epoch=2147483647)
+    if (doer in doers_list):
+        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+        cur = conn.cursor()
+        cur.execute("SELECT kind, pendingid FROM pending_event WHERE doer = %s ORDER BY ts DESC", [doer])
+        all_pendings = cur.fetchall()
+        cur.execute("SELECT note FROM discord_event WHERE id >= %s ORDER BY ts DESC", [all_pendings[0][1]])
+        note = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        if (len(all_pendings) == 0):
+            return "Offline"
+        else:
+            channel = note["channel"]
+            return all_pendings[0][0] + "\nchannel: " + channel 
+
+    else:
+        return "User Not Found!"
+    
+
+
+
+
