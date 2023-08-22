@@ -431,6 +431,9 @@ def run():
     
     @bot.hybrid_command(description="جدول مدت سشن های این ماه")
     async def thismonth(ctx):
+
+        log_processor.renew_pendings()
+
         now = today_jalali()
         start_epoch = int(
                 JalaliDateTime(
