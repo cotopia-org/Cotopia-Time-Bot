@@ -470,6 +470,78 @@ def run():
         status = report.get_status(str(member))
         await ctx.send(member.mention + "'s current status: \n" + status)
 
+    
+    @bot.hybrid_command()
+    async def makeboard(ctx,
+                        start_ssss: typing.Optional[int]=1349, start_mm: typing.Optional[int]=1, start_rr: typing.Optional[int]=1,
+                        end_ssss: typing.Optional[int]=1415, end_mm: typing.Optional[int]=12, end_rr: typing.Optional[int]=29):
+        now = today_jalali()        
+
+        # I want to set today as default end value, but passing it in Args didnt work. So I do this:
+        if (end_ssss == 1415 and end_mm == 12 and end_rr == 29):
+            end_epoch = JalaliDateTime(
+                year=now["y"], month=now["m"], day=now["d"], hour=23, minute=59, second=59,
+                tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+        else:
+            try:
+                end_epoch = JalaliDateTime(
+                    year=end_ssss, month=end_mm, day=end_rr, hour=23, minute=59, second=59,
+                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+            except:
+                await ctx.send("Please enter a valid date!")
+                return
+
+         
+        if (start_ssss == 1349 and start_mm == 1 and start_rr == 1):
+            start_epoch = JalaliDateTime(
+                year=now["y"], month=now["m"], day=1, hour=0, minute=0, second=0,
+                tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+        else:
+            try:
+                start_epoch = JalaliDateTime(
+                    year=start_ssss, month=start_mm, day=start_rr, hour=0, minute=0, second=0,
+                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+            except:
+                await ctx.send("Please enter a valid date!")
+                return
+
+
+        
+        if (int(start_epoch) >= int(end_epoch)):
+            await ctx.send("**Start Date** should be before **End Date**! Try Again!")
+            return
+        # max int value in postgres is 	-2147483648 to 2147483647
+        elif (int(end_epoch) > 2147400000):
+            await ctx.send("**End Date** is too far in the future! Try Again!")
+            return
+        elif (int(start_epoch) < 0):
+            await ctx.send("I wasn't even born back then! Try Again!")
+            return
+        
+        print("start epoch: " + str(start_epoch))
+        print("end epoch: " + str(end_epoch))
+
+        # log_processor.renew_pendings()
+        the_board = report.make_board(start_epoch, end_epoch)
+
+
+        discordDate_from = JalaliDateTime.fromtimestamp(int(start_epoch), pytz.timezone("Asia/Tehran")).strftime("%c")
+        discordDate_to = JalaliDateTime.fromtimestamp(int(end_epoch), pytz.timezone("Asia/Tehran")).strftime("%c")
+
+        text = ("Net Session Hours\n" +
+        "From:  " + str(discordDate_from) + "\n"
+        "To:  " + str(discordDate_to) +
+        "\n------------------------------\n")
+        for l in the_board:
+            string = str(l)
+            string = string.replace("('", "")
+            string = string.replace("',", " :")
+            string = string.replace(")", "")
+            text = text + string + "\n"
+
+        await ctx.send(text)
+
+
 
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
