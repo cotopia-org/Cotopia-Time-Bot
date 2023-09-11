@@ -567,7 +567,9 @@ def run():
         await ctx.send(text)
 
 
-
+    @bot.hybrid_command()
+    async def brief(ctx):
+        await ctx.send("Please add a brief for your session by replying to this message " + ctx.author.mention + "!")
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
 

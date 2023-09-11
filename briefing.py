@@ -83,7 +83,7 @@ def write_to_db(brief: str, doer: str):
             content TEXT null);""")
     cur.execute("INSERT INTO brief (epoch, doer, content) VALUES (%s, %s, %s);",
                  (rightnow(), doer, brief))
-    
+    print("trying to write a brief to db!")
     conn.commit()
     cur.close()
     conn.close()
