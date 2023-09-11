@@ -75,18 +75,28 @@ def write_to_db(brief: str, doer: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
-    cur.execute("""CREATE TABLE IF NOT EXISTS brief(
-            id SERIAL NOT NULL PRIMARY KEY,
-            ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-            epoch INTEGER null,
-            doer VARCHAR(255) null,
-            content TEXT null);""")
     cur.execute("INSERT INTO brief (epoch, doer, content) VALUES (%s, %s, %s);",
                  (rightnow(), doer, brief))
     print("trying to write a brief to db!")
     conn.commit()
     cur.close()
     conn.close()
+
+def create_table():
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS brief(
+            id SERIAL NOT NULL PRIMARY KEY,
+            ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            epoch INTEGER null,
+            doer VARCHAR(255) null,
+            content TEXT null);""")
+    conn.commit()
+    cur.close()
+    conn.close()
+    
+
 
 
 # text = """very new ut perspiciatis, unde omnis iste 
