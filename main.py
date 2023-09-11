@@ -13,6 +13,7 @@ import log_processor
 import raw_logger
 import report
 import zombie_hunter
+import briefing
 
 
 logger = settings.logging.getLogger("bot")
@@ -59,6 +60,24 @@ def run():
             task.cancel()
             await message.channel.send("Well well you are not a zombie " + message.author.mention + "!")
             the_zombie = None
+        
+        # RECORDING BRIEF
+        try:
+            replied_to = await message.channel.fetch_message(message.reference.message_id)
+            if (replied_to.author == bot.user):
+                if ("Please add a brief for your session by replying to this message" in replied_to.content):
+                    if (message.author in replied_to.mentions):
+                        briefing.write_to_db(brief=message.content, doer=str(message.author))
+        except:
+            print("the message is not relevant!")
+
+
+        # print("message: " + message.content)
+        # print("reference: ")
+        # print(message.reference)
+
+        # asking_message = await message.channel.fetch_message(message.reference.message_id)
+        # print(asking_message.content)
 
         
 
@@ -87,6 +106,12 @@ def run():
         
         log_processor.record(member, before, after, extra)
         raw_logger.record(member, before, after)
+
+        # ASKING FOR BRIEF
+        if (before.channel is None):
+            if (briefing.should_record_brief(str(member))):
+                guild = member.guild
+                await guild.system_channel.send("Please add a brief for your session by replying to this message " + member.mention + "!")
 
 
 

@@ -1,44 +1,104 @@
-import report
-from persiantools.jdatetime import JalaliDate
-from persiantools.jdatetime import JalaliDateTime
-import pytz
+# from discord import VoiceState, Member
+import time
+import psycopg2
 
 
 
-def today_jalali():
-    the_string = str(JalaliDate.today())
-    slices = the_string.split("-")
-    dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
-    return dic
+def should_record_brief(doer: str):
+    last = get_last_brief_epoch(doer)
+    if (last == -1):
+        return True
+    now = rightnow()
+    dif = now - last
+    print(f"last recorded brief for '{doer}' was from {dif} seconds ago")
+    if (dif > 86400):
+        return True
+    else:
+        return False
 
-now = today_jalali()
-start_epoch = int(
-                JalaliDateTime(
-                    year=now["y"], month=now["m"], day=now["d"]-14, hour=0, minute=0, second=0,
-                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
-        )
-end_epoch = int(
-                JalaliDateTime(
-                    year=now["y"], month=now["m"], day=now["d"]-14, hour=23, minute=59, second=59,
-                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
-        )
+def get_last_brief(doer: str):
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+    cur.execute("""
+                   SELECT content FROM brief
+                   WHERE doer = %s
+                   ORDER BY ts DESC;
+                   """, [doer])
+    
+    result = cur.fetchone()
 
-discordDate_from = JalaliDateTime.fromtimestamp(start_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
-discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
+    if (result == None):
+        print("no brief found!")
+        conn.commit()
+        cur.close()
+        conn.close()
+        return "N/A"
+    else:
+        conn.commit()
+        cur.close()
+        conn.close()
+        return result[0]
 
-the_board = report.make_board(start_epoch, end_epoch)
+
+def get_last_brief_epoch(doer: str):
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+    cur.execute("""
+                   SELECT epoch FROM brief
+                   WHERE doer = %s
+                   ORDER BY epoch DESC;
+                   """, [doer])
+    
+    result = cur.fetchone()
+
+    if (result == None):
+        print("no brief found!")
+        conn.commit()
+        cur.close()
+        conn.close()
+        return -1
+    else:
+        conn.commit()
+        cur.close()
+        conn.close()
+        return result[0]
 
 
-text = ("Net Session Hours\n\n" +
-        "From: " + discordDate_from + "\n" +
-        "To: " + discordDate_to + "\n" +
-        "------------------------------\n")
-for l in the_board:
-    string = str(l)
-    string = string.replace("('", "")
-    string = string.replace("',", " :")
-    string = string.replace(")", "")
-    text = text + string + "\n"
-            
+# returns epoch of NOW: int
+def rightnow():
+    epoch = int(time.time())
+    return epoch
 
-print(text)
+def write_to_db(brief: str, doer: str):
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS brief(
+            id SERIAL NOT NULL PRIMARY KEY,
+            ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            epoch INTEGER null,
+            doer VARCHAR(255) null,
+            content TEXT null);""")
+    cur.execute("INSERT INTO brief (epoch, doer, content) VALUES (%s, %s, %s);",
+                 (rightnow(), doer, brief))
+    
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+text = """very new ut perspiciatis, unde omnis iste 
+natus error sit voluptatem accusantium doloremque 
+laudantium, totam rem aperiam eaque ipsa, quae
+"""
+write_to_db(brief=text, doer="ali")
+
+print(should_record_brief("yo"))
+
+print(type(get_last_brief("ali")))
+
+print(type(get_last_brief_epoch("yo")))
+
+print(rightnow())
