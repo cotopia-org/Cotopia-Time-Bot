@@ -1,15 +1,5 @@
-import sqlite3
+import psycopg2
 
-conn = sqlite3.connect('thebot.db')
-
-c = conn.cursor()
-
-# c.execute("""CREATE TABLE timelogs (
-#                 epoch integer,
-#                 user text,
-#                 event text
-#                 )""")
-
-conn.commit()
-
-conn.close()
+conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+cur = conn.cursor()
