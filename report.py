@@ -257,6 +257,26 @@ def get_status(doer: str):
         return "User Not Found!"
     
 
+def get_events(start: int, end: int):
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+    cur.execute("""
+                SELECT * From discord_event
+                WHERE epoch >= %s
+                AND epoch <= %s
+                ORDER BY epoch
+                """, (start, end))
+    result = cur.fetchall()
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return result
+
+    
+
 
 
 
