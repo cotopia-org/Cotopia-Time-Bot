@@ -275,6 +275,25 @@ def get_events(start: int, end: int):
 
     return result
 
+
+def get_events_of_doer(start: int, end: int, doer: str):
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+    cur.execute("""
+                SELECT * From discord_event
+                WHERE epoch >= %s
+                AND epoch <= %s
+                AND doer = %s
+                ORDER BY epoch
+                """, (start, end, doer))
+    result = cur.fetchall()
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return result
     
 
 

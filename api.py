@@ -18,6 +18,10 @@ app = FastAPI()
 async def root():
     return {"message": "Hello World"}
 
+@app.get("/doers")
+async def get_doers(start: int, end: int):
+      return report.get_doers_list(start_epoch=start, end_epoch=end)
+
 @app.get("/thismonth")
 async def thismonth():
     log_processor.renew_pendings()
@@ -50,12 +54,17 @@ async def thismonth():
 
 
 @app.get("/events")
-async def getevents(start: int, end: int):
+async def getevents(start: int, end: int, doer: str | None = None):
       
-      all = report.get_events(start=start, end=end)
-      answer = []
+    if (doer == None):
+        all = report.get_events(start=start, end=end)
+    else:
+        all = report.get_events_of_doer(start=start, end=end, doer=doer)
+    
 
-      for event in all:
+    answer = []
+
+    for event in all:
             d = {}
             d["id"] = event[0]
             d["ts"] = event[1]
@@ -69,4 +78,4 @@ async def getevents(start: int, end: int):
             d["duration"] = event[9]
             answer.append(d)
       
-      return answer
+    return answer
