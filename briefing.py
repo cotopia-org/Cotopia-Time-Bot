@@ -4,8 +4,8 @@ import psycopg2
 
 
 
-def should_record_brief(doer: str):
-    last = get_last_brief_epoch(doer)
+def should_record_brief(doer: str, driver: str):
+    last = get_last_brief_epoch(doer, driver)
     if (last == -1):
         return True
     now = rightnow()
@@ -16,15 +16,15 @@ def should_record_brief(doer: str):
     else:
         return False
 
-def get_last_brief(doer: str):
+def get_last_brief(doer: str, driver: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
     cur.execute("""
                    SELECT content FROM brief
-                   WHERE doer = %s
+                   WHERE doer = %s AND driver = %s
                    ORDER BY ts DESC;
-                   """, [doer])
+                   """, (doer, driver))
     
     result = cur.fetchone()
 
@@ -40,16 +40,15 @@ def get_last_brief(doer: str):
         conn.close()
         return result[0]
 
-
-def get_last_brief_epoch(doer: str):
+def get_last_brief_epoch(doer: str, driver: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
     cur.execute("""
                    SELECT epoch FROM brief
-                   WHERE doer = %s
+                   WHERE doer = %s AND driver = %s
                    ORDER BY epoch DESC;
-                   """, [doer])
+                   """, (doer, driver))
     
     result = cur.fetchone()
 
@@ -65,18 +64,17 @@ def get_last_brief_epoch(doer: str):
         conn.close()
         return result[0]
 
-
 # returns epoch of NOW: int
 def rightnow():
     epoch = int(time.time())
     return epoch
 
-def write_to_db(brief: str, doer: str):
+def write_to_db(brief: str, doer: str, driver: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
-    cur.execute("INSERT INTO brief (epoch, doer, content) VALUES (%s, %s, %s);",
-                 (rightnow(), doer, brief))
+    cur.execute("INSERT INTO brief (driver, epoch, doer, content) VALUES (%s, %s, %s, %s);",
+                 (driver, rightnow(), doer, brief))
     print("trying to write a brief to db!")
     conn.commit()
     cur.close()
@@ -88,6 +86,7 @@ def create_table():
     cur = conn.cursor()
     cur.execute("""CREATE TABLE IF NOT EXISTS brief(
             id SERIAL NOT NULL PRIMARY KEY,
+            driver VARCHAR(255) null,
             ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             epoch INTEGER null,
             doer VARCHAR(255) null,
@@ -95,20 +94,3 @@ def create_table():
     conn.commit()
     cur.close()
     conn.close()
-    
-
-
-
-# text = """very new ut perspiciatis, unde omnis iste 
-# natus error sit voluptatem accusantium doloremque 
-# laudantium, totam rem aperiam eaque ipsa, quae
-# """
-# write_to_db(brief=text, doer="ali")
-
-# print(should_record_brief("yo"))
-
-# print(type(get_last_brief("ali")))
-
-# print(type(get_last_brief_epoch("yo")))
-
-# print(rightnow())
