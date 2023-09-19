@@ -58,6 +58,9 @@ def run():
     
     @bot.event
     async def on_message(message):
+        print("this is on_message. the server is:")
+        print(message.guild.id)
+
         if message.author == bot.user:
             return
         
@@ -94,6 +97,8 @@ def run():
 
         guild = member.guild
 
+        print("this is on_voice_state_update. the server is:")
+        print(guild.id)
 
         # cancelling the zombie
         global the_zombie
@@ -143,6 +148,9 @@ def run():
 
     @bot.event
     async def on_raw_reaction_add(payload):
+        print("this is on_raw_reaction_add. the server is:")
+        print(payload.guild_id)
+        
         
         global the_zombie
         # cancelling the zombie
@@ -161,6 +169,8 @@ def run():
 
     @bot.hybrid_command(description="Replies with pong!")
     async def ping(ctx):
+        print("this is ping. the server is:")
+        print(ctx.guild.id)
         await ctx.send("pong")
 
     @bot.hybrid_command(description="Generates report. default date: current month")
