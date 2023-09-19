@@ -20,7 +20,7 @@ import briefing
 
 logger = settings.logging.getLogger("bot")
 
-the_zombie = None
+the_zombie = {}
 last_brief_ask = {}
 
 def today():
@@ -66,11 +66,11 @@ def run():
         
         # cancelling the zombie
         global the_zombie
-        if (message.author == the_zombie):
-            task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
+        if (message.author == the_zombie[message.guild.id]):
+            task, = [task for task in asyncio.all_tasks() if task.get_name() == f"dc zombie {message.guild.id}"]
             task.cancel()
             await message.channel.send("Well well you are not a zombie " + message.author.mention + "!")
-            the_zombie = None
+            the_zombie[message.guild.id] = None
         
         # RECORDING BRIEF
         try:
@@ -78,17 +78,9 @@ def run():
             if (replied_to.author == bot.user):
                 if ("Please add a brief for your session by replying to this message" in replied_to.content):
                     if (message.author in replied_to.mentions):
-                        briefing.write_to_db(brief=message.content, doer=str(message.author))
+                        briefing.write_to_db(brief=message.content, doer=str(message.author), driver=str(message.guild.id))
         except:
             print("the message is not relevant!")
-
-
-        # print("message: " + message.content)
-        # print("reference: ")
-        # print(message.reference)
-
-        # asking_message = await message.channel.fetch_message(message.reference.message_id)
-        # print(asking_message.content)
 
         
 
@@ -102,12 +94,12 @@ def run():
 
         # cancelling the zombie
         global the_zombie
-        if (member == the_zombie):
-            task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
+        if (member == the_zombie[guild.id]):
+            task, = [task for task in asyncio.all_tasks() if task.get_name() == f"dc zombie {guild.id}"]
             task.cancel()
                         
             await guild.system_channel.send("Well well you are not a zombie " + member.mention + "!")
-            the_zombie = None
+            the_zombie[guild.id] = None
 
         extra = {
             "is_on_mobile": member.is_on_mobile(),
@@ -126,7 +118,7 @@ def run():
 
         def get_previous_ask(doer: str):
             try:
-                return rightnow() - last_brief_ask[doer]
+                return rightnow() - last_brief_ask[doer + "@" + str(guild.id)]
             except:
                 return 1000000000
         
@@ -137,9 +129,9 @@ def run():
                 return False
         
         if (before.channel is None):
-            if (briefing.should_record_brief(str(member))):
+            if (briefing.should_record_brief(driver=str(guild.id), doer=str(member))):
                 if (just_asked(str(member)) == False):
-                    last_brief_ask[str(member)] = rightnow()
+                    last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow()
                     await guild.system_channel.send(
                         "Please add a brief for your session by replying to this message " + member.mention + "!")
         
@@ -154,11 +146,11 @@ def run():
         
         global the_zombie
         # cancelling the zombie
-        if (payload.member == the_zombie):
+        if (payload.member == the_zombie[payload.guild.id]):
             channel = bot.get_channel(payload.channel_id)
-            task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
+            task, = [task for task in asyncio.all_tasks() if task.get_name() == f"dc zombie {payload.guild.id}"]
             task.cancel()
-            the_zombie = None
+            the_zombie[payload.guild.id] = None
             await channel.send("Well well you are not a zombie " + payload.member.mention + "!")
 
        
@@ -220,7 +212,7 @@ def run():
         print("end epoch: " + str(end_epoch))
         
         
-        thereport = report.make_report(str(member), start_epoch, end_epoch)
+        thereport = report.make_report(driver=str(ctx.guild.id), doer=str(member), start_epoch=start_epoch, end_epoch=end_epoch)
         discordDate_from = "<t:" + thereport["From"] + ":D>"
         discordDate_to = "<t:" + thereport["To"] + ":D>"
         text = ("Report for " + member.mention + "\n" + 
@@ -296,7 +288,7 @@ def run():
         print("end epoch: " + str(end_epoch))
         
         
-        thereport = report.make_report(str(member), start_epoch, end_epoch)
+        thereport = report.make_report(driver=str(ctx.guild.id), doer=str(member), start_epoch=start_epoch, end_epoch=end_epoch)
         discordDate_from = JalaliDateTime.fromtimestamp(int(thereport["From"]), pytz.timezone("Asia/Tehran")).strftime("%c")
         discordDate_to = JalaliDateTime.fromtimestamp(int(thereport["To"]), pytz.timezone("Asia/Tehran")).strftime("%c")
         text = ("Report for " + member.mention + "\n" + 
@@ -327,8 +319,8 @@ def run():
         async def dc_user():
             await asyncio.sleep(180)    # 3 minutes
             global the_zombie
-            the_zombie = None
-            zombie_hunter.record_hunt(reporter=str(ctx.author), zombie=str(member))
+            the_zombie[ctx.guild.id] = None
+            zombie_hunter.record_hunt(driver=str(ctx.guild.id), reporter=str(ctx.author), zombie=str(member))
             await member.move_to(None, reason="You have been reported a zombie and didn't respond!")
             await ctx.guild.system_channel.send(member.mention+"'s session terminated because they acted like a :zombie:!")
             
@@ -345,11 +337,11 @@ def run():
             if (members_channel != None and member.voice.self_deaf == False):
 
                 global the_zombie
-                the_zombie = member
+                the_zombie[ctx.guild.id] = member
 
                 await ctx.send("You reported " + member.mention + " as a zombie!")
                 await ctx.guild.system_channel.send(member.mention+" you have been called a zombie. Show up in 3 minutes or you would be disconnected!")
-                task1 = asyncio.create_task(dc_user(), name="dc zombie")
+                task1 = asyncio.create_task(dc_user(), name=f"dc zombie {ctx.guild.id}")
                 await task1
 
             
@@ -417,7 +409,7 @@ def run():
         print("start epoch: " + str(start_epoch))
         print("end epoch: " + str(end_epoch))
 
-        thereport = report.make_raw_file(str(member), int(start_epoch), int(end_epoch))
+        thereport = report.make_raw_file(driver=str(ctx.guild.id), doer=str(member), start_epoch=int(start_epoch), end_epoch=int(end_epoch))
 
 
         await ctx.send(file=discord.File(thereport))
@@ -426,7 +418,7 @@ def run():
     @bot.hybrid_command(description="جدول مدت سشن های تمام شده در امروز")
     async def today(ctx):
 
-        log_processor.renew_pendings()
+        log_processor.renew_pendings(driver=str(ctx.guild.id))
 
         now = today_jalali()
         start_epoch = int(
@@ -440,7 +432,7 @@ def run():
                     tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
         )
         
-        the_board = report.make_board(start_epoch, end_epoch)
+        the_board = report.make_board(driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
 
         title_date = JalaliDate.fromtimestamp(start_epoch)
         # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
@@ -473,7 +465,7 @@ def run():
                     tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
         )
         
-        the_board = report.make_board(start_epoch, end_epoch)
+        the_board = report.make_board(driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
 
         title_date = JalaliDate.fromtimestamp(start_epoch)
         # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
@@ -493,7 +485,7 @@ def run():
     @bot.hybrid_command(description="جدول مدت سشن های این ماه")
     async def thismonth(ctx):
 
-        log_processor.renew_pendings()
+        log_processor.renew_pendings(driver=str(ctx.guild.id))
 
         now = today_jalali()
         start_epoch = int(
@@ -507,7 +499,7 @@ def run():
                     tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
         )
         
-        the_board = report.make_board(start_epoch, end_epoch)
+        the_board = report.make_board(driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
 
         title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
         # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
@@ -528,7 +520,7 @@ def run():
 
     @bot.hybrid_command()
     async def status(ctx, member: discord.Member):
-        status = report.get_status(str(member))
+        status = report.get_status(driver=str(ctx.guild.id), doer=str(member))
         await ctx.send(member.mention + "'s current status: \n" + status)
 
     
@@ -582,8 +574,8 @@ def run():
         print("start epoch: " + str(start_epoch))
         print("end epoch: " + str(end_epoch))
 
-        # log_processor.renew_pendings()
-        the_board = report.make_board(start_epoch, end_epoch)
+        log_processor.renew_pendings(driver=str(ctx.guild.id))
+        the_board = report.make_board(driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
 
 
         discordDate_from = JalaliDateTime.fromtimestamp(int(start_epoch), pytz.timezone("Asia/Tehran")).strftime("%c")
