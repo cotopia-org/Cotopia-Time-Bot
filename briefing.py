@@ -11,7 +11,7 @@ def should_record_brief(doer: str):
     now = rightnow()
     dif = now - last
     print(f"last recorded brief for '{doer}' was from {dif} seconds ago")
-    if (dif > 86400):
+    if (dif > 68400):
         return True
     else:
         return False

@@ -108,10 +108,20 @@ def run():
         raw_logger.record(member, before, after)
 
         # ASKING FOR BRIEF
+        def get_previous_ask(doer: str):
+            return 1000
+        
+        def just_asked(doer: str):
+            if (get_previous_ask(doer) < 900): # 15 minutes
+                return True
+            else:
+                return False
+        
         if (before.channel is None):
             if (briefing.should_record_brief(str(member))):
-                guild = member.guild
-                await guild.system_channel.send("Please add a brief for your session by replying to this message " + member.mention + "!")
+                if (just_asked(str(member)) == False):
+                    guild = member.guild
+                    await guild.system_channel.send("Please add a brief for your session by replying to this message " + member.mention + "!")
 
 
 
