@@ -1,6 +1,6 @@
 .venv
 .env
-token
+notes.md
 __pycache__
 *.db
 *.txt
@@ -9,4 +9,3 @@ logs/
 oldlogs/
 plogs/
 .DS_Store
-
