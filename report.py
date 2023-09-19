@@ -3,19 +3,21 @@ from persiantools.jdatetime import JalaliDateTime
 import pytz
 import datetime
 
-def make_report (doer: str, start_epoch: int, end_epoch: int):
+# 🚗
+def make_report (driver: str, doer: str, start_epoch: int, end_epoch: int):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
     cur.execute("""
                 SELECT * From discord_event
                 WHERE pairid IS NOT NULL
+                AND driver = %s
                 AND kind = ANY(ARRAY['SESSION STARTED', 'TALKING STARTED', 'SESSION PAUSED'])
                 AND doer = %s
                 AND epoch >= %s
                 AND epoch <= %s
                 ORDER BY id
-                """, (doer, start_epoch, end_epoch))
+                """, (driver, doer, start_epoch, end_epoch))
     
     data = cur.fetchall()
     
@@ -72,36 +74,38 @@ def make_report (doer: str, start_epoch: int, end_epoch: int):
 
     return report_dic
 
-
-def on_mobile_count(doer: str, start_epoch: int, end_epoch: int, cursor):
+# 🚗
+def on_mobile_count(driver: str, doer: str, start_epoch: int, end_epoch: int, cursor):
     cursor.execute("""
                 SELECT COUNT(note->>'is_on_mobile') FROM discord_event
                 WHERE doer = %s
                 AND epoch >= %s
                 AND epoch <= %s
+                AND driver = %s
                 AND kind = 'SESSION STARTED'
                 AND duration != -1
                 AND note->>'is_on_mobile' = 'true'
                 AND note->>'mobile_status' = 'online'
-                """, (doer, start_epoch, end_epoch))
+                """, (doer, start_epoch, end_epoch, driver))
     number_of_on_mobile = cursor.fetchone()[0]
     if(number_of_on_mobile == None):
         return 0
     else:
         return number_of_on_mobile
 
-
-def on_mobile_duration(doer: str, start_epoch: int, end_epoch: int, cursor):
+# 🚗
+def on_mobile_duration(driver: str, doer: str, start_epoch: int, end_epoch: int, cursor):
     cursor.execute("""
                    SELECT SUM(duration) FROM discord_event
                    WHERE doer = %s
                    AND epoch >= %s
                    AND epoch <= %s
+                   AND driver = %s
                    AND kind = 'SESSION STARTED'
                    AND duration != -1
                    AND note->>'is_on_mobile' = 'true'
                    AND note->>'mobile_status' = 'online'
-                   """, (doer, start_epoch, end_epoch))
+                   """, (doer, start_epoch, end_epoch, driver))
     
     duration_of_on_mobile = cursor.fetchone()[0]
     
@@ -110,8 +114,8 @@ def on_mobile_duration(doer: str, start_epoch: int, end_epoch: int, cursor):
     else:
         return duration_of_on_mobile
 
-
-def make_raw_file(doer: str, start_epoch: int, end_epoch: int):
+# 🚗
+def make_raw_file(driver: str, doer: str, start_epoch: int, end_epoch: int):
 
     from_date = JalaliDateTime.fromtimestamp(int(start_epoch), pytz.timezone("Asia/Tehran")).strftime("%c")
     to_date = JalaliDateTime.fromtimestamp(int(end_epoch), pytz.timezone("Asia/Tehran")).strftime("%c")
@@ -125,13 +129,14 @@ def make_raw_file(doer: str, start_epoch: int, end_epoch: int):
                     WHERE doer = %s
                     AND epoch >= %s
                     AND epoch <= %s
+                    AND driver = %s
                     ORDER BY id
-                    """, (doer, start_epoch, end_epoch))
+                    """, (doer, start_epoch, end_epoch, driver))
         data = cur.fetchall()
 
         filename = doer + "_" + str(int(((start_epoch + end_epoch)/17)))
         reportfile = open("./rawreports/" + filename + ".txt", "w")
-        reportfile.write("(id SERIAL NOT NULL PRIMARY KEY, ts TIMESTAMPTZ NOT NULL DEFAULT NOW(), epoch integer null, kind varchar(255) null, doer varchar(255) null, isPair boolean DEFAULT FALSE, pairID integer null, isValid boolean DEFAULT TRUE, note json null, duration integer DEFAULT -1)\n")
+        reportfile.write("(id SERIAL NOT NULL PRIMARY KEY, ts TIMESTAMPTZ NOT NULL DEFAULT NOW(), epoch integer null, kind varchar(255) null, doer varchar(255) null, isPair boolean DEFAULT FALSE, pairID integer null, isValid boolean DEFAULT TRUE, note json null, duration integer DEFAULT -1, driver varchar(255))\n")
         reportfile.write("_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________\n")
         reportfile.write("doer = " + doer + "\nFrom: " + from_date + "\nTo: " + to_date + "\n" )
         reportfile.write("_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________\n")
@@ -153,14 +158,8 @@ def make_raw_file(doer: str, start_epoch: int, end_epoch: int):
 
     return filepath
 
-
-# def make_heat_map():
-#     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
-#                         password="Tp\ZS?gfLr|]'a", port=5432)
-#     cur = conn.cursor()
-
-
-def get_doers_list(start_epoch: int, end_epoch: int):
+# 🚗
+def get_doers_list(driver: str, start_epoch: int, end_epoch: int):
     doers = []
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
@@ -170,8 +169,9 @@ def get_doers_list(start_epoch: int, end_epoch: int):
                 SELECT DISTINCT doer From discord_event
                 WHERE epoch >= %s
                 AND epoch <= %s
+                AND driver = %s
                 ORDER BY doer;
-                """, (start_epoch, end_epoch))
+                """, (start_epoch, end_epoch, driver))
     data = cur.fetchall()
 
     for row in data:
@@ -184,21 +184,8 @@ def get_doers_list(start_epoch: int, end_epoch: int):
 
     return doers
 
-# def get_starts_epochs(doer: str):
-#     pass
-
-# def get_stops_epochs(doer: str):
-#     pass
-
-
-# def get_hour(epoch: int):
-
-#     jtime = JalaliDateTime.fromtimestamp(epoch, pytz.timezone("Asia/Tehran"))
-#     return jtime.strftime("%H:%M")
-
-
-
-def make_board(start_epoch: int, end_epoch: int):
+# 🚗
+def make_board(driver: str, start_epoch: int, end_epoch: int):
     doers = []
     the_board = {}
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
@@ -209,8 +196,9 @@ def make_board(start_epoch: int, end_epoch: int):
                 SELECT DISTINCT doer From discord_event
                 WHERE epoch >= %s
                 AND epoch <= %s
+                AND driver = %s
                 ORDER BY doer;
-                """, (start_epoch, end_epoch))
+                """, (start_epoch, end_epoch, driver))
     data = cur.fetchall()
 
     for row in data:
@@ -230,18 +218,16 @@ def make_board(start_epoch: int, end_epoch: int):
 
     return sorted_board
 
-
-
-
-def get_status(doer: str):
-    doers_list = get_doers_list(start_epoch=0, end_epoch=2147483647)
+# 🚗
+def get_status(driver: str, doer: str):
+    doers_list = get_doers_list(driver, start_epoch=0, end_epoch=2147483647)
     if (doer in doers_list):
         conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
         cur = conn.cursor()
-        cur.execute("SELECT kind, pendingid FROM pending_event WHERE doer = %s ORDER BY ts DESC", [doer])
+        cur.execute("SELECT kind, pendingid FROM pending_event WHERE doer = %s AND driver = %s ORDER BY ts DESC", (doer, driver))
         all_pendings = cur.fetchall()
-        cur.execute("SELECT note FROM discord_event WHERE id >= %s ORDER BY ts DESC", [all_pendings[0][1]])
+        cur.execute("SELECT note FROM discord_event WHERE id >= %s AND doer = %s AND driver = %s ORDER BY ts DESC", (all_pendings[0][1], doer, driver))
         note = cur.fetchone()[0]
         conn.commit()
         cur.close()
@@ -256,8 +242,8 @@ def get_status(doer: str):
     else:
         return "User Not Found!"
     
-
-def get_events(start: int, end: int):
+# 🚗
+def get_events(driver: str, start: int, end: int):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
@@ -265,8 +251,9 @@ def get_events(start: int, end: int):
                 SELECT * From discord_event
                 WHERE epoch >= %s
                 AND epoch <= %s
+                AND driver = %s
                 ORDER BY epoch
-                """, (start, end))
+                """, (start, end, driver))
     result = cur.fetchall()
 
     conn.commit()
@@ -275,8 +262,8 @@ def get_events(start: int, end: int):
 
     return result
 
-
-def get_events_of_doer(start: int, end: int, doer: str):
+# 🚗
+def get_events_of_doer(driver: str, start: int, end: int, doer: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
@@ -285,8 +272,9 @@ def get_events_of_doer(start: int, end: int, doer: str):
                 WHERE epoch >= %s
                 AND epoch <= %s
                 AND doer = %s
+                AND driver = %s
                 ORDER BY epoch
-                """, (start, end, doer))
+                """, (start, end, doer, driver))
     result = cur.fetchall()
 
     conn.commit()
