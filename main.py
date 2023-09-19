@@ -5,6 +5,8 @@ from discord.ext import commands
 from persiantools.jdatetime import JalaliDate
 from persiantools.jdatetime import JalaliDateTime
 import pytz
+import time
+
 import asyncio
 import datetime
 import typing
@@ -19,6 +21,7 @@ import briefing
 logger = settings.logging.getLogger("bot")
 
 the_zombie = None
+last_brief_ask = {}
 
 def today():
     the_string = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -31,6 +34,11 @@ def today_jalali():
     slices = the_string.split("-")
     dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
     return dic
+
+# returns epoch of NOW: int
+def rightnow():
+    epoch = int(time.time())
+    return epoch
 
 
 def run():
@@ -84,14 +92,15 @@ def run():
     @bot.event
     async def on_voice_state_update(member, before, after):
 
+        guild = member.guild
+
+
         # cancelling the zombie
         global the_zombie
         if (member == the_zombie):
             task, = [task for task in asyncio.all_tasks() if task.get_name() == "dc zombie"]
             task.cancel()
-            
-            guild = member.guild
-            
+                        
             await guild.system_channel.send("Well well you are not a zombie " + member.mention + "!")
             the_zombie = None
 
@@ -108,8 +117,13 @@ def run():
         raw_logger.record(member, before, after)
 
         # ASKING FOR BRIEF
+        global last_brief_ask
+
         def get_previous_ask(doer: str):
-            return 1000
+            try:
+                return rightnow() - last_brief_ask[doer]
+            except:
+                return 1000000000
         
         def just_asked(doer: str):
             if (get_previous_ask(doer) < 900): # 15 minutes
@@ -120,8 +134,10 @@ def run():
         if (before.channel is None):
             if (briefing.should_record_brief(str(member))):
                 if (just_asked(str(member)) == False):
-                    guild = member.guild
-                    await guild.system_channel.send("Please add a brief for your session by replying to this message " + member.mention + "!")
+                    last_brief_ask[str(member)] = rightnow()
+                    await guild.system_channel.send(
+                        "Please add a brief for your session by replying to this message " + member.mention + "!")
+        
 
 
 
