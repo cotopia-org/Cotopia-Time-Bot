@@ -45,94 +45,97 @@ def record(member: Member, before: VoiceState, after: VoiceState, extra: dict):
             
     return
 
-
+# 🚗
 def session_start(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
     notedic = notedic | e
     note = json.dumps(notedic)
     print ('SESSION STARTED')
-    pendingID = write_event_to_db(rightnow(), "SESSION STARTED", str(m), True, note)
-    write_pending_to_db(str(m), "SESSION STARTED", pendingID)
+    pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note)
+    write_pending_to_db(str(m.guild.id), str(m), "SESSION STARTED", pendingID)
 
+# 🚗
 def session_end(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
     notedic = notedic | e
     note = json.dumps(notedic)
     print ('SESSION ENDED')
-    stop = write_event_to_db(rightnow(), "SESSION ENDED", str(m), True, note)
+    stop = write_event_to_db(str(m.guild.id), rightnow(), "SESSION ENDED", str(m), True, note)
     print("stop:    "+ str(stop))
-    start = get_pair_start_id(str(m), "SESSION STARTED")
+    start = get_pair_start_id(str(m.guild.id), str(m), "SESSION STARTED")
     print("start:   "+ str(start))
     if (start != -1):
         add_pairid_to_db(start, stop)
-    delete_all_pending_from_db(str(m))
+    delete_all_pending_from_db(str(m.guild.id), str(m))
 
-
+# 🚗
 def session_pause(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
     notedic = notedic | e
     note = json.dumps(notedic)
     print('DEAFENED')
     print ('SESSION PAUSED')
-    pendingID = write_event_to_db(rightnow(), "SESSION PAUSED", str(m), True, note)
-    write_pending_to_db(str(m), "SESSION PAUSED", pendingID)
+    pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION PAUSED", str(m), True, note)
+    write_pending_to_db(str(m.guild.id), str(m), "SESSION PAUSED", pendingID)
 
+# 🚗
 def session_resume(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
     notedic = notedic | e
     note = json.dumps(notedic)
     print('UNDEAFENED')
     print ('SESSION RESUMED')
-    stop = write_event_to_db(rightnow(), "SESSION RESUMED", str(m), True, note)
-    start = get_pair_start_id(str(m), "SESSION PAUSED")
+    stop = write_event_to_db(str(m.guild.id), rightnow(), "SESSION RESUMED", str(m), True, note)
+    start = get_pair_start_id(str(m.guild.id), str(m), "SESSION PAUSED")
     if (start != -1):
         add_pairid_to_db(start, stop)
 
-
+# 🚗
 def channel_change(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
     notedic = notedic | e
     note = json.dumps(notedic)
     print ('CHANEL CHANGED')
-    write_event_to_db(rightnow(), "CHANEL CHANGED", str(m), False, note)
+    write_event_to_db(str(m.guild.id), rightnow(), "CHANEL CHANGED", str(m), False, note)
 
-
+# 🚗
 def talking_start(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
     notedic = notedic | e
     note = json.dumps(notedic)
     print('UNMUTED')
     print('TALKING STARTED')
-    pendingID = write_event_to_db(rightnow(), "TALKING STARTED", str(m), True, note)
-    write_pending_to_db(str(m), "TALKING STARTED", pendingID)
+    pendingID = write_event_to_db(str(m.guild.id), rightnow(), "TALKING STARTED", str(m), True, note)
+    write_pending_to_db(str(m.guild.id), str(m), "TALKING STARTED", pendingID)
 
+# 🚗
 def talking_stop(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
     notedic = notedic | e
     note = json.dumps(notedic)
-    stop = write_event_to_db(rightnow(), "TALKING STOPPED", str(m), True, note)
-    start = get_pair_start_id(str(m), "TALKING STARTED")
+    stop = write_event_to_db(str(m.guild.id), rightnow(), "TALKING STOPPED", str(m), True, note)
+    start = get_pair_start_id(str(m.guild.id), str(m), "TALKING STARTED")
     if (start != -1):
         add_pairid_to_db(start, stop)
     print('MUTED')
     print('TALKING STOPPED')
-
 
 # returns epoch of NOW: int
 def rightnow():
     epoch = int(time.time())
     return epoch
 
-
 # CREATES TABLE IF NOT EXISTS
 # INSERTS INTO discord_event (epoch, kind, doer, isPair, note)
 # retuns the id of the added row
-def write_event_to_db(epoch: int, kind: str, doer: str, isPair: bool, note: str):
+# 🚗
+def write_event_to_db(driver: str, epoch: int, kind: str, doer: str, isPair: bool, note: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
     cur.execute("""CREATE TABLE IF NOT EXISTS discord_event(
             id SERIAL NOT NULL PRIMARY KEY,
+            driver VARCHAR(255) null,
             ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             epoch integer null,
             kind varchar(255) null,
@@ -142,8 +145,8 @@ def write_event_to_db(epoch: int, kind: str, doer: str, isPair: bool, note: str)
             isValid boolean DEFAULT TRUE,
             duration integer DEFAULT -1,
             note json null);""")
-    cur.execute("INSERT INTO discord_event (epoch, kind, doer, isPair, note) VALUES (%s, %s, %s, %s, %s) RETURNING id;",
-                    (epoch, kind, doer, isPair, note))
+    cur.execute("INSERT INTO discord_event (driver, epoch, kind, doer, isPair, note) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;",
+                    (driver, epoch, kind, doer, isPair, note))
     id_of_added_row = cur.fetchone()[0]
     conn.commit()
     cur.close()
@@ -153,25 +156,28 @@ def write_event_to_db(epoch: int, kind: str, doer: str, isPair: bool, note: str)
 # CREATES TABLE IF NOT EXISTS pending_event
 # should be replaced with redis or something
 # INSERTS INTO pending_event (doer, kind, pendingID)
-def write_pending_to_db(doer: str, kind: str, pendingID: int):
+# 🚗
+def write_pending_to_db(driver: str, doer: str, kind: str, pendingID: int):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
     cur.execute("""CREATE TABLE IF NOT EXISTS pending_event(
             id SERIAL NOT NULL PRIMARY KEY,
+            driver VARCHAR(255) null,
             ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             doer varchar(255) null,
             kind varchar(255) null,
             pendingID integer null);""")
-    cur.execute("INSERT INTO pending_event (doer, kind, pendingID) VALUES (%s, %s, %s);",
-                 (doer, kind, pendingID))
+    cur.execute("INSERT INTO pending_event (driver, doer, kind, pendingID) VALUES (%s, %s, %s, %s);",
+                 (driver, doer, kind, pendingID))
     conn.commit()
     cur.close()
     conn.close()
 
 
 # adds pairID to events, both starting and ending event.
-# calculates duration time in seconds and writes it to both starting and ending event   
+# calculates duration time in seconds and writes it to both starting and ending event
+# 🚗
 def add_pairid_to_db(start: int, stop: int):
 
     # print("start    :" +str(start))
@@ -200,18 +206,20 @@ def add_pairid_to_db(start: int, stop: int):
 # finds and returns the starting pair id from pendings
 # if found, deletes the pending row
 # returns -1 if not found
-def get_pair_start_id(doer: str, kind: str):
+# 🚗
+def get_pair_start_id(driver: str, doer: str, kind: str):
     pair_start_id = 0
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
     cur.execute("""CREATE TABLE IF NOT EXISTS pending_event(
             id SERIAL NOT NULL PRIMARY KEY,
+            driver VARCHAR(255) null,
             ts TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             doer varchar(255) null,
             kind varchar(255) null,
             pendingID integer null);""")
-    cur.execute("SELECT pendingid FROM pending_event WHERE doer = %s AND kind = %s;", (doer, kind))
+    cur.execute("SELECT pendingid FROM pending_event WHERE doer = %s AND kind = %s AND driver = %s;", (doer, kind, driver))
 
     result = cur.fetchone()
 
@@ -232,11 +240,12 @@ def get_pair_start_id(doer: str, kind: str):
 
 
 # deletes all the pendings of a doer from pending_event table
-def delete_all_pending_from_db(doer: str):
+# 🚗
+def delete_all_pending_from_db(driver: str, doer: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
-    cur.execute("DELETE FROM pending_event WHERE doer = %s;", [doer])
+    cur.execute("DELETE FROM pending_event WHERE doer = %s AND driver = %s;", (doer, driver))
     conn.commit()
     cur.close()
     conn.close()
@@ -244,15 +253,16 @@ def delete_all_pending_from_db(doer: str):
 
 # we need a function that gets all the pendings, finish them and renew them!
 # this would be used to produce live /today report
-def renew_pendings():
+# 🚗
+def renew_pendings(driver: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
     cur = conn.cursor()
 
     renew_epoch = rightnow()
 
-    cur.execute("INSERT INTO discord_event (epoch, kind, doer, isPair) VALUES (%s, %s, %s, %s) RETURNING id;",
-                    (renew_epoch, "PENDING RENEW", "/today", True))
+    cur.execute("INSERT INTO discord_event (driver, epoch, kind, doer, isPair) VALUES (%s, %s, %s, %s, %s) RETURNING id;",
+                    (driver, renew_epoch, "PENDING RENEW", "/today", True))
     id_of_slash_today_row = cur.fetchone()[0]
 
 
@@ -278,13 +288,13 @@ def renew_pendings():
         notedic = old_event[8]
         notedic["renew"] = "Renewed Automatically by renew_pendings()"
         note = json.dumps(notedic)
-        cur.execute("INSERT INTO discord_event (epoch, kind, doer, isPair, note) VALUES (%s, %s, %s, %s, %s) RETURNING id;",
-                    (renew_epoch, old_event[3], old_event[4], old_event[5], note))
+        cur.execute("INSERT INTO discord_event (driver, epoch, kind, doer, isPair, note) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;",
+                    (driver, renew_epoch, old_event[3], old_event[4], old_event[5], note))
         id_of_renewed_event = cur.fetchone()[0]
         
         # readd the pending
-        cur.execute("INSERT INTO pending_event (doer, kind, pendingID) VALUES (%s, %s, %s);",
-                 (each[2], each[3], id_of_renewed_event))
+        cur.execute("INSERT INTO pending_event (driver, doer, kind, pendingID) VALUES (%s, %s, %s, %s);",
+                 (driver, each[2], each[3], id_of_renewed_event))
 
 
     conn.commit()
