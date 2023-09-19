@@ -29,7 +29,7 @@ app = FastAPI(
 origins = [
     "https://tmaster.ir",
     "http://tmaster.ir",
-    "https://time-master-eight.vercel.app",
+    "https://time-master-eight.vercel.app/",
     "http://localhost",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
