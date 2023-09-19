@@ -30,6 +30,7 @@ origins = [
     "https://tmaster.ir",
     "http://tmaster.ir",
     "https://time-master-eight.vercel.app/",
+    "https://time-master-eight.vercel.app",
     "http://localhost",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
@@ -67,7 +68,8 @@ async def get_doers(start: int, end: int):
       return report.get_doers_list(start_epoch=start, end_epoch=end)
 
 @app.get("/thismonth")
-async def thismonth():
+async def this_month():
+
     log_processor.renew_pendings()
 
     now = today_jalali()
@@ -84,17 +86,14 @@ async def thismonth():
             
     the_board = report.make_board(start_epoch, end_epoch)
     title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
-    text = ("Net Session Hours of " +
-            str(title_date) +
-            "\n------------------------------\n")
-    for l in the_board:
-                string = str(l)
-                string = string.replace("('", "")
-                string = string.replace("',", " :")
-                string = string.replace(")", "")
-                text = text + string + "\n"
+    title = "Net Session Hours of " + str(title_date)
+    result = {}
+    result["The Board Title"] = title
 
-    return text
+    for l in the_board:
+                result[l[0]] = l[1]
+                
+    return result
 
 
 @app.get("/events")
