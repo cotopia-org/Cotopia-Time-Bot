@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import log_processor
 from persiantools.jdatetime import JalaliDateTime
 from persiantools.jdatetime import JalaliDate
@@ -11,12 +12,50 @@ def today_jalali():
     dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
     return dic
 
-app = FastAPI()
+app = FastAPI(
+    title="TimeMaster",
+    description="A tool for recording and processing events.",
+    version="0.0.42",
+    contact={
+        "name": "Ali Kharrati (developer)",
+        "email": "ali.kharrati+timemaster@gmail.com",
+    },
+    servers=[
+        {"url": "https://tmaster.ir", "description": "Staging environment"},
+        {"url": "http://127.0.0.1:8000", "description": "Local environment"},
+    ]
+)
+
+origins = [
+    "https://tmaster.ir",
+    "http://tmaster.ir",
+    "http://localhost",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5173/",
+    "http://127.0.0.1:5173/",
+    "http://localhost:8000/",
+    "http://127.0.0.1:8000/",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "https://tmaster.ir/docs"}
 
 @app.get("/doers")
 async def get_doers(start: int, end: int):
@@ -54,7 +93,7 @@ async def thismonth():
 
 
 @app.get("/events")
-async def getevents(start: int, end: int, doer: str | None = None):
+async def get_events(start: int, end: int, doer: str | None = None):
       
     if (doer == None):
         all = report.get_events(start=start, end=end)
