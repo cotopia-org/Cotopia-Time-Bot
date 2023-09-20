@@ -91,6 +91,15 @@ def run():
 
         guild = member.guild
 
+        # func that does the job after a while
+        task2 = None
+        async def ask_for_brief():
+            await asyncio.sleep(900)    # 15 minutes
+            await guild.system_channel.send(
+                "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
+            )
+
+
         print("this is on_voice_state_update. the server is:")
         print(guild.id)
 
@@ -133,9 +142,12 @@ def run():
         if (before.channel is None):
             if (briefing.should_record_brief(driver=str(guild.id), doer=str(member))):
                 if (just_asked(str(member)) == False):
-                    last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow()
-                    await guild.system_channel.send(
-                        "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief.")
+                    # Ask 15 minutes later
+                    last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow() + 900
+                    task2 = asyncio.create_task(ask_for_brief(), name=f"ask for brief {guild.id}")
+                    await task2
+                    # await guild.system_channel.send(
+                    #     "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief.")
         
 
 
