@@ -77,9 +77,10 @@ def run():
         try:
             replied_to = await message.channel.fetch_message(message.reference.message_id)
             if (replied_to.author == bot.user):
-                if ("Please add a brief for your session by replying to this message" in replied_to.content):
+                if ("Reply to this message to submit a brief." in replied_to.content):
                     if (message.author in replied_to.mentions):
                         briefing.write_to_db(brief=message.content, doer=str(message.author), driver=str(message.guild.id))
+                        await replied_to.delete()
         except:
             print("the message is not relevant!")
 
@@ -134,7 +135,7 @@ def run():
                 if (just_asked(str(member)) == False):
                     last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow()
                     await guild.system_channel.send(
-                        "Please add a brief for your session by replying to this message " + member.mention + "!")
+                        "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief.")
         
 
 
@@ -599,7 +600,7 @@ def run():
 
     @bot.hybrid_command()
     async def brief(ctx):
-        await ctx.send("Please add a brief for your session by replying to this message " + ctx.author.mention + "!")
+        await ctx.send("Welcome " + ctx.author.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief.")
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
 
