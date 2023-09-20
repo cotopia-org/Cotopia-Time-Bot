@@ -66,11 +66,12 @@ def run():
         
         # cancelling the zombie
         global the_zombie
-        if (message.author == the_zombie[message.guild.id]):
-            task, = [task for task in asyncio.all_tasks() if task.get_name() == f"dc zombie {message.guild.id}"]
-            task.cancel()
-            await message.channel.send("Well well you are not a zombie " + message.author.mention + "!")
-            the_zombie[message.guild.id] = None
+        if (message.guild.id in the_zombie):
+            if (message.author == the_zombie[message.guild.id]):
+                task, = [task for task in asyncio.all_tasks() if task.get_name() == f"dc zombie {message.guild.id}"]
+                task.cancel()
+                await message.channel.send("Well well you are not a zombie " + message.author.mention + "!")
+                the_zombie[message.guild.id] = None
         
         # RECORDING BRIEF
         try:
@@ -94,12 +95,12 @@ def run():
 
         # cancelling the zombie
         global the_zombie
-        if (member == the_zombie[guild.id]):
-            task, = [task for task in asyncio.all_tasks() if task.get_name() == f"dc zombie {guild.id}"]
-            task.cancel()
-                        
-            await guild.system_channel.send("Well well you are not a zombie " + member.mention + "!")
-            the_zombie[guild.id] = None
+        if (guild.id in the_zombie):
+            if (member == the_zombie[guild.id]):
+                task, = [task for task in asyncio.all_tasks() if task.get_name() == f"dc zombie {guild.id}"]
+                task.cancel()         
+                await guild.system_channel.send("Well well you are not a zombie " + member.mention + "!")
+                the_zombie[guild.id] = None
 
         extra = {
             "is_on_mobile": member.is_on_mobile(),
@@ -146,12 +147,13 @@ def run():
         
         global the_zombie
         # cancelling the zombie
-        if (payload.member == the_zombie[payload.guild.id]):
-            channel = bot.get_channel(payload.channel_id)
-            task, = [task for task in asyncio.all_tasks() if task.get_name() == f"dc zombie {payload.guild.id}"]
-            task.cancel()
-            the_zombie[payload.guild.id] = None
-            await channel.send("Well well you are not a zombie " + payload.member.mention + "!")
+        if (payload.guild.id in the_zombie):
+            if (payload.member == the_zombie[payload.guild.id]):
+                channel = bot.get_channel(payload.channel_id)
+                task, = [task for task in asyncio.all_tasks() if task.get_name() == f"dc zombie {payload.guild.id}"]
+                task.cancel()
+                the_zombie[payload.guild.id] = None
+                await channel.send("Well well you are not a zombie " + payload.member.mention + "!")
 
        
 
