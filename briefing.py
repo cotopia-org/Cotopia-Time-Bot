@@ -3,7 +3,7 @@ import time
 import psycopg2
 
 
-
+# ✅
 def should_record_brief(doer: str, driver: str):
     last = get_last_brief_epoch(doer, driver)
     if (last == -1):
@@ -16,6 +16,7 @@ def should_record_brief(doer: str, driver: str):
     else:
         return False
 
+# ✅
 def get_last_brief(doer: str, driver: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
@@ -40,6 +41,7 @@ def get_last_brief(doer: str, driver: str):
         conn.close()
         return result[0]
 
+# ✅
 def get_last_brief_epoch(doer: str, driver: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
@@ -69,6 +71,7 @@ def rightnow():
     epoch = int(time.time())
     return epoch
 
+# ✅
 def write_to_db(brief: str, doer: str, driver: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
@@ -80,6 +83,7 @@ def write_to_db(brief: str, doer: str, driver: str):
     cur.close()
     conn.close()
 
+# ✅
 def create_table():
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
