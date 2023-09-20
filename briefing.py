@@ -1,20 +1,20 @@
 # from discord import VoiceState, Member
+import datetime
 import time
 import psycopg2
 
 
 # ✅
 def should_record_brief(doer: str, driver: str):
-    last = get_last_brief_epoch(doer, driver)
+    last = get_last_brief_ts(doer, driver)
     if (last == -1):
         return True
-    now = rightnow()
-    dif = now - last
-    print(f"last recorded brief for '{doer}' was from {dif} seconds ago")
-    if (dif > 68400):
-        return True
-    else:
+    now = today()
+    print(f"last recorded brief for {doer}@{driver} was from {last}")
+    if (last == now):
         return False
+    else:
+        return True
 
 # ✅
 def get_last_brief(doer: str, driver: str):
@@ -98,3 +98,31 @@ def create_table():
     conn.commit()
     cur.close()
     conn.close()
+
+def today():
+    the_string = datetime.datetime.today().strftime('%Y-%m-%d')
+    return the_string
+
+def get_last_brief_ts(doer: str, driver: str):
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+    cur.execute("""
+                   SELECT ts FROM brief
+                   WHERE doer = %s AND driver = %s
+                   ORDER BY epoch DESC;
+                   """, (doer, driver))
+    
+    result = cur.fetchone()
+
+    if (result == None):
+        print("no brief found!")
+        conn.commit()
+        cur.close()
+        conn.close()
+        return -1
+    else:
+        conn.commit()
+        cur.close()
+        conn.close()
+        return result[0].strftime('%Y-%m-%d')
