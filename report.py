@@ -3,7 +3,7 @@ from persiantools.jdatetime import JalaliDateTime
 import pytz
 import datetime
 
-# 🚗
+# ✅
 def make_report (driver: str, doer: str, start_epoch: int, end_epoch: int):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
@@ -46,7 +46,7 @@ def make_report (driver: str, doer: str, start_epoch: int, end_epoch: int):
     total_pd_hours = round((total_pausing_duration/3600), 1)
     total_td_hours = round((total_talking_duration/3600), 1)
     
-    on_mobile_hours = round((on_mobile_duration(doer, start_epoch, end_epoch, cur)/3600), 1)
+    on_mobile_hours = round((on_mobile_duration(driver, doer, start_epoch, end_epoch, cur)/3600), 1)
 
     net_sd_hours = round((total_sd_hours - total_pd_hours - on_mobile_hours), 1)
 
@@ -59,7 +59,7 @@ def make_report (driver: str, doer: str, start_epoch: int, end_epoch: int):
                   "Number Of Sessions": sessions_count,
                   "Number Of Pausings": pausings_count,
                   "Number Of Talkings": talkings_count,
-                  "Number Of On Moblies": on_mobile_count(doer, start_epoch, end_epoch, cur),
+                  "Number Of On Moblies": on_mobile_count(driver, doer, start_epoch, end_epoch, cur),
                   "Raw Session Hours": total_sd_hours,
                   "Total Puasing Hours": total_pd_hours,
                   "Total Talking Hours": total_td_hours,
@@ -74,7 +74,7 @@ def make_report (driver: str, doer: str, start_epoch: int, end_epoch: int):
 
     return report_dic
 
-# 🚗
+# # ✅
 def on_mobile_count(driver: str, doer: str, start_epoch: int, end_epoch: int, cursor):
     cursor.execute("""
                 SELECT COUNT(note->>'is_on_mobile') FROM discord_event
@@ -93,7 +93,7 @@ def on_mobile_count(driver: str, doer: str, start_epoch: int, end_epoch: int, cu
     else:
         return number_of_on_mobile
 
-# 🚗
+# # ✅
 def on_mobile_duration(driver: str, doer: str, start_epoch: int, end_epoch: int, cursor):
     cursor.execute("""
                    SELECT SUM(duration) FROM discord_event
@@ -114,7 +114,7 @@ def on_mobile_duration(driver: str, doer: str, start_epoch: int, end_epoch: int,
     else:
         return duration_of_on_mobile
 
-# 🚗
+# ✅
 def make_raw_file(driver: str, doer: str, start_epoch: int, end_epoch: int):
 
     from_date = JalaliDateTime.fromtimestamp(int(start_epoch), pytz.timezone("Asia/Tehran")).strftime("%c")
@@ -158,7 +158,7 @@ def make_raw_file(driver: str, doer: str, start_epoch: int, end_epoch: int):
 
     return filepath
 
-# 🚗
+# ✅
 def get_doers_list(driver: str, start_epoch: int, end_epoch: int):
     doers = []
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
@@ -184,7 +184,7 @@ def get_doers_list(driver: str, start_epoch: int, end_epoch: int):
 
     return doers
 
-# 🚗
+# ✅
 def make_board(driver: str, start_epoch: int, end_epoch: int):
     doers = []
     the_board = {}
@@ -206,7 +206,7 @@ def make_board(driver: str, start_epoch: int, end_epoch: int):
             doers.append(row[0])
 
     for user in doers:
-        user_report = make_report(doer=user, start_epoch=start_epoch, end_epoch=end_epoch)
+        user_report = make_report(driver=driver, doer=user, start_epoch=start_epoch, end_epoch=end_epoch)
         the_board[user] = user_report["Net Session Hours"]
     
     sorted_board = sorted(the_board.items(), key=lambda x: x[1], reverse=True) 
@@ -218,7 +218,7 @@ def make_board(driver: str, start_epoch: int, end_epoch: int):
 
     return sorted_board
 
-# 🚗
+# ✅
 def get_status(driver: str, doer: str):
     doers_list = get_doers_list(driver, start_epoch=0, end_epoch=2147483647)
     if (doer in doers_list):
@@ -242,7 +242,7 @@ def get_status(driver: str, doer: str):
     else:
         return "User Not Found!"
     
-# 🚗
+# ✅
 def get_events(driver: str, start: int, end: int):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
@@ -262,7 +262,7 @@ def get_events(driver: str, start: int, end: int):
 
     return result
 
-# 🚗
+# ✅
 def get_events_of_doer(driver: str, start: int, end: int, doer: str):
     conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
