@@ -28,20 +28,14 @@ app = FastAPI(
 
 origins = [
     "https://tmaster.ir",
-    "http://tmaster.ir",
+    "https://tmaster.ir/",
     "https://time-master-eight.vercel.app/",
     "https://time-master-eight.vercel.app",
     "http://localhost",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
     "http://localhost:8787",
     "http://127.0.0.1:8787",
-    "http://localhost:5173/",
-    "http://127.0.0.1:5173/",
     "http://localhost:8787/",
     "http://127.0.0.1:8787/",
     "http://localhost:8080/",
@@ -65,12 +59,12 @@ async def root():
 
 @app.get("/doers")
 async def get_doers(start: int, end: int):
-      return report.get_doers_list(start_epoch=start, end_epoch=end)
+      return report.get_doers_list(driver="1125764070935638086", start_epoch=start, end_epoch=end)
 
 @app.get("/thismonth")
 async def this_month():
 
-    log_processor.renew_pendings()
+    log_processor.renew_pendings(driver="1125764070935638086", )
 
     now = today_jalali()
     start_epoch = int(
@@ -84,7 +78,7 @@ async def this_month():
                         tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
             )
             
-    the_board = report.make_board(start_epoch, end_epoch)
+    the_board = report.make_board(driver="1125764070935638086", start_epoch=start_epoch, end_epoch=end_epoch)
     title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
     title = "Net Session Hours of " + str(title_date)
     result = {}
@@ -100,9 +94,9 @@ async def this_month():
 async def get_events(start: int, end: int, doer: str | None = None):
       
     if (doer == None):
-        all = report.get_events(start=start, end=end)
+        all = report.get_events(driver="1125764070935638086", start=start, end=end)
     else:
-        all = report.get_events_of_doer(start=start, end=end, doer=doer)
+        all = report.get_events_of_doer(driver="1125764070935638086", start=start, end=end, doer=doer)
     
 
     answer = []
@@ -119,6 +113,7 @@ async def get_events(start: int, end: int, doer: str | None = None):
             d["isvalid"] = event[7]
             d["note"] = event[8]
             d["duration"] = event[9]
+            d["driver"] = event[10]
             answer.append(d)
       
     return answer
