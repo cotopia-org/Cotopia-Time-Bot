@@ -95,8 +95,8 @@ def channel_change(m: Member, channel: str, e: dict):
     notedic = {"channel": channel}
     notedic = notedic | e
     note = json.dumps(notedic)
-    print ('CHANEL CHANGED')
-    write_event_to_db(str(m.guild.id), rightnow(), "CHANEL CHANGED", str(m), False, note)
+    print ('CHANNEL CHANGED')
+    write_event_to_db(str(m.guild.id), rightnow(), "CHANNEL CHANGED", str(m), False, note)
 
 # 🚗
 def talking_start(m: Member, channel: str, e: dict):
