@@ -1,3 +1,4 @@
+from discord.interactions import Interaction
 import settings
 import discord
 from discord.ext import commands
@@ -19,6 +20,27 @@ import briefing
 
 
 logger = settings.logging.getLogger("bot")
+
+class BriefModal(discord.ui.Modal, title="Submit your brief!"):
+    brief = discord.ui.TextInput(
+        style = discord.TextStyle.long,
+        label = "Your Brief",
+        required = True,
+        placeholder = "What are you going to do in this session?"
+    )
+
+    async def on_submit(self, interaction: discord.Interaction):
+        channel = interaction.guild.system_channel
+        embed = discord.Embed(title=f"Brief of {str(JalaliDate.today())}", description=self.brief.value, color=discord.Color.blue())
+        embed.set_author(name=str(self.user))
+        await channel.send(embed=embed)
+        briefing.write_to_db(brief=self.brief.value, doer=str(self.user), driver=str(self.driver))
+        try:
+            task, = [task for task in asyncio.all_tasks() if task.get_name() == f"ask for brief {str(self.user)}@{self.driver}"]
+            task.cancel() 
+        except:
+            print("No briefing tasks were canceled!")
+        await interaction.response.send_message(f"Your brief was submited {self.user.mention}!", ephemeral=True)
 
 the_zombie = {}
 last_brief_ask = {}
@@ -58,8 +80,8 @@ def run():
     
     @bot.event
     async def on_message(message):
-        print("this is on_message. the server is:")
-        print(message.guild.id)
+        # print("this is on_message. the server is:")
+        # print(message.guild.id)
 
         if message.author == bot.user:
             return
@@ -81,12 +103,6 @@ def run():
                     if (message.author in replied_to.mentions):
                         briefing.write_to_db(brief=message.content, doer=str(message.author), driver=str(message.guild.id))
                         await replied_to.delete()
-                        try:
-                            task, = [task for task in asyncio.all_tasks() 
-                                     if task.get_name() == f"ask for brief {message.guild.id}"]
-                            task.cancel() 
-                        except:
-                            print("No briefing tasks were canceled!")
 
         except:
             print("the message is not relevant!")
@@ -151,7 +167,7 @@ def run():
                 if (just_asked(str(member)) == False):
                     # Ask 15 minutes later
                     last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow() + 900
-                    task2 = asyncio.create_task(ask_for_brief(), name=f"ask for brief {guild.id}")
+                    task2 = asyncio.create_task(ask_for_brief(), name=f"ask for brief {str(member)}@{guild.id}")
                     await task2
                     # await guild.system_channel.send(
                     #     "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief.")
@@ -617,9 +633,14 @@ def run():
         await ctx.send(text)
 
 
-    @bot.hybrid_command()
-    async def brief(ctx):
-        await ctx.send("Welcome " + ctx.author.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief.")
+    @bot.tree.command()
+    async def brief(interaction: discord.Interaction):
+        brief_modal = BriefModal()
+        brief_modal.user = interaction.user
+        brief_modal.driver = interaction.guild_id
+        await interaction.response.send_modal(brief_modal)
+
+
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
 
