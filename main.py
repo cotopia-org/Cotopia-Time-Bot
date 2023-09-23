@@ -81,6 +81,13 @@ def run():
                     if (message.author in replied_to.mentions):
                         briefing.write_to_db(brief=message.content, doer=str(message.author), driver=str(message.guild.id))
                         await replied_to.delete()
+                        try:
+                            task, = [task for task in asyncio.all_tasks() 
+                                     if task.get_name() == f"ask for brief {message.guild.id}"]
+                            task.cancel() 
+                        except:
+                            print("No briefing tasks were canceled!")
+
         except:
             print("the message is not relevant!")
 
