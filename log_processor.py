@@ -266,7 +266,7 @@ def renew_pendings(driver: str):
     id_of_slash_today_row = cur.fetchone()[0]
 
 
-    cur.execute("SELECT * FROM pending_event")
+    cur.execute(f"SELECT * FROM pending_event WHERE driver = '{driver}'")
     current_pendings = cur.fetchall()
 
 
