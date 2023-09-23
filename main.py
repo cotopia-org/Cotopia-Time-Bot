@@ -119,6 +119,10 @@ def run():
     @bot.event
     async def on_voice_state_update(member, before, after):
 
+        # Ignoring Bots
+        if (member.bot):
+            return
+
         guild = member.guild
 
         # func that does the job after a while
