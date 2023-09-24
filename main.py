@@ -31,9 +31,9 @@ class BriefModal(discord.ui.Modal, title="Submit your brief!"):
 
     async def on_submit(self, interaction: discord.Interaction):
         channel = interaction.guild.system_channel
-        embed = discord.Embed(title=f"Brief of {str(JalaliDate.today())}",
+        embed = discord.Embed(title=f"#brief - @{str(self.user)}",
                                description=self.brief.value, color=discord.Color.blue())
-        embed.set_author(name=str(self.user))
+        embed.set_author(name=str(JalaliDate.today()))
         await channel.send(embed=embed)
         briefing.write_to_db(brief=self.brief.value, doer=str(self.user), driver=str(self.driver))
         try:
@@ -103,9 +103,9 @@ def run():
                 if ("Reply to this message to submit a brief." in replied_to.content):
                     if (message.author in replied_to.mentions):
                         briefing.write_to_db(brief=message.content, doer=str(message.author), driver=str(message.guild.id))
-                        em = discord.Embed(title=f"Brief of {str(JalaliDate.today())}",
+                        em = discord.Embed(title=f"#brief - @{str(message.author)}",
                                                     description=message.content, color=discord.Color.blue())
-                        em.set_author(name=str(message.author))
+                        em.set_author(name=str(JalaliDate.today()))
                         channel = message.guild.system_channel
                         await channel.send(embed=em)
                         await replied_to.delete()
