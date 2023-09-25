@@ -124,18 +124,16 @@ def run():
             return
 
         guild = member.guild
+        print("this is on_voice_state_update. the server is:")
+        print(guild.id)
 
-        # func that does the job after a while
+        # func that asks for brief after a while
         task2 = None
         async def ask_for_brief():
             await asyncio.sleep(900)    # 15 minutes
             await guild.system_channel.send(
                 "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
             )
-
-
-        print("this is on_voice_state_update. the server is:")
-        print(guild.id)
 
         # cancelling the zombie
         global the_zombie
@@ -146,6 +144,16 @@ def run():
                 await guild.system_channel.send("Well well you are not a zombie " + member.mention + "!")
                 the_zombie[guild.id] = None
 
+        # cancelling asking for brief
+        if (after.channel is None):
+            try:
+                task, = [task for task in asyncio.all_tasks() if task.get_name() == f"ask for brief {str(member)}@{guild.id}"]
+                task.cancel()
+            except:
+                print("Asking for brief was not canceled! Don't panic tho.")
+
+
+        # Sending events
         extra = {
             "is_on_mobile": member.is_on_mobile(),
             "raw_status": str(member.raw_status),
@@ -158,21 +166,19 @@ def run():
         log_processor.record(member, before, after, extra)
         raw_logger.record(member, before, after)
 
+
         # ASKING FOR BRIEF
         global last_brief_ask
-
         def get_previous_ask(doer: str):
             try:
                 return rightnow() - last_brief_ask[doer + "@" + str(guild.id)]
             except:
                 return 1000000000
-        
         def just_asked(doer: str):
             if (get_previous_ask(doer) < 900): # 15 minutes
                 return True
             else:
                 return False
-        
         if (before.channel is None):
             if (briefing.should_record_brief(driver=str(guild.id), doer=str(member))):
                 if (just_asked(str(member)) == False):
@@ -180,8 +186,7 @@ def run():
                     last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow() + 900
                     task2 = asyncio.create_task(ask_for_brief(), name=f"ask for brief {str(member)}@{guild.id}")
                     await task2
-                    # await guild.system_channel.send(
-                    #     "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief.")
+                    
         
 
 
