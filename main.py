@@ -34,6 +34,7 @@ class BriefModal(discord.ui.Modal, title="Submit your brief!"):
         embed = discord.Embed(title=f"#brief - {str(self.user)}",
                                description=self.brief.value, color=discord.Color.blue())
         embed.set_author(name=str(JalaliDate.today()))
+        embed.set_thumbnail(url=self.user.avatar)
         await channel.send(embed=embed)
         briefing.write_to_db(brief=self.brief.value, doer=str(self.user), driver=str(self.driver))
         try:
@@ -41,7 +42,7 @@ class BriefModal(discord.ui.Modal, title="Submit your brief!"):
             task.cancel() 
         except:
             print("No briefing tasks were canceled!")
-        await interaction.response.send_message(f"Your brief was submited {self.user.mention}!", ephemeral=True)
+        await interaction.response.send_message(f"Your brief was submitted {self.user.mention}!", ephemeral=True)
 
 the_zombie = {}
 last_brief_ask = {}
@@ -106,6 +107,7 @@ def run():
                         em = discord.Embed(title=f"#brief - {str(message.author)}",
                                                     description=message.content, color=discord.Color.blue())
                         em.set_author(name=str(JalaliDate.today()))
+                        em.set_thumbnail(url=message.author.avatar)
                         channel = message.guild.system_channel
                         await channel.send(embed=em)
                         await replied_to.delete()
@@ -115,7 +117,6 @@ def run():
             print("the message is not relevant!")
 
         
-
     @bot.event
     async def on_voice_state_update(member, before, after):
 
@@ -188,9 +189,6 @@ def run():
                     await task2
                     
         
-
-
-
     @bot.event
     async def on_raw_reaction_add(payload):
         print("this is on_raw_reaction_add. the server is:")
@@ -206,18 +204,19 @@ def run():
                 task.cancel()
                 the_zombie[payload.guild.id] = None
                 await channel.send("Well well you are not a zombie " + payload.member.mention + "!")
-
-       
+  
 
     @bot.event
     async def on_presence_update(before, after):
         pass
+
 
     @bot.hybrid_command(description="Replies with pong!")
     async def ping(ctx):
         print("this is ping. the server is:")
         print(ctx.guild.id)
         await ctx.send("pong")
+
 
     @bot.hybrid_command(description="Generates report. default date: current month")
     async def viewstats(ctx, member: discord.Member,
@@ -364,7 +363,6 @@ def run():
         await ctx.send(text)
 
 
-
     @bot.hybrid_command(description="If someone is in not deafen and doesn't answer, report them as a zombie!")
     async def zombie(ctx, member: discord.Member):
         
@@ -407,8 +405,6 @@ def run():
         else:
             await ctx.send("You can not name yourself a zombie! Take a break!")
             
-
-    
 
     @bot.hybrid_command(description="داده خام یک کاربر در یک بازه زمانی. تاریخ پیش فرض: ماه جاری")
     async def rawdata(ctx, member: discord.Member,
@@ -504,7 +500,6 @@ def run():
         await ctx.send(text)
 
 
-
     @bot.hybrid_command(description="جدول مدت سشن های دیروز")
     async def yesterday(ctx):
         now = today_jalali()
@@ -536,6 +531,7 @@ def run():
 
         await ctx.send(text)
     
+
     @bot.hybrid_command(description="جدول مدت سشن های این ماه")
     async def thismonth(ctx):
 
@@ -569,7 +565,6 @@ def run():
             text = text + string + "\n"
 
         await ctx.send(text)
-
 
 
     @bot.hybrid_command()
