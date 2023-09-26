@@ -34,12 +34,14 @@ class BriefModal(discord.ui.Modal, title="Submit your brief!"):
         embed = discord.Embed(title=f"#brief",
                                description=self.brief.value, color=discord.Color.blue())
         embed.set_author(name=str(JalaliDate.today()))
-        # embed.set_thumbnail(url=self.user.avatar)
-        # await channel.send(embed=embed)
         briefing.write_to_db(brief=self.brief.value, doer=str(self.user), driver=str(self.driver))
         webhook = await channel.create_webhook(name=self.user.name)
+        if (self.user.nick == None):
+            the_name = self.user.name
+        else:
+            the_name = self.user.nick
         await webhook.send(
-            embed=embed, username=self.user.name, avatar_url=self.user.avatar)
+            embed=embed, username=the_name, avatar_url=self.user.avatar)
         webhooks = await channel.webhooks()
         for w in webhooks:
                 await w.delete()
@@ -117,8 +119,12 @@ def run():
                         channel = message.guild.system_channel
                         # await channel.send(embed=em)
                         webhook = await channel.create_webhook(name=message.author.name)
+                        if (message.author.nick == None):
+                            the_name = message.author.name
+                        else:
+                            the_name = message.author.nick
                         await webhook.send(
-                            embed=em, username=message.author.name, avatar_url=message.author.avatar)
+                            embed=em, username=the_name, avatar_url=message.author.avatar)
                         webhooks = await channel.webhooks()
                         for w in webhooks:
                             await w.delete()
@@ -227,13 +233,11 @@ def run():
     async def ping(ctx):
         print("this is ping. the server is:")
         print(ctx.guild.id)
+        if (ctx.author.nick == None):
+            nickname = ctx.author.name
+        else:
+            nickname = ctx.author.nick
         await ctx.send("pong")
-        # webhook = await ctx.channel.create_webhook(name=ctx.author.name)
-        # await webhook.send(
-        #     "pong", username=ctx.author.name, avatar_url=ctx.author.avatar)
-        # webhooks = await ctx.channel.webhooks()
-        # for w in webhooks:
-        #         await w.delete()
 
 
 
