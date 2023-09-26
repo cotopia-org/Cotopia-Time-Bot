@@ -31,12 +31,18 @@ class BriefModal(discord.ui.Modal, title="Submit your brief!"):
 
     async def on_submit(self, interaction: discord.Interaction):
         channel = interaction.guild.system_channel
-        embed = discord.Embed(title=f"#brief - {str(self.user)}",
+        embed = discord.Embed(title=f"#brief",
                                description=self.brief.value, color=discord.Color.blue())
         embed.set_author(name=str(JalaliDate.today()))
-        embed.set_thumbnail(url=self.user.avatar)
-        await channel.send(embed=embed)
+        # embed.set_thumbnail(url=self.user.avatar)
+        # await channel.send(embed=embed)
         briefing.write_to_db(brief=self.brief.value, doer=str(self.user), driver=str(self.driver))
+        webhook = await channel.create_webhook(name=self.user.name)
+        await webhook.send(
+            embed=embed, username=self.user.name, avatar_url=self.user.avatar)
+        webhooks = await channel.webhooks()
+        for w in webhooks:
+                await w.delete()
         try:
             task, = [task for task in asyncio.all_tasks() if task.get_name() == f"ask for brief {str(self.user)}@{self.driver}"]
             task.cancel() 
@@ -104,12 +110,18 @@ def run():
                 if ("Reply to this message to submit a brief." in replied_to.content):
                     if (message.author in replied_to.mentions):
                         briefing.write_to_db(brief=message.content, doer=str(message.author), driver=str(message.guild.id))
-                        em = discord.Embed(title=f"#brief - {str(message.author)}",
+                        em = discord.Embed(title=f"#brief",
                                                     description=message.content, color=discord.Color.blue())
                         em.set_author(name=str(JalaliDate.today()))
-                        em.set_thumbnail(url=message.author.avatar)
+                        # em.set_thumbnail(url=message.author.avatar)
                         channel = message.guild.system_channel
-                        await channel.send(embed=em)
+                        # await channel.send(embed=em)
+                        webhook = await channel.create_webhook(name=message.author.name)
+                        await webhook.send(
+                            embed=em, username=message.author.name, avatar_url=message.author.avatar)
+                        webhooks = await channel.webhooks()
+                        for w in webhooks:
+                            await w.delete()
                         await replied_to.delete()
                         await message.delete()
 
@@ -216,6 +228,14 @@ def run():
         print("this is ping. the server is:")
         print(ctx.guild.id)
         await ctx.send("pong")
+        # webhook = await ctx.channel.create_webhook(name=ctx.author.name)
+        # await webhook.send(
+        #     "pong", username=ctx.author.name, avatar_url=ctx.author.avatar)
+        # webhooks = await ctx.channel.webhooks()
+        # for w in webhooks:
+        #         await w.delete()
+
+
 
 
     @bot.hybrid_command(description="Generates report. default date: current month")
