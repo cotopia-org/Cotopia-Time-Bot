@@ -1,4 +1,3 @@
-from discord.interactions import Interaction
 import settings
 import discord
 from discord.ext import commands
@@ -16,41 +15,42 @@ import log_processor
 import raw_logger
 import report
 import zombie_hunter
-import briefing
+import briefing.briefing as briefing
+from briefing.brief_modal import BriefModal
 
 
 logger = settings.logging.getLogger("bot")
 
-class BriefModal(discord.ui.Modal, title="Submit your brief!"):
-    brief = discord.ui.TextInput(
-        style = discord.TextStyle.long,
-        label = "Your Brief",
-        required = True,
-        placeholder = "What are you going to do in this session?"
-    )
+# class BriefModal(discord.ui.Modal, title="Submit your brief!"):
+#     brief = discord.ui.TextInput(
+#         style = discord.TextStyle.long,
+#         label = "Your Brief",
+#         required = True,
+#         placeholder = "What are you going to do in this session?"
+#     )
 
-    async def on_submit(self, interaction: discord.Interaction):
-        channel = interaction.guild.system_channel
-        embed = discord.Embed(title=f"#brief",
-                               description=self.brief.value, color=discord.Color.blue())
-        embed.set_author(name=str(JalaliDate.today()))
-        briefing.write_to_db(brief=self.brief.value, doer=str(self.user), driver=str(self.driver))
-        webhook = await channel.create_webhook(name=self.user.name)
-        if (self.user.nick == None):
-            the_name = self.user.name
-        else:
-            the_name = self.user.nick
-        await webhook.send(
-            embed=embed, username=the_name, avatar_url=self.user.avatar)
-        webhooks = await channel.webhooks()
-        for w in webhooks:
-                await w.delete()
-        try:
-            task, = [task for task in asyncio.all_tasks() if task.get_name() == f"ask for brief {str(self.user)}@{self.driver}"]
-            task.cancel() 
-        except:
-            print("No briefing tasks were canceled!")
-        await interaction.response.send_message(f"Your brief was submitted {self.user.mention}!", ephemeral=True)
+#     async def on_submit(self, interaction: discord.Interaction):
+#         channel = interaction.guild.system_channel
+#         embed = discord.Embed(title=f"#brief",
+#                                description=self.brief.value, color=discord.Color.blue())
+#         embed.set_author(name=str(JalaliDate.today()))
+#         briefing.write_to_db(brief=self.brief.value, doer=str(self.user), driver=str(self.driver))
+#         webhook = await channel.create_webhook(name=self.user.name)
+#         if (self.user.nick == None):
+#             the_name = self.user.name
+#         else:
+#             the_name = self.user.nick
+#         await webhook.send(
+#             embed=embed, username=the_name, avatar_url=self.user.avatar)
+#         webhooks = await channel.webhooks()
+#         for w in webhooks:
+#                 await w.delete()
+#         try:
+#             task, = [task for task in asyncio.all_tasks() if task.get_name() == f"ask for brief {str(self.user)}@{self.driver}"]
+#             task.cancel() 
+#         except:
+#             print("No briefing tasks were canceled!")
+#         await interaction.response.send_message(f"Your brief was submitted {self.user.mention}!", ephemeral=True)
 
 the_zombie = {}
 last_brief_ask = {}
@@ -233,10 +233,6 @@ def run():
     async def ping(ctx):
         print("this is ping. the server is:")
         print(ctx.guild.id)
-        if (ctx.author.nick == None):
-            nickname = ctx.author.name
-        else:
-            nickname = ctx.author.nick
         await ctx.send("pong")
 
 

@@ -1,4 +1,4 @@
-import briefing
+import briefing.briefing as briefing
 
 # briefing.create_table()
 # print(briefing.get_last_brief(doer="habibi", driver="1125764070935638086"))
