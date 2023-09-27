@@ -17,40 +17,10 @@ import report
 import zombie_hunter
 import briefing.briefing as briefing
 from briefing.brief_modal import BriefModal
+from person.my_settings_modal import MySettingsModal
 
 
 logger = settings.logging.getLogger("bot")
-
-# class BriefModal(discord.ui.Modal, title="Submit your brief!"):
-#     brief = discord.ui.TextInput(
-#         style = discord.TextStyle.long,
-#         label = "Your Brief",
-#         required = True,
-#         placeholder = "What are you going to do in this session?"
-#     )
-
-#     async def on_submit(self, interaction: discord.Interaction):
-#         channel = interaction.guild.system_channel
-#         embed = discord.Embed(title=f"#brief",
-#                                description=self.brief.value, color=discord.Color.blue())
-#         embed.set_author(name=str(JalaliDate.today()))
-#         briefing.write_to_db(brief=self.brief.value, doer=str(self.user), driver=str(self.driver))
-#         webhook = await channel.create_webhook(name=self.user.name)
-#         if (self.user.nick == None):
-#             the_name = self.user.name
-#         else:
-#             the_name = self.user.nick
-#         await webhook.send(
-#             embed=embed, username=the_name, avatar_url=self.user.avatar)
-#         webhooks = await channel.webhooks()
-#         for w in webhooks:
-#                 await w.delete()
-#         try:
-#             task, = [task for task in asyncio.all_tasks() if task.get_name() == f"ask for brief {str(self.user)}@{self.driver}"]
-#             task.cancel() 
-#         except:
-#             print("No briefing tasks were canceled!")
-#         await interaction.response.send_message(f"Your brief was submitted {self.user.mention}!", ephemeral=True)
 
 the_zombie = {}
 last_brief_ask = {}
@@ -115,9 +85,7 @@ def run():
                         em = discord.Embed(title=f"#brief",
                                                     description=message.content, color=discord.Color.blue())
                         em.set_author(name=str(JalaliDate.today()))
-                        # em.set_thumbnail(url=message.author.avatar)
                         channel = message.guild.system_channel
-                        # await channel.send(embed=em)
                         webhook = await channel.create_webhook(name=message.author.name)
                         if (message.author.nick == None):
                             the_name = message.author.name
@@ -234,8 +202,6 @@ def run():
         print("this is ping. the server is:")
         print(ctx.guild.id)
         await ctx.send("pong")
-
-
 
 
     @bot.hybrid_command(description="Generates report. default date: current month")
@@ -670,6 +636,16 @@ def run():
         brief_modal.user = interaction.user
         brief_modal.driver = interaction.guild_id
         await interaction.response.send_modal(brief_modal)
+    
+    
+    @bot.tree.command()
+    async def my_settings(interaction: discord.Interaction):
+        my_settings_modal = MySettingsModal()
+        my_settings_modal.user = interaction.user
+        my_settings_modal.driver = interaction.guild_id
+        my_settings_modal.connect_to_db()
+        my_settings_modal.load_defualts()
+        await interaction.response.send_modal(my_settings_modal)
 
 
 

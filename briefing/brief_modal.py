@@ -33,4 +33,5 @@ class BriefModal(discord.ui.Modal, title="Submit your brief!"):
             task.cancel() 
         except:
             print("No briefing tasks were canceled!")
+            
         await interaction.response.send_message(f"Your brief was submitted {self.user.mention}!", ephemeral=True)
