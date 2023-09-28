@@ -19,12 +19,14 @@ class MySettingsModal(discord.ui.Modal, title="Settings"):
         style = discord.TextStyle.short,
         label = "Your email",
         placeholder = "me@gmail.com",
+        required = False
     )
 
     trc20_wallet_addr = discord.ui.TextInput(
         style = discord.TextStyle.short,
         label = "Your TRC20 Wallet Address",
-        placeholder = " TRC2034c276example45DaE400ecA3deCc"
+        placeholder = " TRC2034c276example45DaE400ecA3deCc",
+        required = False
     )
 
     async def on_submit(self, interaction: discord.Interaction):
