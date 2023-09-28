@@ -13,9 +13,9 @@ cur.execute("""CREATE TABLE IF NOT EXISTS person(
             email VARCHAR(63) NULL,
             trc20_addr VARCHAR(127) NULL,
             active BOOLEAN DEFAULT TRUE,
+            google_token json NULL,
             note json NULL
             );""")
 conn.commit()
 cur.close()
 conn.close()
-
