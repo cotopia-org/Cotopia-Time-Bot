@@ -23,7 +23,7 @@ def get_calendar_service():
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 CREDENTIALS_FILE, SCOPES)
-            creds = flow.run_local_server(port=3010, redirect_uri_trailing_slash=False)
+            creds = flow.run_local_server(port=3010, redirect_uri_trailing_slash=False, open_browser=False)
         # Save the credentials for the next run
         with open('gcal/token.json', 'w') as token:
             token.write(creds.to_json())
