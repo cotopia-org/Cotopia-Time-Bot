@@ -18,7 +18,10 @@ def get_calendar_service(discord_guild: int, discord_id: int):
     cur = conn.cursor()
     cur.execute("SELECT google_token FROM person WHERE discord_guild = %s AND discord_id = %s;",
                  (discord_guild, discord_id))
-    result = cur.fetchone()[0]
+    try:
+        result = cur.fetchone()[0]
+    except:
+        result = None
 
 
     if (result != None):
@@ -31,7 +34,7 @@ def get_calendar_service(discord_guild: int, discord_id: int):
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 CREDENTIALS_FILE, SCOPES)
-            creds = flow.run_local_server()
+            creds = flow.run_local_server(port=8080, redirect_uri_trailing_slash=False, open_browser=False)
 
         # Save the credentials for the next run
         cur.execute("UPDATE person SET google_token = %s WHERE discord_guild = %s AND discord_id = %s;",
@@ -43,3 +46,5 @@ def get_calendar_service(discord_guild: int, discord_id: int):
 
     service = build('calendar', 'v3', credentials=creds)
     return service
+
+get_calendar_service(10, 11)
