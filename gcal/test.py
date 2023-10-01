@@ -1,7 +1,7 @@
 
 import os.path
 from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
+from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 # If modifying these scopes, delete the file token.json.
@@ -21,14 +21,21 @@ def get_calendar_service():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                CREDENTIALS_FILE, SCOPES)
-            creds = flow.run_local_server(port=3010, redirect_uri_trailing_slash=False, open_browser=False)
+            flow = Flow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES, redirect_uri='http://127.0.0.1:8000/goauth')
+            # creds = flow.run_local_server(port=3010, redirect_uri_trailing_slash=False, open_browser=False)
+            url = flow.authorization_url()
+            print(url)
         # Save the credentials for the next run
-        with open('gcal/token.json', 'w') as token:
-            token.write(creds.to_json())
+    #     with open('gcal/token.json', 'w') as token:
+    #         token.write(creds.to_json())
 
-    service = build('calendar', 'v3', credentials=creds)
-    return service
+    # service = build('calendar', 'v3', credentials=creds)
+    return url
 
-get_calendar_service()
+def get_token():
+    flow = Flow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES, redirect_uri='http://127.0.0.1:8000/goauth')
+    code = "4/0AfJohXnmwQ0NBmI2-qCLiF72aDYAxaOpZXGRp1Pe-lIVBIELkZaqjk5OU_pubYi9zI0cSw"
+    token = flow.fetch_token(code=code)
+    return token
+
+print(get_token())

@@ -117,3 +117,7 @@ async def get_events(start: int, end: int, doer: str | None = None):
             answer.append(d)
       
     return answer
+
+@app.get("/goauth")
+async def google_oauth(code: str):
+      return code
