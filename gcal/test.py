@@ -4,6 +4,10 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from urllib.parse import quote
+
+
+
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
@@ -24,7 +28,8 @@ def get_calendar_service():
             flow = Flow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES, redirect_uri='http://127.0.0.1:8000/goauth')
             # creds = flow.run_local_server(port=3010, redirect_uri_trailing_slash=False, open_browser=False)
             url = flow.authorization_url()
-            print(url)
+            print(url[0])
+            print(quote(url[0]))
         # Save the credentials for the next run
     #     with open('gcal/token.json', 'w') as token:
     #         token.write(creds.to_json())
@@ -38,4 +43,6 @@ def get_token():
     token = flow.fetch_token(code=code)
     return token
 
-print(get_token())
+# print(get_token())
+
+get_calendar_service()
