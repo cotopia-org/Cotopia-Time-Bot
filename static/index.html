@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Master</title>
+</head>
+<body>
+    <h5>Redirecting!</h5>
+    <script>
+        console.log("running the js!");
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect_url = urlParams.get('u');
+        const discord_id = urlParams.get('a');
+        const guild_id = urlParams.get('b');
+
+
+        document.cookie = "discord_id="+discord_id;
+        document.cookie = "guild_id="+guild_id;
+
+
+        console.log(redirect_url);
+        window.location.href = redirect_url;
+
+    </script>
+    
+</body>
+</html>

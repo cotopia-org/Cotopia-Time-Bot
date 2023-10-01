@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from starlette.responses import FileResponse 
 from fastapi.middleware.cors import CORSMiddleware
 import log_processor
 from persiantools.jdatetime import JalaliDateTime
@@ -121,3 +122,7 @@ async def get_events(start: int, end: int, doer: str | None = None):
 @app.get("/goauth")
 async def google_oauth(code: str):
       return code
+
+@app.get("/gcal")
+async def google_oauth():
+      return FileResponse('static/index.html')

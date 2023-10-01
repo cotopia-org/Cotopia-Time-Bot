@@ -658,8 +658,9 @@ def run():
     @bot.hybrid_command()
     async def add_google_cal(ctx):
         g_redirect_url = GCalSetup.gen_GOAuth_URL()
-        link = "https://tmaster.ir/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id)
-        await ctx.send("\nPlease follow the link below to give access to your Google Calendar:\n\n" + link,
+        # link = "https://tmaster.ir/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id)
+        link = "http://127.0.0.1:8000/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id)
+        await ctx.send("Please follow the link below to give access to your Google Calendar:\n\n" + link,
                         ephemeral=True)
 
 
