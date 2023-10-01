@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from starlette.responses import FileResponse 
 from fastapi.middleware.cors import CORSMiddleware
 import log_processor
@@ -120,9 +120,16 @@ async def get_events(start: int, end: int, doer: str | None = None):
     return answer
 
 @app.get("/goauth")
-async def google_oauth(code: str):
+async def google_oauth(code: str, request: Request):
+      # TO-DO
+      # Handle no code response
+
+      discord_id = request.cookies.get('discord_id')
+      print("discord_id:    " + str(discord_id))
+      guild_id = request.cookies.get('guild_id')
+      print("guild_id:    " + str(guild_id))
       return code
 
 @app.get("/gcal")
 async def google_oauth():
-      return FileResponse('static/index.html')
+      return FileResponse('static/gcal.html')
