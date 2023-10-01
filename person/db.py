@@ -12,8 +12,32 @@ import psycopg2
     
 #     return cur.fetchone()
 
-# def add_person(cur: cursor, discord_guild: int, discord_id: int):
-#     return
+def add_person(discord_guild: int, discord_id: int):
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+    cur.execute("""
+                SELECT id FROM person
+                WHERE discord_guild = %s
+                AND discord_id = %s
+                ;"""
+                , (discord_guild, discord_id))
+    result = cur.fetchone()
+    if result:
+        # person already exists
+        print("person already exists")
+        conn.commit()
+        cur.close()
+        conn.close()
+        return result[0]
+    else:
+        cur.execute("INSERT INTO person (discord_guild, discord_id) VALUES (%s, %s) RETURNING id;",
+                    (discord_guild, discord_id))
+        result = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return result[0]
 
 def get_person(cur: cursor, discord_guild: int, discord_id: int):
     cur.execute("""
@@ -71,3 +95,4 @@ def set_trc20_addr(cur: cursor, discord_guild: int, discord_id: int, name: str, 
                  (discord_guild, discord_id, name, addr))
     else:
         cur.execute("UPDATE person SET trc20_addr = %s WHERE id = %s;", (addr, person_id))
+
