@@ -98,6 +98,12 @@ def run():
                             await w.delete()
                         await replied_to.delete()
                         await message.delete()
+                        try:
+                            task, = [task for task in asyncio.all_tasks() if task.get_name() ==
+                                     f"ask for brief {str(message.author)}@{message.guild.id}"]
+                            task.cancel()
+                        except:
+                            print("Asking for brief was not canceled! Don't panic tho.")
 
         except:
             print("the message is not relevant!")
