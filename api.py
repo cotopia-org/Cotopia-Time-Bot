@@ -120,7 +120,7 @@ async def get_events(start: int, end: int, doer: str | None = None):
     return answer
 
 @app.get("/goauth")
-async def google_oauth(code: str, request: Request):
+async def google_oauth(code: str, state: str, request: Request):
       # TO-DO
       # Handle no code response
 
@@ -128,6 +128,8 @@ async def google_oauth(code: str, request: Request):
       print("discord_id:    " + str(discord_id))
       guild_id = request.cookies.get('guild_id')
       print("guild_id:    " + str(guild_id))
+      print("code:  " + code)
+      print("state: " + state)
       return code
 
 @app.get("/gcal")
