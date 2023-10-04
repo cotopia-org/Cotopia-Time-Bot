@@ -1,8 +1,10 @@
-
 from urllib.parse import quote
+import calapi_chngd as api
 
 
-client = Oauth(
+
+
+client = api.Oauth(
     credentials_path='gcal/credentials.json',
     scopes=['https://www.googleapis.com/auth/calendar'],
     redirect_uri='http://127.0.0.1:8000/goauth'
@@ -26,7 +28,7 @@ def get_user_creds_from_db():
 
 session_credentials=gen_user_creds(code="4/0AfJohXlBmxon7ofW7_xez-PJvjvrrX6yFYQ0G7KP-ogshQo8Yq__HO7ssxBsRETV6J2zmw", state="wzaqsanpu67rQssf9pYF7Oc7wz2h7i")
 print(session_credentials)
-session = Session(session_credentials=session_credentials)
+session = api.Session(session_credentials=session_credentials)
 print(session)
 
 events_list = session.events.list()
