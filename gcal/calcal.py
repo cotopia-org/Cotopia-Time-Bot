@@ -1,4 +1,4 @@
-from calapi import Oauth, Session
+
 from urllib.parse import quote
 
 
@@ -28,4 +28,7 @@ session_credentials=gen_user_creds(code="4/0AfJohXlBmxon7ofW7_xez-PJvjvrrX6yFYQ0
 print(session_credentials)
 session = Session(session_credentials=session_credentials)
 print(session)
+
+events_list = session.events.list()
+print(events_list)
 
