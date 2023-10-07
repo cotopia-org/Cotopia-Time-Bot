@@ -80,7 +80,12 @@ def get_user_creds(discord_guild: int, discord_id: int):
     cur.close()
     conn.close()
     the_dict = json.loads(creds.to_json())
-    the_dict["expiry"] = datetime.strptime(the_dict["expiry"], '%Y-%m-%dT%H:%M:%SZ')
+    try:
+        the_dict["expiry"] = datetime.strptime(the_dict["expiry"], '%Y-%m-%dT%H:%M:%SZ')
+    except:
+        # When the creds.refresh(Request()) is called, time format is diffrent and has milliseconds.
+        the_dict["expiry"] = datetime.strptime(the_dict["expiry"], '%Y-%m-%dT%H:%M:%S.%fZ')
+
     return the_dict
 
 
