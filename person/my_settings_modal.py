@@ -3,7 +3,7 @@ import discord
 from discord.interactions import Interaction
 from discord.utils import MISSING
 import psycopg2
-from . import db
+from .db import Person
 
 class MySettingsModal(discord.ui.Modal, title="Settings"):
 
@@ -31,19 +31,19 @@ class MySettingsModal(discord.ui.Modal, title="Settings"):
 
     async def on_submit(self, interaction: discord.Interaction):
         if (self.email.default != self.email.value):
-            db.set_email(cur=self.cur, discord_guild=self.driver, discord_id=self.user.id,
+            Person.set_email(cur=self.cur, discord_guild=self.driver, discord_id=self.user.id,
                           name=self.user.name, email=self.email.value)
         if (self.trc20_wallet_addr.default != self.trc20_wallet_addr.value):
-            db.set_trc20_addr(cur=self.cur, discord_guild=self.driver,
+            Person.set_trc20_addr(cur=self.cur, discord_guild=self.driver,
                                discord_id=self.user.id, name=self.user.name,
                                  addr=self.trc20_wallet_addr.value)
         self.commit_db()
         await interaction.response.send_message(f"Your settings were submitted {self.user.mention}!", ephemeral=True)
     
     def load_defualts(self):
-        self.email.default = db.get_email(
+        self.email.default = Person.get_email(
             cur=self.cur, discord_guild=self.driver, discord_id=self.user.id)
-        self.trc20_wallet_addr.default = db.get_trc20_addr(
+        self.trc20_wallet_addr.default = Person.get_trc20_addr(
             cur=self.cur, discord_guild=self.driver, discord_id=self.user.id)
         
     def commit_db(self):

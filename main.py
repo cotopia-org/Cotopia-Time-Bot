@@ -17,7 +17,7 @@ import report
 import zombie_hunter
 import briefing.briefing as briefing
 from briefing.brief_modal import BriefModal
-from person.my_settings_modal import MySettingsModal
+from person import MySettingsModal
 from gcal import calcal as GCalSetup
 
 
