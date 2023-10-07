@@ -6,6 +6,8 @@ from persiantools.jdatetime import JalaliDateTime
 from persiantools.jdatetime import JalaliDate
 import pytz
 import report
+from gcal import calcal as GCalSetup
+
 
 def today_jalali():
     the_string = str(JalaliDate.today())
@@ -130,7 +132,10 @@ async def google_oauth(code: str, state: str, request: Request):
       print("guild_id:    " + str(guild_id))
       print("code:  " + code)
       print("state: " + state)
-      return code
+
+      GCalSetup.store_user_creds(discord_guild=guild_id, discord_id=discord_id, code=code, state=state)
+
+      return FileResponse('static/goauthdone.html')
 
 @app.get("/gcal")
 async def google_oauth():

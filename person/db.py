@@ -93,4 +93,14 @@ class Person():
                     (discord_guild, discord_id, name, addr))
         else:
             cur.execute("UPDATE person SET trc20_addr = %s WHERE id = %s;", (addr, person_id))
+    
+    def set_google_token(self, person_id: int, creds_json: str):
+        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                            password="Tp\ZS?gfLr|]'a", port=5432)
+        cur = conn.cursor()
+        cur.execute("UPDATE person SET google_token = %s WHERE id = %s;", (creds_json, person_id))
+        conn.commit()
+        cur.close()
+        conn.close()
+
 
