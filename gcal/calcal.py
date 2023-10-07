@@ -100,7 +100,14 @@ def get_events_list(discord_guild: int, discord_id: int):
     return events_list
 
 
-def get_cotopia_events(discord_guild: int, discord_id: int):
+def get_keyword_events(discord_guild: int, discord_id: int, keyword: str):
     events_list = get_events_list(discord_guild, discord_id)
-    print(events_list)
-    return events_list
+    event_items = events_list["items"]
+    result = []
+    for i in event_items:
+        if (i["summary"].casefold() == keyword.casefold()):
+            result.append(i)
+
+    j = json.dumps(result)
+
+    return j
