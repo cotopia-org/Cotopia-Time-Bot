@@ -10,6 +10,8 @@ class MySettingsModal(discord.ui.Modal, title="Settings"):
     conn = None
     cur = None
 
+    the_person = Person()
+
     def connect_to_db(self):
         self.conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                         password="Tp\ZS?gfLr|]'a", port=5432)
@@ -31,19 +33,19 @@ class MySettingsModal(discord.ui.Modal, title="Settings"):
 
     async def on_submit(self, interaction: discord.Interaction):
         if (self.email.default != self.email.value):
-            Person.set_email(cur=self.cur, discord_guild=self.driver, discord_id=self.user.id,
+            self.the_person.set_email(cur=self.cur, discord_guild=self.driver, discord_id=self.user.id,
                           name=self.user.name, email=self.email.value)
         if (self.trc20_wallet_addr.default != self.trc20_wallet_addr.value):
-            Person.set_trc20_addr(cur=self.cur, discord_guild=self.driver,
+            self.the_person.set_trc20_addr(cur=self.cur, discord_guild=self.driver,
                                discord_id=self.user.id, name=self.user.name,
                                  addr=self.trc20_wallet_addr.value)
         self.commit_db()
         await interaction.response.send_message(f"Your settings were submitted {self.user.mention}!", ephemeral=True)
     
     def load_defualts(self):
-        self.email.default = Person.get_email(
+        self.email.default = self.the_person.get_email(
             cur=self.cur, discord_guild=self.driver, discord_id=self.user.id)
-        self.trc20_wallet_addr.default = Person.get_trc20_addr(
+        self.trc20_wallet_addr.default = self.the_person.get_trc20_addr(
             cur=self.cur, discord_guild=self.driver, discord_id=self.user.id)
         
     def commit_db(self):

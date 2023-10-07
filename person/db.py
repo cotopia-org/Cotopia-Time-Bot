@@ -5,7 +5,7 @@ class Person():
 
     # checks database, if person exists, just returns the id
     # if not, adds and returns the id
-    def add_person(discord_guild: int, discord_id: int):
+    def add_person(self, discord_guild: int, discord_id: int):
         conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                             password="Tp\ZS?gfLr|]'a", port=5432)
         cur = conn.cursor()
@@ -33,7 +33,7 @@ class Person():
             return result[0]
 
 
-    def get_person(cur: cursor, discord_guild: int, discord_id: int):
+    def get_person(self, cur: cursor, discord_guild: int, discord_id: int):
         cur.execute("""
                     SELECT id FROM person
                     WHERE discord_guild = %s
@@ -47,7 +47,7 @@ class Person():
             return result[0]
 
 
-    def get_email(cur: cursor, discord_guild: int, discord_id: int):
+    def get_email(self, cur: cursor, discord_guild: int, discord_id: int):
         cur.execute("""
                     SELECT email FROM person
                     WHERE discord_guild = %s
@@ -62,7 +62,7 @@ class Person():
             return result[0]
 
 
-    def get_trc20_addr(cur: cursor, discord_guild: int, discord_id: int):
+    def get_trc20_addr(self, cur: cursor, discord_guild: int, discord_id: int):
         cur.execute("""
                     SELECT trc20_addr FROM person
                     WHERE discord_guild = %s
