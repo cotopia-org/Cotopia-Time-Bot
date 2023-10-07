@@ -98,9 +98,11 @@ class Oauth(object):
         flow.fetch_token(code=code)
         self.__session_credentials = {
             'token': flow.credentials.token,
+            'refresh_token': flow.credentials.refresh_token,
             'token_uri': flow.credentials.token_uri,
             'client_id': flow.credentials.client_id,
             'client_secret': flow.credentials.client_secret,
-            'scopes': flow.credentials.scopes
+            'scopes': flow.credentials.scopes,
+            'expiry': str(flow.credentials.expiry)
         }
         return self.__session_credentials
