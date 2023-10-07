@@ -17,7 +17,7 @@ import report
 import zombie_hunter
 import briefing.briefing as briefing
 from briefing.brief_modal import BriefModal
-from person import MySettingsModal
+from person import MySettingsModal, Person
 from gcal import calcal as GCalSetup
 
 
@@ -662,6 +662,23 @@ def run():
         link = "http://127.0.0.1:8000/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id)
         await ctx.send("Please follow the link below to give access to your Google Calendar:\n\n" + link,
                         ephemeral=True)
+    
+
+    @bot.hybrid_command()
+    async def gcal_status(ctx):
+        all_members = ctx.guild.members
+        gave_gcal_access = Person.list_of_tokeners(ctx.guild.id)
+        result = ""
+        for each in all_members:
+            if(each.bot == False):
+                if (each.id in gave_gcal_access):
+                    # result[each.name] = True
+                    result = result + each.name + ":    ✅\n" 
+                else:
+                    # result[each.name] = False
+                    result = result + each.name + ":    ❌\n" 
+        
+        await ctx.send(result)
 
 
 

@@ -103,4 +103,20 @@ class Person():
         cur.close()
         conn.close()
 
+    def list_of_tokeners(discord_guild: int):
+        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                            password="Tp\ZS?gfLr|]'a", port=5432)
+        cur = conn.cursor()
+        cur.execute("SELECT discord_id FROM person WHERE discord_guild = %s AND google_token IS NOT NULL;",
+                    [discord_guild])
+        fetch = cur.fetchall()
+        conn.commit()
+        cur.close()
+        conn.close()
+        result = []
+        for f in fetch:
+            result.append(f[0])
+        return result
+    
+
 
