@@ -94,16 +94,24 @@ def get_session(discord_guild: int, discord_id: int):
                           get_user_creds(discord_guild, discord_id))
     return session
 
-def get_events_list(discord_guild: int, discord_id: int):
+
+def get_user_events(discord_guild: int, discord_id: int):
     session = get_session(discord_guild, discord_id)
-    events_list = session.events.list()
-    return events_list
+    events = session.events.list()
+    return events
 
 
-def get_keyword_events(discord_guild: int, discord_id: int, keyword: str, checking_last_n_events=100):
+def get_event_instances(discord_guild: int, discord_id: int, event_id):
+    session = get_session(discord_guild, discord_id)
+    event_instances = session.events.instances(event_id=event_id)
+    return event_instances
 
-    events_list = get_events_list(discord_guild, discord_id)
-    event_items = events_list["items"]
+
+def get_keyword_events(discord_guild: int, discord_id: int,
+                       keyword: str, checking_last_n_events=100, to_json=True):
+
+    raw_events = get_user_events(discord_guild, discord_id)
+    event_items = raw_events["items"]
     event_items = event_items[-checking_last_n_events:]
 
     result = []
@@ -116,6 +124,13 @@ def get_keyword_events(discord_guild: int, discord_id: int, keyword: str, checki
         except:
             # It had no summary
             recheck.append(i)
+    
+    # now lets check and get recurring events instances
+    for r in result:
+        if ("recurrence" in r):
+            instances = get_event_instances(discord_guild=discord_guild, discord_id=discord_id, event_id=r["id"])
+            f = open("instances.json", "w")
+            
 
     # check if the events in recheck are related to events in result
     # and if so, append them to result
@@ -129,7 +144,46 @@ def get_keyword_events(discord_guild: int, discord_id: int, keyword: str, checki
             if (a["id"] in r["id"]):
                 result.append(r)
                 break
+    
+    # returning
+    if (to_json):
+        return json.dumps(result)
+    else:
+        return result
 
-    j = json.dumps(result)
 
-    return j
+def process_events(l: list):
+    result = []
+    for i in l:
+        if (i["status"] == "confirmed"):
+            event = {}
+            event["id"] = i["id"]
+            event["title"] = i["summary"]
+            event["creator"] = i["creator"]
+            event["creator"] = i["creator"]
+            event["organizer"] = i["organizer"]
+            event["start"] = i["start"]
+            event["end"] = i["end"]
+            duration = datetime.strptime(
+                i["end"]["dateTime"],'%Y-%m-%dT%H:%M:%S%z') - datetime.strptime(
+                    i["start"]["dateTime"], '%Y-%m-%dT%H:%M:%S%z')
+            event["duration"] = duration.total_seconds()
+
+            result.append(event)
+
+            # if ("recurrence" in i):
+            #     result = result + make_recurring_events(event, i["recurrence"])
+
+        elif (i["status"] == "cancelled"):
+            pass
+
+        return result
+
+
+# def make_recurring_events(event: dict, rules: list):
+#     for r in rules:
+#         print(r)
+#     result = []
+#     result.append(event)
+#     return result
+

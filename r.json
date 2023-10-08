@@ -1,0 +1,49 @@
+[
+  {
+    "kind": "calendar#event",
+    "etag": "\"3393514616974000\"",
+    "id": "70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k",
+    "status": "confirmed",
+    "htmlLink": "https://www.google.com/calendar/event?eid=NzBzamllOWk2OHIzMmJiM2NkajNnYjlrNjVpamNiYjJjNHBqZ2I5cDZoaWphcDFoNnRoMzhvOW42a18yMDIzMTAwOFQwNTMwMDBaIGFsaS5raGFycmF0aUBt",
+    "created": "2023-10-08T09:28:28.000Z",
+    "updated": "2023-10-08T09:28:28.487Z",
+    "summary": "cotopia thingy",
+    "creator": {
+      "email": "ali.kharrati@gmail.com",
+      "self": true
+    },
+    "organizer": {
+      "email": "ali.kharrati@gmail.com",
+      "self": true
+    },
+    "start": {
+      "dateTime": "2023-10-08T09:00:00+03:30",
+      "timeZone": "Asia/Tehran"
+    },
+    "end": {
+      "dateTime": "2023-10-08T17:00:00+03:30",
+      "timeZone": "Asia/Tehran"
+    },
+    "recurrence": [
+      "RRULE:FREQ=WEEKLY;WKST=SU;COUNT=42;INTERVAL=1;BYDAY=SU,MO,TU,WE,SA"
+    ],
+    "iCalUID": "70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k@google.com",
+    "sequence": 0,
+    "guestsCanInviteOthers": false,
+    "reminders": {
+      "useDefault": true
+    },
+    "eventType": "default"
+  },
+  {
+    "kind": "calendar#event",
+    "etag": "\"3393514862014000\"",
+    "id": "70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k_20231025T053000Z",
+    "status": "cancelled",
+    "recurringEventId": "70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k",
+    "originalStartTime": {
+      "dateTime": "2023-10-25T09:00:00+03:30",
+      "timeZone": "Asia/Tehran"
+    }
+  }
+]
