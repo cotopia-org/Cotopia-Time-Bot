@@ -100,13 +100,35 @@ def get_events_list(discord_guild: int, discord_id: int):
     return events_list
 
 
-def get_keyword_events(discord_guild: int, discord_id: int, keyword: str):
+def get_keyword_events(discord_guild: int, discord_id: int, keyword: str, checking_last_n_events=100):
+
     events_list = get_events_list(discord_guild, discord_id)
     event_items = events_list["items"]
+    event_items = event_items[-checking_last_n_events:]
+
     result = []
+    recheck = []
+
     for i in event_items:
-        if (i["summary"].casefold() == keyword.casefold()):
-            result.append(i)
+        try:
+            if (keyword.casefold() in i["summary"].casefold()):
+                result.append(i)
+        except:
+            # It had no summary
+            recheck.append(i)
+
+    # check if the events in recheck are related to events in result
+    # and if so, append them to result
+    # example: if cancel one day of a recurring event, the original event stays the same
+    # but a cancelation event will be added and if the id of the original event is somthing like
+    # 'id': '70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k'
+    # the id of the cancelation event would be something like
+    # 'id': '70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k_20231025T053000Z'  
+    for r in recheck:
+        for a in result:
+            if (a["id"] in r["id"]):
+                result.append(r)
+                break
 
     j = json.dumps(result)
 
