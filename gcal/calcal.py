@@ -110,6 +110,7 @@ def get_event_instances(discord_guild: int, discord_id: int, event_id):
 def get_keyword_events(discord_guild: int, discord_id: int,
                        keyword: str, checking_last_n_events=100, to_json=True):
 
+    print("Getting raw events!")
     raw_events = get_user_events(discord_guild, discord_id)
     event_items = raw_events["items"]
     event_items = event_items[-checking_last_n_events:]
@@ -117,6 +118,7 @@ def get_keyword_events(discord_guild: int, discord_id: int,
     result = []
     recheck = []
 
+    print("Looking for keyword!")
     for i in event_items:
         try:
             if (keyword.casefold() in i["summary"].casefold()):
@@ -126,10 +128,14 @@ def get_keyword_events(discord_guild: int, discord_id: int,
             recheck.append(i)
     
     # now lets check and get recurring events instances
+    print("Getting recurring events!")
     for r in result:
         if ("recurrence" in r):
-            instances = get_event_instances(discord_guild=discord_guild, discord_id=discord_id, event_id=r["id"])
-            f = open("instances.json", "w")
+            raw_instances = get_event_instances(
+                discord_guild=discord_guild, discord_id=discord_id, event_id=r["id"])
+            instance_items =  raw_instances["items"]
+            result.remove(r)
+            result = result + instance_items
             
 
     # check if the events in recheck are related to events in result
@@ -139,6 +145,7 @@ def get_keyword_events(discord_guild: int, discord_id: int,
     # 'id': '70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k'
     # the id of the cancelation event would be something like
     # 'id': '70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k_20231025T053000Z'  
+    print("Adding cancellations!")
     for r in recheck:
         for a in result:
             if (a["id"] in r["id"]):
@@ -171,19 +178,16 @@ def process_events(l: list):
 
             result.append(event)
 
-            # if ("recurrence" in i):
-            #     result = result + make_recurring_events(event, i["recurrence"])
-
         elif (i["status"] == "cancelled"):
             pass
 
         return result
 
 
-# def make_recurring_events(event: dict, rules: list):
-#     for r in rules:
-#         print(r)
-#     result = []
-#     result.append(event)
-#     return result
-
+def get_processed_events(discord_guild: int, discord_id: int, keyword: str):
+    raw = get_keyword_events(
+        discord_guild=discord_guild, discord_id=discord_id, keyword=keyword,
+          checking_last_n_events=50, to_json=False)
+    processed = process_events(raw)
+    j = json.dumps(processed)
+    return j
