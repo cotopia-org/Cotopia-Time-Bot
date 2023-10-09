@@ -208,7 +208,7 @@ def run():
     async def ping(ctx):
         print("this is ping. the server is:")
         print(ctx.guild.id)
-        await ctx.send("pong")
+        await ctx.send("pong", ephemeral=True)
 
 
     @bot.hybrid_command(description="Generates report. default date: current month")
@@ -227,7 +227,7 @@ def run():
                 end_epoch = datetime.datetime(
                     year=end_yyyy, month=end_mm, day=end_dd, hour=23, minute=59, second=59).strftime('%s')
             except:
-                await ctx.send("Please enter a valid date!")
+                await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
         
 
@@ -239,19 +239,19 @@ def run():
                 start_epoch = datetime.datetime(
                     year=start_yyyy, month=start_mm, day=start_dd, hour=0, minute=0, second=0).strftime('%s')
             except:
-                await ctx.send("Please enter a valid date!")
+                await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
         
 
         if (int(start_epoch) >= int(end_epoch)):
-            await ctx.send("**Start Date** should be before **End Date**! Try Again!")
+            await ctx.send("**Start Date** should be before **End Date**! Try Again!", ephemeral=True)
             return
         # max int value in postgres is 	-2147483648 to 2147483647
         elif (int(end_epoch) > 2147400000):
-            await ctx.send("**End Date** is too far in the future! Try Again!")
+            await ctx.send("**End Date** is too far in the future! Try Again!", ephemeral=True)
             return
         elif (int(start_epoch) < 0):
-            await ctx.send("I wasn't even born back then! Try Again!")
+            await ctx.send("I wasn't even born back then! Try Again!", ephemeral=True)
             return
         
         print("start epoch: " + str(start_epoch))
@@ -277,7 +277,7 @@ def run():
                 text = text + str(line)+": "+str(thereport[line]) + "\n"
             
 
-        await ctx.send(text)
+        await ctx.send(text, ephemeral=True)
 
     
     @bot.hybrid_command(description="گزارش ایجاد می کند. تاریخ پیش فرض: ماه جاری")
@@ -299,7 +299,7 @@ def run():
                     year=end_ssss, month=end_mm, day=end_rr, hour=23, minute=59, second=59,
                     tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
             except:
-                await ctx.send("Please enter a valid date!")
+                await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
          
@@ -313,20 +313,20 @@ def run():
                     year=start_ssss, month=start_mm, day=start_rr, hour=0, minute=0, second=0,
                     tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
             except:
-                await ctx.send("Please enter a valid date!")
+                await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
 
         
         if (int(start_epoch) >= int(end_epoch)):
-            await ctx.send("**Start Date** should be before **End Date**! Try Again!")
+            await ctx.send("**Start Date** should be before **End Date**! Try Again!", ephemeral=True)
             return
         # max int value in postgres is 	-2147483648 to 2147483647
         elif (int(end_epoch) > 2147400000):
-            await ctx.send("**End Date** is too far in the future! Try Again!")
+            await ctx.send("**End Date** is too far in the future! Try Again!", ephemeral=True)
             return
         elif (int(start_epoch) < 0):
-            await ctx.send("I wasn't even born back then! Try Again!")
+            await ctx.send("I wasn't even born back then! Try Again!", ephemeral=True)
             return
 
         
@@ -353,7 +353,7 @@ def run():
                 text = text + str(line)+": "+str(thereport[line]) + "\n"
             
 
-        await ctx.send(text)
+        await ctx.send(text, ephemeral=True)
 
 
     @bot.hybrid_command(description="If someone is in not deafen and doesn't answer, report them as a zombie!")
@@ -384,19 +384,19 @@ def run():
                 global the_zombie
                 the_zombie[ctx.guild.id] = member
 
-                await ctx.send("You reported " + member.mention + " as a zombie!")
+                await ctx.send("You reported " + member.mention + " as a zombie!", ephemeral=True)
                 await ctx.guild.system_channel.send(member.mention+" you have been called a zombie. Show up in 3 minutes or you would be disconnected!")
                 task1 = asyncio.create_task(dc_user(), name=f"dc zombie {ctx.guild.id}")
                 await task1
 
             
             else:
-                await ctx.send("Well obviously " + member.mention + " is NOT a zombie!")
+                await ctx.send("Well obviously " + member.mention + " is NOT a zombie!", ephemeral=True)
 
 
         # reporting yourself!
         else:
-            await ctx.send("You can not name yourself a zombie! Take a break!")
+            await ctx.send("You can not name yourself a zombie! Take a break!", ephemeral=True)
             
 
     @bot.hybrid_command(description="داده خام یک کاربر در یک بازه زمانی. تاریخ پیش فرض: ماه جاری")
@@ -418,7 +418,7 @@ def run():
                     year=end_ssss, month=end_mm, day=end_rr, hour=23, minute=59, second=59,
                     tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
             except:
-                await ctx.send("Please enter a valid date!")
+                await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
          
@@ -432,20 +432,20 @@ def run():
                     year=start_ssss, month=start_mm, day=start_rr, hour=0, minute=0, second=0,
                     tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
             except:
-                await ctx.send("Please enter a valid date!")
+                await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
 
         
         if (int(start_epoch) >= int(end_epoch)):
-            await ctx.send("**Start Date** should be before **End Date**! Try Again!")
+            await ctx.send("**Start Date** should be before **End Date**! Try Again!", ephemeral=True)
             return
         # max int value in postgres is 	-2147483648 to 2147483647
         elif (int(end_epoch) > 2147400000):
-            await ctx.send("**End Date** is too far in the future! Try Again!")
+            await ctx.send("**End Date** is too far in the future! Try Again!", ephemeral=True)
             return
         elif (int(start_epoch) < 0):
-            await ctx.send("I wasn't even born back then! Try Again!")
+            await ctx.send("I wasn't even born back then! Try Again!", ephemeral=True)
             return
 
         
@@ -571,7 +571,7 @@ def run():
                     year=end_ssss, month=end_mm, day=end_rr, hour=23, minute=59, second=59,
                     tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
             except:
-                await ctx.send("Please enter a valid date!")
+                await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
          
@@ -585,20 +585,20 @@ def run():
                     year=start_ssss, month=start_mm, day=start_rr, hour=0, minute=0, second=0,
                     tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
             except:
-                await ctx.send("Please enter a valid date!")
+                await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
 
         
         if (int(start_epoch) >= int(end_epoch)):
-            await ctx.send("**Start Date** should be before **End Date**! Try Again!")
+            await ctx.send("**Start Date** should be before **End Date**! Try Again!", ephemeral=True)
             return
         # max int value in postgres is 	-2147483648 to 2147483647
         elif (int(end_epoch) > 2147400000):
-            await ctx.send("**End Date** is too far in the future! Try Again!")
+            await ctx.send("**End Date** is too far in the future! Try Again!", ephemeral=True)
             return
         elif (int(start_epoch) < 0):
-            await ctx.send("I wasn't even born back then! Try Again!")
+            await ctx.send("I wasn't even born back then! Try Again!", ephemeral=True)
             return
         
         print("start epoch: " + str(start_epoch))
@@ -648,7 +648,7 @@ def run():
         g_redirect_url = GCalSetup.gen_GOAuth_URL()
         link = "https://app.cotopia.social/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id)
         # link = "http://127.0.0.1:8000/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id)
-        await ctx.send("Please follow the link below to give access to your Google Calendar:\n\n" + link,
+        await ctx.send("   ‌ ‌  \n⬇️   Please follow the link below to give access to your Google Calendar   ⬇️\n\n" + link,
                         ephemeral=True)
     
 
