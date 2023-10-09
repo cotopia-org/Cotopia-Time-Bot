@@ -673,10 +673,10 @@ def run():
             if(each.bot == False):
                 if (each.id in gave_gcal_access):
                     # result[each.name] = True
-                    result = result + each.name + ":    ✅\n" 
+                    result = result + "✅ " + each.name + "\n" 
                 else:
                     # result[each.name] = False
-                    result = result + each.name + ":    ❌\n" 
+                    result = result + "❌ " + each.name + "\n" 
         
         await ctx.send(result)
 
