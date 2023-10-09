@@ -161,12 +161,13 @@ def get_keyword_events(discord_guild: int, discord_id: int,
 
 def process_events(l: list):
     result = []
+    info = {}
+    info["total_time"] = 0
     for i in l:
         if (i["status"] == "confirmed"):
             event = {}
             event["id"] = i["id"]
             event["title"] = i["summary"]
-            event["creator"] = i["creator"]
             event["creator"] = i["creator"]
             event["organizer"] = i["organizer"]
             event["start"] = i["start"]
@@ -175,19 +176,28 @@ def process_events(l: list):
                 i["end"]["dateTime"],'%Y-%m-%dT%H:%M:%S%z') - datetime.strptime(
                     i["start"]["dateTime"], '%Y-%m-%dT%H:%M:%S%z')
             event["duration"] = duration.total_seconds()
+            info["total_time"] = info["total_time"] + event["duration"]
 
             result.append(event)
 
         elif (i["status"] == "cancelled"):
             pass
 
+        info["created_at"] = datetime.now()
+
+        result.append(info)
+
         return result
 
 
-def get_processed_events(discord_guild: int, discord_id: int, keyword: str):
+def get_processed_events(discord_guild: int, discord_id: int, keyword: str, to_json=True):
     raw = get_keyword_events(
         discord_guild=discord_guild, discord_id=discord_id, keyword=keyword,
           checking_last_n_events=50, to_json=False)
     processed = process_events(raw)
     j = json.dumps(processed)
-    return j
+    if (to_json):
+        return j
+    else:
+        return processed
+

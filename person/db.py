@@ -103,7 +103,7 @@ class Person():
         cur.close()
         conn.close()
 
-    def list_of_tokeners(discord_guild: int):
+    def list_of_tokeners(self, discord_guild: int):
         conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                             password="Tp\ZS?gfLr|]'a", port=5432)
         cur = conn.cursor()
@@ -117,6 +117,4 @@ class Person():
         for f in fetch:
             result.append(f[0])
         return result
-    
-
 
