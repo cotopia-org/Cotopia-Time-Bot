@@ -484,11 +484,7 @@ def run():
         str(title_date) +
         "\n------------------------------\n")
         for l in the_board:
-            string = str(l)
-            string = string.replace("('", "")
-            string = string.replace("',", " :")
-            string = string.replace(")", "")
-            text = text + string + "\n"
+            text = str(l[1]) + " | " + l[0] + "\n"
 
         await ctx.send(text)
 
