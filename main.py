@@ -208,7 +208,7 @@ def run():
     async def ping(ctx):
         print("this is ping. the server is:")
         print(ctx.guild.id)
-        await ctx.send("pong", ephemeral=True)
+        await ctx.send("Your Discord ID is " + str(ctx.author.id), ephemeral=True)
 
 
     @bot.hybrid_command(description="Generates report. default date: current month")
