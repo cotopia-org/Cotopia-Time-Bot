@@ -1,5 +1,7 @@
 from datetime import datetime
 from urllib.parse import quote
+
+import pytz
 from . import calapi_chngd as api
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
@@ -114,7 +116,7 @@ def get_keyword_events(discord_guild: int, discord_id: int,
     raw_events = get_user_events(discord_guild, discord_id)
     event_items = raw_events["items"]
     event_items = event_items[-checking_last_n_events:]
-
+   
     result = []
     recheck = []
 
@@ -126,7 +128,7 @@ def get_keyword_events(discord_guild: int, discord_id: int,
         except:
             # It had no summary
             recheck.append(i)
-    
+
     # now lets check and get recurring events instances
     print("Getting recurring events!")
     for r in result:
@@ -137,7 +139,6 @@ def get_keyword_events(discord_guild: int, discord_id: int,
             result.remove(r)
             result = result + instance_items
             
-
     # check if the events in recheck are related to events in result
     # and if so, append them to result
     # example: if cancel one day of a recurring event, the original event stays the same
@@ -183,7 +184,7 @@ def process_events(l: list):
         elif (i["status"] == "cancelled"):
             pass
 
-        info["created_at"] = datetime.now()
+        info["created_at"] = datetime.now(tz=pytz.utc).strftime("%Y-%m-%dT%H:%M:%S%z")
 
         result.append(info)
 
@@ -195,11 +196,11 @@ def get_processed_events(discord_guild: int, discord_id: int, keyword: str, to_j
         discord_guild=discord_guild, discord_id=discord_id, keyword=keyword,
           checking_last_n_events=50, to_json=False)
     processed = process_events(raw)
-    # j = json.dumps(processed)
-    # if (to_json):
-    #     return j
-    # else:
-    #     return processed
-    return processed
+    j = json.dumps(processed)
+    if (to_json):
+        return j
+    else:
+        return processed
+    
 
 
