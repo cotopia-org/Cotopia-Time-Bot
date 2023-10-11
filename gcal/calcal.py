@@ -186,9 +186,9 @@ def process_events(l: list):
 
         info["created_at"] = datetime.now(tz=pytz.utc).strftime("%Y-%m-%dT%H:%M:%S%z")
 
-        result.append(info)
+    result.append(info)
 
-        return result
+    return result
 
 
 def get_processed_events(discord_guild: int, discord_id: int, keyword: str, to_json=True):
