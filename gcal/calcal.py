@@ -191,16 +191,14 @@ def process_events(l: list):
     return result
 
 
-def get_processed_events(discord_guild: int, discord_id: int, keyword: str, to_json=True):
+def get_processed_events(discord_guild: int, discord_id: int, keyword: str):
     raw = get_keyword_events(
         discord_guild=discord_guild, discord_id=discord_id, keyword=keyword,
           checking_last_n_events=50, to_json=False)
+    
     processed = process_events(raw)
-    j = json.dumps(processed)
-    if (to_json):
-        return j
-    else:
-        return processed
+    
+    return processed
     
 
 

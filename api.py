@@ -1,3 +1,4 @@
+import json
 from fastapi import FastAPI, Request
 from starlette.responses import FileResponse 
 from fastapi.middleware.cors import CORSMiddleware
@@ -155,7 +156,7 @@ async def get_calendar(discord_id: int):
       cal = person.get_cal(guild_id, discord_id)
       if (cal == None):
         cal = GCalSetup.get_processed_events(guild_id, discord_id, keyword)
-        person.set_cal(guild_id, discord_id, cal)
+        person.set_cal(guild_id, discord_id, json.dumps(cal))
 
       return cal
 
