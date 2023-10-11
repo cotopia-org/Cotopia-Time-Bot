@@ -94,6 +94,7 @@ class Person():
         else:
             cur.execute("UPDATE person SET trc20_addr = %s WHERE id = %s;", (addr, person_id))
     
+
     def set_google_token(self, person_id: int, creds_json: str):
         conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                             password="Tp\ZS?gfLr|]'a", port=5432)
@@ -102,6 +103,7 @@ class Person():
         conn.commit()
         cur.close()
         conn.close()
+
 
     def list_of_tokeners(self, discord_guild: int):
         conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
@@ -117,4 +119,34 @@ class Person():
         for f in fetch:
             result.append(f[0])
         return result
+    
 
+    def set_cal(self, discord_guild: int, discord_id: int, cal: str):
+        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                            password="Tp\ZS?gfLr|]'a", port=5432)
+        cur = conn.cursor()
+        cur.execute("UPDATE person SET calendar = %s WHERE discord_guild = %s AND discord_id = %s;",
+                    (cal, discord_guild, discord_id))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+
+    def get_cal(sel, discord_guild: int, discord_id: int):
+        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                            password="Tp\ZS?gfLr|]'a", port=5432)
+        cur = conn.cursor()
+        cur.execute("""
+                    SELECT calendar FROM person
+                    WHERE discord_guild = %s
+                    AND discord_id = %s
+                    ;"""
+                    , (discord_guild, discord_id))
+        result = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        if(result == None):
+            return None
+        else:
+            return result[0]

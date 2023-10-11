@@ -7,6 +7,7 @@ from persiantools.jdatetime import JalaliDate
 import pytz
 import report
 from gcal import calcal as GCalSetup
+from person import Person
 
 
 def today_jalali():
@@ -143,3 +144,18 @@ async def google_oauth(code: str, state: str, request: Request):
 @app.get("/gcal")
 async def google_oauth():
       return FileResponse('static/gcal.html')
+
+@app.get("getcal")
+async def get_calendar(discord_id: int):
+      guild_id = 1125764070935638086
+      keyword = "cotopia"
+      person = Person()
+
+      cal = None
+      cal = person.get_cal(guild_id, discord_id)
+      if (cal == None):
+        cal = GCalSetup.get_processed_events(guild_id, discord_id, keyword)
+        person.set_cal(guild_id, discord_id, cal)
+
+      return cal
+
