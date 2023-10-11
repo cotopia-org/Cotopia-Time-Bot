@@ -11,7 +11,12 @@ from datetime import datetime
 # f.close()
 
 
-# print(GCalSetup.get_processed_events(1125764070935638086, 592386692569366559, "cotopia"))
+# print(GCalSetup.get_user_calendars(1125764070935638086, 592386692569366559))
 
-raw_instances = GCalSetup.get_event_instances(1125764070935638086, 592386692569366559, "70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k_20231008T053000Z'")
-print(raw_instances["items"])
+# raw_instances = GCalSetup.get_event_instances(1125764070935638086, 592386692569366559, "70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k_20231008T053000Z'")
+# print(raw_instances["items"])
+
+l = []
+print(GCalSetup.process_events(l))
+
+print(GCalSetup.get_user_events(1125764070935638086, 1076050027761381437))

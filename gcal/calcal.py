@@ -184,8 +184,7 @@ def process_events(l: list):
         elif (i["status"] == "cancelled"):
             pass
 
-        info["created_at"] = datetime.now(tz=pytz.utc).strftime("%Y-%m-%dT%H:%M:%S%z")
-
+    info["created_at"] = datetime.now(tz=pytz.utc).strftime("%Y-%m-%dT%H:%M:%S%z")
     result.append(info)
 
     return result
@@ -202,3 +201,7 @@ def get_processed_events(discord_guild: int, discord_id: int, keyword: str):
     
 
 
+def get_user_calendars(discord_guild: int, discord_id: int):
+    session = get_session(discord_guild, discord_id)
+    c = session.calendars.list(calendar_id="primary")
+    return c
