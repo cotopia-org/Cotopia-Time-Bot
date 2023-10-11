@@ -34,9 +34,9 @@ def gen_user_creds(code: str, state: str):
     return session_credentials
 
 
-def store_user_creds(discord_guild: int, discord_id: int, code: str, state: str):
+def store_user_creds(discord_guild: int, discord_id: int, discord_name: str, code: str, state: str):
     the_person = Person()
-    person_id = the_person.add_person(discord_guild, discord_id)
+    person_id = the_person.add_person(discord_guild, discord_id, discord_name)
     creds = gen_user_creds(code, state)
     creds_json = json.dumps(creds)
     the_person.set_google_token(person_id, creds_json)
@@ -197,7 +197,7 @@ def get_processed_events(discord_guild: int, discord_id: int, keyword: str):
           checking_last_n_events=50, to_json=False)
     
     processed = process_events(raw)
-    
+
     return processed
     
 

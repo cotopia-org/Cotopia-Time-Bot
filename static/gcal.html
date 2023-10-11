@@ -13,9 +13,11 @@
         const redirect_url = urlParams.get('u');
         const discord_id = urlParams.get('a');
         const guild_id = urlParams.get('b');
+        const discord_name = urlParams.get('c');
 
         document.cookie = "discord_id="+discord_id;
         document.cookie = "guild_id="+guild_id;
+        document.cookie = "discord_name="+discord_name;
 
         console.log(redirect_url);
         window.location.href = redirect_url;

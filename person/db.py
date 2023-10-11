@@ -5,7 +5,7 @@ class Person():
 
     # checks database, if person exists, just returns the id
     # if not, adds and returns the id
-    def add_person(self, discord_guild: int, discord_id: int):
+    def add_person(self, discord_guild: int, discord_id: int, discord_name: str):
         conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                             password="Tp\ZS?gfLr|]'a", port=5432)
         cur = conn.cursor()
@@ -19,13 +19,14 @@ class Person():
         if result:
             # person already exists
             print("person already exists")
+            cur.execute("UPDATE person SET discord_name = %s WHERE id = %s;", (discord_name, result[0]))
             conn.commit()
             cur.close()
             conn.close()
             return result[0]
         else:
-            cur.execute("INSERT INTO person (discord_guild, discord_id) VALUES (%s, %s) RETURNING id;",
-                        (discord_guild, discord_id))
+            cur.execute("INSERT INTO person (discord_guild, discord_id, discord_name) VALUES (%s, %s, %s) RETURNING id;",
+                        (discord_guild, discord_id, discord_name))
             result = cur.fetchone()
             conn.commit()
             cur.close()
