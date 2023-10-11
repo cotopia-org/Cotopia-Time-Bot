@@ -668,6 +668,13 @@ def run():
         
         await ctx.send(result)
 
+    @bot.hybrid_command()
+    async def get_schedule(ctx, member: discord.Member):
+        text = member.mention + "'s working schedule is: \n"
+        text = text + "Monday, Tuesday, Wednesday, Thursday 9AM to 5PM\n\n"
+        text = text + "Exception: He won't be available at October 11 2PM to 5PM"
+        await ctx.send(text)
+
 
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
