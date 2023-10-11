@@ -145,7 +145,7 @@ async def google_oauth(code: str, state: str, request: Request):
 async def google_oauth():
       return FileResponse('static/gcal.html')
 
-@app.get("getcal")
+@app.get("/getcal")
 async def get_calendar(discord_id: int):
       guild_id = 1125764070935638086
       keyword = "cotopia"
