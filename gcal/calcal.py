@@ -38,6 +38,9 @@ def store_user_creds(discord_guild: int, discord_id: int, discord_name: str, cod
     the_person = Person()
     person_id = the_person.add_person(discord_guild, discord_id, discord_name)
     creds = gen_user_creds(code, state)
+    if (creds["refresh_token"] == None):
+        print("No refresh_token in creds! google_token won't be saved to DB!")
+        return
     creds_json = json.dumps(creds)
     the_person.set_google_token(person_id, creds_json)
     return creds_json
