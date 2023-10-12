@@ -18,7 +18,7 @@ import psycopg2
 
 client = api.Oauth(
     credentials_path='gcal/credentials.json',
-    scopes=['https://www.googleapis.com/auth/calendar'],
+    scopes=['https://www.googleapis.com/auth/calendar.readonly'],
     redirect_uri='https://app.cotopia.social/goauth'
 )
 
@@ -97,9 +97,9 @@ def get_session(discord_guild: int, discord_id: int):
     return session
 
 
-def get_user_events(discord_guild: int, discord_id: int):
+def get_user_events(discord_guild: int, discord_id: int, next_page_token: str | None = None):
     session = get_session(discord_guild, discord_id)
-    events = session.events.list()
+    events = session.events.list(page_token=next_page_token)
     return events
 
 
@@ -113,8 +113,16 @@ def get_keyword_events(discord_guild: int, discord_id: int,
                        keyword: str, checking_last_n_events=100, to_json=True):
 
     print("Getting raw events!")
-    raw_events = get_user_events(discord_guild, discord_id)
-    event_items = raw_events["items"]
+    event_items = []
+    next_page_token = None
+    while True:
+        raw_events = get_user_events(discord_guild, discord_id, next_page_token)
+        event_items = event_items + raw_events["items"]
+        if ("nextPageToken" in raw_events):
+            next_page_token = raw_events["nextPageToken"]
+        else:
+            break
+    
     event_items = event_items[-checking_last_n_events:]
    
     result = []
