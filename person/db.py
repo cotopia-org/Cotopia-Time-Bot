@@ -106,6 +106,26 @@ class Person():
         conn.close()
 
 
+    def get_google_token(self, discord_guild: int, discord_id: int):
+        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                            password="Tp\ZS?gfLr|]'a", port=5432)
+        cur = conn.cursor()
+        cur.execute("""
+                    SELECT google_token FROM person
+                    WHERE discord_guild = %s
+                    AND discord_id = %s
+                    ;"""
+                    , (discord_guild, discord_id))
+        result = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        if(result == None):
+            return None
+        else:
+            return result[0]
+
+
     def list_of_tokeners(self, discord_guild: int):
         conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                             password="Tp\ZS?gfLr|]'a", port=5432)

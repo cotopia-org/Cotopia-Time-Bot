@@ -19,7 +19,16 @@ from datetime import datetime
 # l = []
 # print(GCalSetup.process_events(l))
 
-events = GCalSetup.get_keyword_events(1125764070935638086, 592386692569366559, "cotopia")
-f = open("events.json", "w")
-f.write(events)
-f.close()
+# events = GCalSetup.get_keyword_events(1125764070935638086, 592386692569366559, "cotopia")
+# f = open("events.json", "w")
+# f.write(events)
+# f.close()
+
+# 1125764070935638086
+# 592386692569366559
+# kharrati
+# 4/0AfJohXlRFQAXnS91ijKvR1JiT7KpXx0L9w2G352UUiHwZRgtKlYnhrxNZ01fS13YvyIugg
+# HW0g1XEZtSQqUKRJIB0jV2gw5vnkvU
+
+# GCalSetup.store_user_creds(1125764070935638086, 592386692569366559, "kharrati", "4/0AfJohXlxwoQVJB5hqmhRFxARnjQ0IozBR7bmiI_dKXP0DugZ0NKolnaqYyyAdFt7Uh4taA", "HW0g1XEZtSQqUKRJIB0jV2gw5vnkvU")
+# print(GCalSetup.get_user_events(1125764070935638086, 592386692569366559))
