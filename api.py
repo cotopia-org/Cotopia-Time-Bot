@@ -134,8 +134,14 @@ async def google_oauth(code: str, state: str, request: Request):
       guild_id = request.cookies.get('guild_id')
       discord_name = request.cookies.get('discord_name')
 
-      GCalSetup.store_user_creds(
-           discord_guild=guild_id, discord_id=discord_id, discord_name=discord_name, code=code, state=state)
+      print(guild_id)
+      print(discord_id)
+      print(discord_name)
+      print(code)
+      print(state)
+
+    #   GCalSetup.store_user_creds(
+    #        discord_guild=guild_id, discord_id=discord_id, discord_name=discord_name, code=code, state=state)
 
       return FileResponse('static/goauthdone.html')
 
