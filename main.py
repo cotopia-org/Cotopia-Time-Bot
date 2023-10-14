@@ -648,8 +648,13 @@ def run():
         g_redirect_url = GCalSetup.gen_GOAuth_URL()
         link = "https://app.cotopia.social/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id) + "&c=" + str(ctx.author.name)
         # link = "http://127.0.0.1:8000/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id) + "&c=" + str(ctx.author.name)
-        await ctx.send("   ‌ ‌  \n⬇️   Please follow the link below to give access to your Google Calendar   ⬇️\n\n" + link,
-                        ephemeral=True)
+        person = Person()
+        token = person.get_google_token(ctx.guild.id, ctx.author.id)
+        if (token == None):
+            await ctx.send("   ‌ ‌  \n⬇️   Please follow the link below to give access to your Google Calendar   ⬇️\n\n" + link,
+                            ephemeral=True)
+        else:
+            await ctx.send("You already did this before!", ephemeral=True)
     
 
     @bot.hybrid_command()

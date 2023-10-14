@@ -133,20 +133,22 @@ async def google_oauth(code: str, state: str, request: Request):
       discord_id = request.cookies.get('discord_id')
       guild_id = request.cookies.get('guild_id')
       discord_name = request.cookies.get('discord_name')
+      GCalSetup.store_user_creds(
+            discord_guild=guild_id, discord_id=discord_id, discord_name=discord_name, code=code, state=state)
+      return FileResponse('static/goauthdone.html')
+      
 
+@app.get("/gcal")
+async def google_oauth(a: int, b: int):
+      discord_id = a
+      guild_id = b
       person = Person()
       token = person.get_google_token(
            discord_guild=guild_id, discord_id=discord_id)
       if (token == None):
-        GCalSetup.store_user_creds(
-            discord_guild=guild_id, discord_id=discord_id, discord_name=discord_name, code=code, state=state)
-        return FileResponse('static/goauthdone.html')
+        return FileResponse('static/gcal.html')
       else:
            return "You already did this before!"
-
-@app.get("/gcal")
-async def google_oauth():
-      return FileResponse('static/gcal.html')
 
 @app.get("/getcal")
 async def get_calendar(discord_id: int):
