@@ -1,3 +1,4 @@
+import json
 import settings
 import discord
 from discord.ext import commands
@@ -25,6 +26,7 @@ logger = settings.logging.getLogger("bot")
 
 the_zombie = {}
 last_brief_ask = {}
+last_profile_update = {}
 
 def today():
     the_string = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -138,8 +140,25 @@ def run():
                 await guild.system_channel.send("Well well you are not a zombie " + member.mention + "!")
                 the_zombie[guild.id] = None
 
-        # cancelling asking for brief
+        # When user leave voice channel
         if (after.channel is None):
+            # Update user profile
+            try:
+                global last_profile_update
+                if (f"{member.id}@{member.guild.id}" in last_profile_update):
+                    pass
+                else:
+                    last_profile_update[f"{member.id}@{member.guild.id}"] = datetime.datetime.today().strftime('%Y-%m-%d')
+
+                if (last_profile_update[f"{member.id}@{member.guild.id}"] != datetime.datetime.today().strftime('%Y-%m-%d')):
+                    keyword = member.guild.name
+                    person = Person()
+                    cal = GCalSetup.get_processed_events(member.guild.id, member.id, keyword)
+                    person.set_cal(member.guild.id, member.id, json.dumps(cal))
+                    last_profile_update[f"{member.id}@{member.guild.id}"] = datetime.datetime.today().strftime('%Y-%m-%d')
+            except:
+                print("could not get cal!")
+            # cancelling asking for brief
             try:
                 task, = [task for task in asyncio.all_tasks() if task.get_name() == f"ask for brief {str(member)}@{guild.id}"]
                 task.cancel()
