@@ -135,6 +135,10 @@ async def google_oauth(code: str, state: str, request: Request):
       discord_name = request.cookies.get('discord_name')
       GCalSetup.store_user_creds(
             discord_guild=guild_id, discord_id=discord_id, discord_name=discord_name, code=code, state=state)
+      keyword = "cotopia"
+      person = Person()
+      cal = GCalSetup.get_processed_events(guild_id, discord_id, keyword)
+      person.set_cal(guild_id, discord_id, json.dumps(cal))
       return FileResponse('static/goauthdone.html')
       
 
