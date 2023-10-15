@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Master</title>
+    <title>Cotopia</title>
 </head>
+
 <body>
-    <h5>Redirecting!</h5>
+    <h4>Redirecting...</h4>
     <script>
+        async function handleHardReload(url) {
+            const newUrl = urlWithRndQueryParam(url);
+            await fetch(newUrl, {
+                headers: {
+                    Pragma: 'no-cache',
+                    Expires: '-1',
+                    'Cache-Control': 'no-cache',
+                },
+            });
+            window.location.href = url;
+            // This is to ensure reload with url's having '#'
+            window.location.reload();
+        }
+
+        handleHardReload(window.location.href);
         console.log("running the js!");
         const urlParams = new URLSearchParams(window.location.search);
         const redirect_url = urlParams.get('u');
@@ -15,13 +32,14 @@
         const guild_id = urlParams.get('b');
         const discord_name = urlParams.get('c');
 
-        document.cookie = "discord_id="+discord_id;
-        document.cookie = "guild_id="+guild_id;
-        document.cookie = "discord_name="+discord_name;
+        document.cookie = "discord_id=" + discord_id;
+        document.cookie = "guild_id=" + guild_id;
+        document.cookie = "discord_name=" + discord_name;
 
         console.log(redirect_url);
         window.location.href = redirect_url;
     </script>
-    
+
 </body>
+
 </html>
