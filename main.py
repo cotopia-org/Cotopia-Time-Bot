@@ -153,6 +153,7 @@ def run():
                 if (last_profile_update[f"{member.id}@{member.guild.id}"] != datetime.datetime.today().strftime('%Y-%m-%d')):
                     keyword = member.guild.name
                     person = Person()
+                    person.set_avatar(member.guild.id, member.id, str(member.avatar), member.name)
                     cal = GCalSetup.get_processed_events(member.guild.id, member.id, keyword)
                     person.set_cal(member.guild.id, member.id, json.dumps(cal))
                     last_profile_update[f"{member.id}@{member.guild.id}"] = datetime.datetime.today().strftime('%Y-%m-%d')

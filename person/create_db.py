@@ -16,7 +16,7 @@ cur = conn.cursor()
 #             google_token json NULL,
 #             note json NULL
 #             );""")
-cur.execute("ALTER TABLE person RENAME COLUMN note TO calendar;")
+cur.execute("ALTER TABLE person ADD COLUMN discord_avatar VARCHAR(255) NULL;")
 conn.commit()
 cur.close()
 conn.close()

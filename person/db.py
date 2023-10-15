@@ -172,7 +172,7 @@ class Person():
         else:
             return result[0]
     
-    
+
     def get_cal_by_name(self, discord_guild: int , discord_name: str):
         conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
                             password="Tp\ZS?gfLr|]'a", port=5432)
@@ -191,3 +191,13 @@ class Person():
             return None
         else:
             return result[0]
+    
+    def set_avatar(self, discord_guild: int, discord_id: int, avatar: str, name: str):
+        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                            password="Tp\ZS?gfLr|]'a", port=5432)
+        cur = conn.cursor()
+        cur.execute("UPDATE person SET discord_avatar = %s, discord_name = %s WHERE discord_guild = %s AND discord_id = %s;",
+                     (avatar, name, discord_guild, discord_id))
+        conn.commit()
+        cur.close()
+        conn.close()
