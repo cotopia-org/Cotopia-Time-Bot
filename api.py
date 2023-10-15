@@ -155,16 +155,14 @@ async def google_oauth(a: int, b: int):
            return "You already did this before!"
 
 @app.get("/getcal")
-async def get_calendar(discord_id: int):
+async def get_calendar(doer: str):
       guild_id = 1125764070935638086
-      keyword = "cotopia"
       person = Person()
 
       cal = None
-      cal = person.get_cal(guild_id, discord_id)
+      cal = person.get_cal_by_name(guild_id, doer)
       if (cal == None):
-        cal = GCalSetup.get_processed_events(guild_id, discord_id, keyword)
-        person.set_cal(guild_id, discord_id, json.dumps(cal))
-
-      return cal
+        return "N/A"
+      else:
+        return cal
 

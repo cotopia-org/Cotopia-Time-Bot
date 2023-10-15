@@ -171,3 +171,23 @@ class Person():
             return None
         else:
             return result[0]
+    
+    
+    def get_cal_by_name(self, discord_guild: int , discord_name: str):
+        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                            password="Tp\ZS?gfLr|]'a", port=5432)
+        cur = conn.cursor()
+        cur.execute("""
+                    SELECT calendar FROM person
+                    WHERE discord_guild = %s
+                    AND discord_name = %s
+                    ;"""
+                    , (discord_guild, discord_name))
+        result = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        if(result == None):
+            return None
+        else:
+            return result[0]
