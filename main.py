@@ -28,7 +28,7 @@ the_zombie = {}
 last_brief_ask = {}
 last_profile_update = {}
 
-def today():
+def today_g():
     the_string = datetime.datetime.today().strftime('%Y-%m-%d')
     slices = the_string.split("-")
     dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
@@ -479,7 +479,7 @@ def run():
 
 
     @bot.hybrid_command(description="جدول مدت سشن های تمام شده در امروز")
-    async def today(ctx):
+    async def emrooz(ctx):
 
         log_processor.renew_pendings(driver=str(ctx.guild.id))
 
@@ -510,7 +510,7 @@ def run():
 
 
     @bot.hybrid_command(description="جدول مدت سشن های دیروز")
-    async def yesterday(ctx):
+    async def dirooz(ctx):
         now = today_jalali()
         start_epoch = int(
                 JalaliDateTime(
@@ -538,7 +538,7 @@ def run():
     
 
     @bot.hybrid_command(description="جدول مدت سشن های این ماه")
-    async def thismonth(ctx):
+    async def inmaah(ctx):
 
         log_processor.renew_pendings(driver=str(ctx.guild.id))
 
@@ -557,6 +557,98 @@ def run():
         the_board = report.make_board(driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
 
         title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
+        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
+
+        text = ("Net Session Hours of " +
+        str(title_date) +
+        "\n------------------------------\n")
+        for l in the_board:
+            text = text + str(l[1]) + " | " + l[0] + "\n"
+
+        await ctx.send(text)
+    
+
+
+    @bot.hybrid_command(description="Session durations of current day")
+    async def today(ctx):
+
+        log_processor.renew_pendings(driver=str(ctx.guild.id))
+
+        now = today_g()
+        start_epoch = int(
+                datetime.datetime(
+                    year=now["y"], month=now["m"], day=now["d"], hour=0, minute=0, second=0,
+                    tzinfo=pytz.timezone("Asia/Tehran")).strftime('%s')
+        )
+        end_epoch = int(
+                datetime.datetime(
+                    year=now["y"], month=now["m"], day=now["d"], hour=23, minute=59, second=59,
+                    tzinfo=pytz.timezone("Asia/Tehran")).strftime('%s')
+        )
+        
+        the_board = report.make_board(driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
+
+        title_date = datetime.date.fromtimestamp(start_epoch)
+        
+        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
+
+        text = ("Net Session Hours of " +
+        str(title_date) +
+        "\n------------------------------\n")
+        for l in the_board:
+            text = text + str(l[1]) + " | " + l[0] + "\n"
+
+        await ctx.send(text)
+
+
+    @bot.hybrid_command(description="Session durations of last day")
+    async def yesterday(ctx):
+        now = today_g()
+        start_epoch = int(
+                datetime.datetime(
+                    year=now["y"], month=now["m"], day=now["d"]-1, hour=0, minute=0, second=0,
+                    tzinfo=pytz.timezone("Asia/Tehran")).strftime('%s')
+        )
+        end_epoch = int(
+                datetime.datetime(
+                    year=now["y"], month=now["m"], day=now["d"]-1, hour=23, minute=59, second=59,
+                    tzinfo=pytz.timezone("Asia/Tehran")).strftime('%s')
+        )
+        
+        the_board = report.make_board(driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
+
+        title_date = datetime.date.fromtimestamp(start_epoch)
+        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
+
+        text = ("Net Session Hours of " +
+        str(title_date) +
+        "\n------------------------------\n")
+        for l in the_board:
+            text = text + str(l[1]) + " | " + l[0] + "\n"
+
+        await ctx.send(text)
+    
+
+    @bot.hybrid_command(description="Session durations of current month")
+    async def thismonth(ctx):
+
+        log_processor.renew_pendings(driver=str(ctx.guild.id))
+
+        now = today_g()
+        start_epoch = int(
+                datetime.datetime(
+                    year=now["y"], month=now["m"], day=1, hour=0, minute=0, second=0,
+                    tzinfo=pytz.timezone("Asia/Tehran")).strftime('%s')
+        )
+        end_epoch = int(
+                datetime.datetime(
+                    year=now["y"], month=now["m"], day=now["d"], hour=23, minute=59, second=59,
+                    tzinfo=pytz.timezone("Asia/Tehran")).strftime('%s')
+        )
+        
+        the_board = report.make_board(driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
+
+        title_date = datetime.date.fromtimestamp(start_epoch).strftime("%Y/%m")
         # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
 
         text = ("Net Session Hours of " +
