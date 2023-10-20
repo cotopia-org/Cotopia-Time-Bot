@@ -201,3 +201,40 @@ class Person():
         conn.commit()
         cur.close()
         conn.close()
+    
+    
+    def get_person_info(self, discord_guild: int, discord_name: str):
+        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                            password="Tp\ZS?gfLr|]'a", port=5432)
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM person WHERE discord_guild = %s AND discord_name = %s",
+                    (discord_guild, discord_name))
+        result = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        if(result == None):
+            return None
+        
+        info = {}
+        info["id"] = result[0]
+        info["active"] = result[7]
+        info["created_at"] = result[1]
+        info["discord_guild"] = result[2]
+        info["discord_id"] = result[3]
+        info["discord_name"] = result[4]
+        info["email"] = result[5]
+        info["trc20_addr"] = result[6]
+        if(result[8] == None):
+            info["has_google_token"] = False
+        else:
+            info["has_google_token"] = True
+        if(result[9] == None):
+            info["has_calendar"] = False
+        else:
+            info["has_calendar"] = True
+        
+        
+        return info
+

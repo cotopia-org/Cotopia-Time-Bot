@@ -166,3 +166,10 @@ async def get_calendar(doer: str):
       else:
         return cal
 
+@app.get("/doer")
+async def get_doer(doer: str):
+     guild_id = 1125764070935638086
+     person = Person()
+     info = person.get_person_info(guild_id, doer)
+     return info
+     

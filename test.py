@@ -4,6 +4,8 @@ from google.oauth2.credentials import Credentials
 import json
 from datetime import datetime
 
+from person import Person
+
 # instances = GCalSetup.get_event_instances(discord_guild=1125764070935638086, discord_id=592386692569366559, event_id="70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k")
 # events = GCalSetup.get_keyword_events(discord_guild=1125764070935638086, discord_id=592386692569366559, keyword="cotopia")
 # f = open("instances.json", "w")
@@ -32,3 +34,8 @@ from datetime import datetime
 
 # GCalSetup.store_user_creds(1125764070935638086, 592386692569366559, "kharrati", "4/0AfJohXlxwoQVJB5hqmhRFxARnjQ0IozBR7bmiI_dKXP0DugZ0NKolnaqYyyAdFt7Uh4taA", "HW0g1XEZtSQqUKRJIB0jV2gw5vnkvU")
 # print(GCalSetup.get_user_events(1125764070935638086, 592386692569366559))
+
+
+person = Person()
+
+print(person.get_person_info(1125764070935638086, "kharrati"))
