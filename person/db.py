@@ -234,7 +234,7 @@ class Person():
             info["has_calendar"] = False
         else:
             info["has_calendar"] = True
-        
+        info["discord_avatar"] = result[10]
         
         return info
 
