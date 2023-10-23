@@ -772,7 +772,8 @@ def run():
     @bot.hybrid_command()
     async def gcal_status(ctx):
         all_members = ctx.guild.members
-        gave_gcal_access = Person.list_of_tokeners(ctx.guild.id)
+        person = Person()
+        gave_gcal_access = person.list_of_tokeners(ctx.guild.id)
         result = ""
         for each in all_members:
             if(each.bot == False):
