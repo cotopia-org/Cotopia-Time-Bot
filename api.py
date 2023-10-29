@@ -66,13 +66,53 @@ async def root():
     return "Visit https://app.cotopia.social/docs"
 
 @app.get("/doers")
-async def get_doers(start: int, end: int):
-      return report.get_doers_list(driver="1125764070935638086", start_epoch=start, end_epoch=end)
+async def get_doers(start: int, end: int, request: Request):
+    token = request.cookies.get("token")
+    if (token == None):
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "You are not logged in!")
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:
+             raise HTTPException(
+                  status_code = status.HTTP_406_NOT_ACCEPTABLE,
+                  detail = "Unable to read token!")
+        
+        if (decoded == False):
+             raise HTTPException(
+                  status_code = status.HTTP_401_UNAUTHORIZED,
+                  detail = "Invalid Token! Login Again!")
+        else:
+             driver = str(decoded['discord_guild'])
+        
+    return report.get_doers_list(driver=driver, start_epoch=start, end_epoch=end)
+
 
 @app.get("/thismonth")
-async def this_month():
+async def this_month(request: Request):
+    token = request.cookies.get("token")
+    if (token == None):
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "You are not logged in!")
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:
+             raise HTTPException(
+                  status_code = status.HTTP_406_NOT_ACCEPTABLE,
+                  detail = "Unable to read token!")
+        
+        if (decoded == False):
+             raise HTTPException(
+                  status_code = status.HTTP_401_UNAUTHORIZED,
+                  detail = "Invalid Token! Login Again!")
+        else:
+             driver = str(decoded['discord_guild'])
 
-    log_processor.renew_pendings(driver="1125764070935638086", )
+    log_processor.renew_pendings(driver=driver, )
 
     now = today_jalali()
     start_epoch = int(
@@ -86,7 +126,7 @@ async def this_month():
                         tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
             )
             
-    the_board = report.make_board(driver="1125764070935638086", start_epoch=start_epoch, end_epoch=end_epoch)
+    the_board = report.make_board(driver=driver, start_epoch=start_epoch, end_epoch=end_epoch)
     title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
     title = "Net Session Hours of " + str(title_date)
     result = {}
@@ -99,14 +139,32 @@ async def this_month():
 
 
 @app.get("/events")
-async def get_events(start: int, end: int, doer: str | None = None):
+async def get_events(request: Request, start: int, end: int, doer: str | None = None):
+    token = request.cookies.get("token")
+    if (token == None):
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "You are not logged in!")
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:
+             raise HTTPException(
+                  status_code = status.HTTP_406_NOT_ACCEPTABLE,
+                  detail = "Unable to read token!")
+        
+        if (decoded == False):
+             raise HTTPException(
+                  status_code = status.HTTP_401_UNAUTHORIZED,
+                  detail = "Invalid Token! Login Again!")
+        else:
+             driver = str(decoded['discord_guild'])
       
     if (doer == None):
-        all = report.get_events(driver="1125764070935638086", start=start, end=end)
+        all = report.get_events(driver=driver, start=start, end=end)
     else:
-        all = report.get_events_of_doer(driver="1125764070935638086", start=start, end=end, doer=doer)
+        all = report.get_events_of_doer(driver=driver, start=start, end=end, doer=doer)
     
-
     answer = []
 
     for event in all:
@@ -125,6 +183,7 @@ async def get_events(start: int, end: int, doer: str | None = None):
             answer.append(d)
       
     return answer
+
 
 @app.get("/goauth")
 async def google_oauth(code: str, state: str, request: Request):
@@ -155,24 +214,67 @@ async def google_oauth(a: int, b: int):
       else:
            return "You already did this before!"
 
-@app.get("/getcal")
-async def get_calendar(doer: str):
-      guild_id = 1125764070935638086
-      person = Person()
 
-      cal = None
-      cal = person.get_cal_by_name(guild_id, doer)
-      if (cal == None):
-        return "N/A"
-      else:
-        return cal
+@app.get("/getcal")
+async def get_calendar(doer: str, request: Request):
+    token = request.cookies.get("token")
+    if (token == None):
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "You are not logged in!")
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:
+             raise HTTPException(
+                  status_code = status.HTTP_406_NOT_ACCEPTABLE,
+                  detail = "Unable to read token!")
+        
+        if (decoded == False):
+             raise HTTPException(
+                  status_code = status.HTTP_401_UNAUTHORIZED,
+                  detail = "Invalid Token! Login Again!")
+        else:
+             guild_id = str(decoded['discord_guild'])
+      
+    person = Person()
+
+    cal = None
+    cal = person.get_cal_by_name(guild_id, doer)
+    if (cal == None):
+         raise HTTPException(
+              status_code = status.HTTP_404_NOT_FOUND,
+              detail = "Calendar is not available for this user!")
+    else:
+         return cal
+
 
 @app.get("/doer")
-async def get_doer(doer: str):
-     guild_id = 1125764070935638086
-     person = Person()
-     info = person.get_person_info(guild_id, doer)
-     return info
+async def get_doer(doer: str, request: Request):
+    token = request.cookies.get("token")
+    if (token == None):
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "You are not logged in!")
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:
+             raise HTTPException(
+                  status_code = status.HTTP_406_NOT_ACCEPTABLE,
+                  detail = "Unable to read token!")
+        
+        if (decoded == False):
+             raise HTTPException(
+                  status_code = status.HTTP_401_UNAUTHORIZED,
+                  detail = "Invalid Token! Login Again!")
+        else:
+             guild_id = str(decoded['discord_guild'])
+    
+    person = Person()
+    info = person.get_person_info(guild_id, doer)
+    return info
+
 
 @app.get("/protected")
 async def protected(request: Request):
@@ -192,7 +294,7 @@ async def protected(request: Request):
         if (decoded == False):
              raise HTTPException(
                   status_code = status.HTTP_401_UNAUTHORIZED,
-                  detail = "Invalid Token!")
+                  detail = "Invalid Token! Login Again!")
         else:
              return decoded
         
