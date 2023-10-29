@@ -176,7 +176,28 @@ async def get_doer(doer: str):
 
 @app.get("/protected")
 async def protected(request: Request):
-     token = request.cookies.get("token")
-     if (token == None):
-          raise HTTPException(
-               status_code = status.HTTP_401_UNAUTHORIZED)
+    token = request.cookies.get("token")
+    if (token == None):
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "You are not logged in!")
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:
+             raise HTTPException(
+                  status_code = status.HTTP_406_NOT_ACCEPTABLE,
+                  detail = "Unable to read token!")
+        
+        if (decoded == False):
+             raise HTTPException(
+                  status_code = status.HTTP_401_UNAUTHORIZED,
+                  detail = "Invalid Token!")
+        else:
+             return decoded
+        
+     
+@app.get("/login")
+async def login():
+     return FileResponse('static/login.html')
+     

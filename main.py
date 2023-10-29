@@ -20,6 +20,7 @@ import briefing.briefing as briefing
 from briefing.brief_modal import BriefModal
 from person import MySettingsModal, Person
 from gcal import calcal as GCalSetup
+import auth
 
 
 logger = settings.logging.getLogger("bot")
@@ -787,11 +788,25 @@ def run():
         await ctx.send(result)
 
     @bot.hybrid_command()
-    async def get_schedule(ctx, member: discord.Member):
-        text = member.mention + "'s working schedule is: \n"
-        text = text + "Monday, Tuesday, Wednesday, Thursday 9AM to 5PM\n\n"
-        text = text + "Exception: He won't be available at October 11 2PM to 5PM"
-        await ctx.send(text)
+    async def login(ctx):
+        d = {}
+        d['discord_guild'] = ctx.guild.id
+        d['discord_id'] = ctx.author.id
+        d['discord_name'] = ctx.author.name
+        roles = ctx.author.roles
+        roles_list = []
+        for r in roles:
+            roles_list.append(r.name)
+        d['discord_roles'] = roles_list
+
+        token = auth.create_token(d)
+
+        # link = "http://127.0.0.1:8000/login?t=" + token
+        link = "https://app.cotopia.social/login?t=" + token
+
+        await ctx.send(link, ephemeral=True)
+        
+    
 
 
 
