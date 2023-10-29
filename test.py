@@ -1,41 +1,30 @@
-import psycopg2
-from gcal import calcal as GCalSetup
-from google.oauth2.credentials import Credentials
-import json
-from datetime import datetime
+import datetime
 
-from person import Person
-
-# instances = GCalSetup.get_event_instances(discord_guild=1125764070935638086, discord_id=592386692569366559, event_id="70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k")
-# events = GCalSetup.get_keyword_events(discord_guild=1125764070935638086, discord_id=592386692569366559, keyword="cotopia")
-# f = open("instances.json", "w")
-# f.write(events)
-# f.close()
+import pytz
+import auth
+from jose import jwt
 
 
-# print(GCalSetup.get_user_calendars(1125764070935638086, 592386692569366559))
+d = {
+    'discord_guild': 1125764070935638086,
+    'discord_id': 592386692569366559,
+    'discord_name': "kharrati",
+    'discord_roles': {},
+    }
 
-# raw_instances = GCalSetup.get_event_instances(1125764070935638086, 592386692569366559, "70sjie9i68r32bb3cdj3gb9k65ijcbb2c4pjgb9p6hijap1h6th38o9n6k_20231008T053000Z'")
-# print(raw_instances["items"])
+# token = auth.create_token(d)
 
-# l = []
-# print(GCalSetup.process_events(l))
+# print(token)
 
-# events = GCalSetup.get_keyword_events(1125764070935638086, 592386692569366559, "cotopia")
-# f = open("events.json", "w")
-# f.write(events)
-# f.close()
+d['is_genuine'] = "hast be quran!"
 
-# 1125764070935638086
-# 592386692569366559
-# kharrati
-# 4/0AfJohXlRFQAXnS91ijKvR1JiT7KpXx0L9w2G352UUiHwZRgtKlYnhrxNZ01fS13YvyIugg
-# HW0g1XEZtSQqUKRJIB0jV2gw5vnkvU
+now = datetime.datetime.now(tz=pytz.utc)
+expires_at = now - datetime.timedelta(0,3600) # an hour later
+d['expires_at'] = expires_at.strftime("%Y-%m-%dT%H:%M:%S%z")
 
-# GCalSetup.store_user_creds(1125764070935638086, 592386692569366559, "kharrati", "4/0AfJohXlxwoQVJB5hqmhRFxARnjQ0IozBR7bmiI_dKXP0DugZ0NKolnaqYyyAdFt7Uh4taA", "HW0g1XEZtSQqUKRJIB0jV2gw5vnkvU")
-# print(GCalSetup.get_user_events(1125764070935638086, 592386692569366559))
+token = jwt.encode(d, 'this is shit fr fr', algorithm='HS256')
 
 
-person = Person()
+decoded = auth.decode_token(token)
 
-print(person.get_person_info(1125764070935638086, "kharrati"))
+print(decoded)

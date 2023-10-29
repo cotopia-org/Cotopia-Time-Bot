@@ -1,5 +1,5 @@
 import json
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException, status
 from starlette.responses import FileResponse 
 from fastapi.middleware.cors import CORSMiddleware
 import log_processor
@@ -9,6 +9,7 @@ import pytz
 import report
 from gcal import calcal as GCalSetup
 from person import Person
+import auth
 
 
 def today_jalali():
@@ -172,4 +173,10 @@ async def get_doer(doer: str):
      person = Person()
      info = person.get_person_info(guild_id, doer)
      return info
-     
+
+@app.get("/protected")
+async def protected(request: Request):
+     token = request.cookies.get("token")
+     if (token == None):
+          raise HTTPException(
+               status_code = status.HTTP_401_UNAUTHORIZED)
