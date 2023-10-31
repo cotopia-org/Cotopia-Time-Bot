@@ -92,7 +92,7 @@ async def get_doers(start: int, end: int, request: Request):
     person = Person()
     for each in doers:
          result[each] = person.get_person_info(driver, each)
-        
+
     return result
 
 
@@ -308,4 +308,15 @@ async def protected(request: Request):
 @app.get("/login")
 async def login():
      return FileResponse('static/login.html')
-     
+
+
+
+
+
+"""
+IMPORTANT
+doer and doers are returning slightly wrong values for guild_id and discord_id
+it's ok in the db and python
+fastAPI is doing something whit BIGIT
+need to be fixed later
+"""
