@@ -86,8 +86,14 @@ async def get_doers(start: int, end: int, request: Request):
                   detail = "Invalid Token! Login Again!")
         else:
              driver = str(decoded['discord_guild'])
+    
+    doers = report.get_doers_list(driver=driver, start_epoch=start, end_epoch=end)
+    result = {}
+    person = Person()
+    for each in doers:
+         result[each] = person.get_person_info(driver, each)
         
-    return report.get_doers_list(driver=driver, start_epoch=start, end_epoch=end)
+    return result
 
 
 @app.get("/thismonth")
