@@ -227,8 +227,8 @@ class Person():
         info["id"] = result[0]
         info["active"] = result[7]
         info["created_at"] = result[1]
-        info["discord_guild"] = result[2]
-        info["discord_id"] = result[3]
+        info["discord_guild"] = str(result[2])
+        info["discord_id"] = str(result[3])
         info["discord_name"] = result[4]
         info["email"] = result[5]
         info["trc20_addr"] = result[6]
