@@ -28,6 +28,7 @@ logger = settings.logging.getLogger("bot")
 the_zombie = {}
 last_brief_ask = {}
 last_profile_update = {}
+# the_context = None
 
 def today_g():
     the_string = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -230,6 +231,14 @@ def run():
         print("this is ping. the server is:")
         print(ctx.guild.id)
         await ctx.send("Your Discord ID is " + str(ctx.author.id), ephemeral=True)
+        # global the_context
+        # the_context = ctx
+        # await ctx.send("twice", ephemeral=True)
+    
+    # @bot.hybrid_command()
+    # async def ping2(ctx):
+    #     global the_context
+    #     await the_context.send("it works!")
 
 
     @bot.hybrid_command(description="Generates report. default date: current month")
@@ -801,13 +810,29 @@ def run():
 
         token = auth.create_token(d)
 
-        # link = "http://127.0.0.1:8000/login?t=" + token
-        link = "https://app.cotopia.social/login?t=" + token
+        link = "http://127.0.0.1:8000/login?t=" + token
+        # link = "https://app.cotopia.social/login?t=" + token
 
         await ctx.send(link, ephemeral=True)
         
-    
+    @bot.hybrid_command()
+    async def update_members(ctx):
+        # Updating person table
+        count = 0
+        person = Person()
+        for i in ctx.guild.members:
+            if (i.bot == False):
+                if (i.avatar == None):
+                    person.add_person(ctx.guild.id, i.id, i.name)
+                else:
+                    person.add_person(ctx.guild.id, i.id, i.name, str(i.avatar))
+                
+                count = count + 1
+        
+        await ctx.send(f"Updated {count} profiles!")
 
+
+        
 
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
