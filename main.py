@@ -28,6 +28,7 @@ logger = settings.logging.getLogger("bot")
 the_zombie = {}
 last_brief_ask = {}
 last_profile_update = {}
+temp_channels = []
 # the_context = None
 
 def today_g():
@@ -120,6 +121,12 @@ def run():
         # Ignoring Bots
         if (member.bot):
             return
+        
+        # deleting temp channels
+        global temp_channels
+        if (before.channel in temp_channels):
+            if (len(before.channel.members) == 0):
+                await before.channel.delete()
 
         guild = member.guild
         print("this is on_voice_state_update. the server is:")
@@ -246,7 +253,7 @@ def run():
                         start_yyyy: typing.Optional[int]=1971, start_mm: typing.Optional[int]=1, start_dd: typing.Optional[int]=1,
                         end_yyyy: typing.Optional[int]=2037, end_mm: typing.Optional[int]=1, end_dd: typing.Optional[int]=29):
 
-        now = today()
+        now = today_g()
 
         # I want to set today as default end value, but passing it in Args didnt work. So I do this:
         if (end_yyyy == 2037 and end_mm == 12 and end_dd == 29):
@@ -831,6 +838,33 @@ def run():
         
         await ctx.send(f"Updated {count} profiles!")
 
+
+    @bot.hybrid_command()
+    async def talk_with(ctx, member: discord.Member,
+                        member3: discord.Member | None = None, member4: discord.Member |None = None):
+        channel = await ctx.guild.create_voice_channel(name="temp")
+        await ctx.author.move_to(channel)
+        try:
+            await member.move_to(channel)
+        except:
+            pass
+        try:
+            await member3.move_to(channel)
+        except:
+            pass
+        try:
+            await member4.move_to(channel)
+        except:
+            pass
+        global temp_channels
+        temp_channels.append(channel)
+        
+
+
+        # existing_channel = discord.utils.get(ctx.guild.channels, name="temp")
+        # # if the channel exists
+        # if existing_channel is not None:
+        #     await existing_channel.delete()
 
         
 
