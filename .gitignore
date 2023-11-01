@@ -3,9 +3,10 @@
 notes.md
 __pycache__
 *.db
-*.txt
+raw_logs.txt
 .vscode/
 logs/
 oldlogs/
 plogs/
+rawreports/
 .DS_Store
