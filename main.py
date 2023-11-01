@@ -127,6 +127,8 @@ def run():
         if (before.channel in temp_channels):
             if (len(before.channel.members) == 0):
                 await before.channel.delete()
+                temp_channels.remove(before.channel)
+                print(temp_channels)
 
         guild = member.guild
         print("this is on_voice_state_update. the server is:")
@@ -817,8 +819,8 @@ def run():
 
         token = auth.create_token(d)
 
-        link = "http://127.0.0.1:8000/login?t=" + token
-        # link = "https://app.cotopia.social/login?t=" + token
+        # link = "http://127.0.0.1:8000/login?t=" + token
+        link = "https://app.cotopia.social/login?t=" + token
 
         await ctx.send(link, ephemeral=True)
         
