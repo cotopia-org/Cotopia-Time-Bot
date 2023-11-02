@@ -844,23 +844,20 @@ def run():
     @bot.hybrid_command()
     async def talk_with(ctx, member: discord.Member,
                         member3: discord.Member | None = None, member4: discord.Member |None = None):
-        channel = await ctx.guild.create_voice_channel(name="temp")
+        category = discord.utils.get(ctx.guild.categories, name="MEETINGS")
+        channel = await ctx.guild.create_voice_channel(name="temp", category=category)
+
         await ctx.author.move_to(channel)
-        try:
-            await member.move_to(channel)
-        except:
-            pass
-        try:
-            await member3.move_to(channel)
-        except:
-            pass
-        try:
-            await member4.move_to(channel)
-        except:
-            pass
+        text = ctx.author.mention + " wants to talk with you " + member.mention
+        if (member3 != None):
+            text = text + ", " + member3.mention
+        if (member4 != None):
+            text = text + ", " + member4.mention
+
         global temp_channels
         temp_channels.append(channel)
-        
+
+        await ctx.send(text + "\n\n" + channel.jump_url)
 
 
         # existing_channel = discord.utils.get(ctx.guild.channels, name="temp")
