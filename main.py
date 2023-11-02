@@ -845,7 +845,7 @@ def run():
     async def talk_with(ctx, member: discord.Member,
                         member3: discord.Member | None = None, member4: discord.Member |None = None):
         category = discord.utils.get(ctx.guild.categories, name="MEETINGS")
-        channel = await ctx.guild.create_voice_channel(name="temp", category=category)
+        channel = await ctx.guild.create_voice_channel(name=ctx.author.name + "'s meeting", category=category)
 
         await ctx.author.move_to(channel)
         text = ctx.author.mention + " wants to talk with you " + member.mention
