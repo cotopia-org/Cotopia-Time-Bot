@@ -820,7 +820,7 @@ def run():
         token = auth.create_token(d)
 
         # link = "http://127.0.0.1:8000/login?t=" + token
-        link = "https://app.cotopia.social/login?t=" + token
+        link = "https://tmaster.cotopia.social/login?t=" + token
 
         await ctx.send(link, ephemeral=True)
         
