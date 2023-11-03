@@ -67,7 +67,7 @@ async def root():
 
 @app.get("/doers")
 async def get_doers(start: int, end: int, request: Request):
-    token = request.cookies.get("token")
+    token = request.headers.get("Authorization")
     if (token == None):
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
@@ -147,7 +147,7 @@ async def this_month(request: Request):
 
 @app.get("/events")
 async def get_events(request: Request, start: int, end: int, doer: str | None = None):
-    token = request.cookies.get("token")
+    token = request.headers.get("Authorization")
     if (token == None):
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
@@ -224,7 +224,7 @@ async def google_oauth(a: int, b: int):
 
 @app.get("/getcal")
 async def get_calendar(doer: str, request: Request):
-    token = request.cookies.get("token")
+    token = request.headers.get("Authorization")
     if (token == None):
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
@@ -258,7 +258,7 @@ async def get_calendar(doer: str, request: Request):
 
 @app.get("/doer")
 async def get_doer(doer: str, request: Request):
-    token = request.cookies.get("token")
+    token = request.headers.get("Authorization")
     if (token == None):
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
@@ -285,7 +285,7 @@ async def get_doer(doer: str, request: Request):
 
 @app.get("/protected")
 async def protected(request: Request):
-    token = request.cookies.get("token")
+    token = request.headers.get("Authorization")
     if (token == None):
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED,
@@ -309,15 +309,3 @@ async def protected(request: Request):
 @app.get("/login")
 async def login():
      return FileResponse('static/login.html')
-
-
-
-
-
-"""
-IMPORTANT
-doer and doers are returning slightly wrong values for guild_id and discord_id
-it's ok in the db and python
-fastAPI is doing something whit BIGIT
-need to be fixed later
-"""
