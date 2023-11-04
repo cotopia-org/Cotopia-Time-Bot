@@ -125,6 +125,8 @@ def on_mobile_duration(driver: str, doer: str, start_epoch: int, end_epoch: int,
                    """, (doer, start_epoch, end_epoch, driver))
 
         paused_on_mobile = cursor.fetchone()[0]
+        if (paused_on_mobile == None):
+            paused_on_mobile = 0
 
         return duration_of_on_mobile - paused_on_mobile
         
