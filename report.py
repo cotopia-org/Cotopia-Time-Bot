@@ -63,7 +63,7 @@ def make_report (driver: str, doer: str, start_epoch: int, end_epoch: int):
                   "Raw Session Hours": total_sd_hours,
                   "Total Puasing Hours": total_pd_hours,
                   "Total Talking Hours": total_td_hours,
-                  "On Mobile Hours": on_mobile_hours,
+                  "Net On Mobile Hours": on_mobile_hours,
                   "Net Session Hours": net_sd_hours}
     
     # report = json.dumps(report_dic)
@@ -112,7 +112,22 @@ def on_mobile_duration(driver: str, doer: str, start_epoch: int, end_epoch: int,
     if(duration_of_on_mobile == None):
         return 0
     else:
-        return duration_of_on_mobile
+        cursor.execute("""
+                   SELECT SUM(duration) FROM discord_event
+                   WHERE doer = %s
+                   AND epoch >= %s
+                   AND epoch <= %s
+                   AND driver = %s
+                   AND kind = 'SESSION PAUSED'
+                   AND duration != -1
+                   AND note->>'is_on_mobile' = 'true'
+                   AND note->>'mobile_status' = 'online'
+                   """, (doer, start_epoch, end_epoch, driver))
+
+        paused_on_mobile = cursor.fetchone()[0]
+
+        return duration_of_on_mobile - paused_on_mobile
+        
 
 # ✅
 def make_raw_file(driver: str, doer: str, start_epoch: int, end_epoch: int):
