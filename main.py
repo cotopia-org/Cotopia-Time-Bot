@@ -806,7 +806,7 @@ def run():
         await ctx.send(result)
 
     @bot.hybrid_command()
-    async def login(ctx):
+    async def dashboard(ctx):
         d = {}
         d['discord_guild'] = ctx.guild.id
         d['discord_id'] = ctx.author.id
@@ -822,8 +822,15 @@ def run():
         # link = "http://127.0.0.1:8000/login?t=" + token
         link = "https://tmaster.cotopia.social/login?t=" + token
 
-        await ctx.send(link, ephemeral=True)
-        
+        now = datetime.datetime.now()
+        expires_at = now + datetime.timedelta(0,3600)
+        expires_at_string = expires_at.strftime("%H:%M:%S")
+
+        await ctx.send(f"[Use this link to open your time-bot dashboard.\n(valid until {expires_at_string})]({link})",
+                       ephemeral=True)
+
+
+
     @bot.hybrid_command()
     async def update_members(ctx):
         # Updating person table
