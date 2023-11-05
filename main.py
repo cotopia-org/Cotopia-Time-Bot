@@ -123,12 +123,28 @@ def run():
             return
         
         # deleting temp channels
+
+        # func that does the job after a while
+        task_del_chan = None
+        async def del_temp_chan(channel):
+            print("del_temp_chan been called!")
+            print("the channel is:  " + str(channel))
+            await asyncio.sleep(180)    # 3 minutes
+            global temp_channels
+            if (len(channel.members) == 0):
+                try:
+                    await channel.delete()
+                    temp_channels.remove(channel)
+                except:
+                    print("Sorry couldn't delete the temp channel!")
+            
         global temp_channels
         if (before.channel in temp_channels):
             if (len(before.channel.members) == 0):
-                await before.channel.delete()
-                temp_channels.remove(before.channel)
-                print(temp_channels)
+                task_del_chan = asyncio.create_task(del_temp_chan(before.channel),
+                                                    name=f"deleting temp channel {before.channel}")
+                await task_del_chan
+                
 
         guild = member.guild
         print("this is on_voice_state_update. the server is:")
