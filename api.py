@@ -33,8 +33,8 @@ app = FastAPI(
 )
 
 origins = [
-    "https://tmaster.cotopia.social",
-    "https://tmaster.cotopia.social/",
+    "https://time-bot.cotopia.social",
+    "https://time-bot.cotopia.social/",
     "https://app.cotopia.social",
     "https://app.cotopia.social/",
     "https://time-master-eight.vercel.app/",

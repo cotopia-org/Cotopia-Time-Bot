@@ -820,7 +820,7 @@ def run():
         token = auth.create_token(d)
 
         # link = "http://127.0.0.1:8000/login?t=" + token
-        link = "https://tmaster.cotopia.social/login?t=" + token
+        link = "https://time-bot.cotopia.social/login?t=" + token
 
         now = datetime.datetime.now()
         expires_at = now + datetime.timedelta(0,3600)
