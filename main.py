@@ -137,7 +137,7 @@ def run():
         # func that asks for brief after a while
         task2 = None
         async def ask_for_brief():
-            await asyncio.sleep(900)    # 15 minutes
+            await asyncio.sleep(8)    # 8 seconds
             await guild.system_channel.send(
                 "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
             )
