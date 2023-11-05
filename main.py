@@ -29,6 +29,7 @@ the_zombie = {}
 last_brief_ask = {}
 last_profile_update = {}
 temp_channels = []
+temp_messages = {}
 # the_context = None
 
 def today_g():
@@ -135,6 +136,9 @@ def run():
                 try:
                     await channel.delete()
                     temp_channels.remove(channel)
+                    global temp_messages
+                    msg = temp_messages[channel]
+                    await msg.delete()
                 except:
                     print("Sorry couldn't delete the temp channel!")
             
@@ -256,14 +260,6 @@ def run():
         print("this is ping. the server is:")
         print(ctx.guild.id)
         await ctx.send("Your Discord ID is " + str(ctx.author.id), ephemeral=True)
-        # global the_context
-        # the_context = ctx
-        # await ctx.send("twice", ephemeral=True)
-    
-    # @bot.hybrid_command()
-    # async def ping2(ctx):
-    #     global the_context
-    #     await the_context.send("it works!")
 
 
     @bot.hybrid_command(description="Generates report. default date: current month")
@@ -880,13 +876,10 @@ def run():
         global temp_channels
         temp_channels.append(channel)
 
-        await ctx.send(text + "\n\n" + channel.jump_url)
+        the_message = await ctx.send(text + "\n\n" + channel.jump_url)
 
-
-        # existing_channel = discord.utils.get(ctx.guild.channels, name="temp")
-        # # if the channel exists
-        # if existing_channel is not None:
-        #     await existing_channel.delete()
+        global temp_messages
+        temp_messages[channel] = the_message
 
         
 
