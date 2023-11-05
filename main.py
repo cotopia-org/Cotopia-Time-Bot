@@ -124,7 +124,6 @@ def run():
             return
         
         # deleting temp channels
-
         # func that does the job after a while
         task_del_chan = None
         async def del_temp_chan(channel):
@@ -141,7 +140,7 @@ def run():
                     await msg.delete()
                 except:
                     print("Sorry couldn't delete the temp channel!")
-            
+        # calling the  del_temp_chan(channel) func
         global temp_channels
         if (before.channel in temp_channels):
             if (len(before.channel.members) == 0):
@@ -868,10 +867,16 @@ def run():
 
         await ctx.author.move_to(channel)
         text = ctx.author.mention + " wants to talk with you " + member.mention
+        members = []
+        members.append(str(ctx.author))
+        members.append(str(member))
+        
         if (member3 != None):
             text = text + ", " + member3.mention
+            members.append(str(member3))
         if (member4 != None):
             text = text + ", " + member4.mention
+            members.append(str(member4))
 
         global temp_channels
         temp_channels.append(channel)
@@ -880,6 +885,16 @@ def run():
 
         global temp_messages
         temp_messages[channel] = the_message
+
+        event_note = {}
+        event_note["members"] = members
+        note = json.dumps(event_note)
+        log_processor.write_event_to_db(driver=ctx.guild.id,
+                                        epoch=rightnow(),
+                                        kind="ASK FOR TALK",
+                                        doer=str(ctx.author),
+                                        isPair=False,
+                                        note=note)
 
         
 
