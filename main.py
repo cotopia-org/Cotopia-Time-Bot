@@ -49,6 +49,35 @@ def rightnow():
     epoch = int(time.time())
     return epoch
 
+class TalkWithView(discord.ui.View):
+
+    members = []
+
+    @discord.ui.button(label="decline",
+                       style=discord.ButtonStyle.red)
+    async def decline(self, interaction: discord.Integration, button: discord.ui.Button):
+        if (interaction.user in self.members):
+            await interaction.response.send_message(
+                str(interaction.user.mention) + " declined!")
+        else:
+            await interaction.response.send_message(":unamused:", ephemeral=True)
+    
+    @discord.ui.button(label="I'll join in 5 mins")
+    async def fivemins(self, interaction: discord.Integration, button: discord.ui.Button):
+        if (interaction.user in self.members):
+            await interaction.response.send_message(
+                str(interaction.user.mention) + ": I'll be there in 5 minutes.")
+        else:
+            await interaction.response.send_message(":unamused:", ephemeral=True)
+    
+    @discord.ui.button(label="I'll join in 15 mins")
+    async def fifteenmins(self, interaction: discord.Integration, button: discord.ui.Button):
+        if (interaction.user in self.members):
+            await interaction.response.send_message(
+                str(interaction.user.mention) + ": I'll be there in 15 minutes.")
+        else:
+            await interaction.response.send_message(":unamused:", ephemeral=True)
+
 
 def run():
 
@@ -865,29 +894,37 @@ def run():
         category = discord.utils.get(ctx.guild.categories, name="MEETINGS")
         channel = await ctx.guild.create_voice_channel(name=ctx.author.name + "'s meeting", category=category)
 
+        view = TalkWithView()
+        
+
         await ctx.author.move_to(channel)
         text = ctx.author.mention + " wants to talk with you " + member.mention
         members = []
-        members.append(str(ctx.author))
-        members.append(str(member))
+        members.append(ctx.author)
+        members.append(member)
         
         if (member3 != None):
             text = text + ", " + member3.mention
-            members.append(str(member3))
+            members.append(member3)
         if (member4 != None):
             text = text + ", " + member4.mention
-            members.append(str(member4))
+            members.append(member4)
 
         global temp_channels
         temp_channels.append(channel)
 
-        the_message = await ctx.send(text + "\n\n" + channel.jump_url)
+        view.members = members
+        the_message = await ctx.send(text + "\n\n" + channel.jump_url, view=view)
 
         global temp_messages
         temp_messages[channel] = the_message
 
         event_note = {}
-        event_note["members"] = members
+        members_str = []
+        for m in members:
+            members_str.append(str(m))
+        
+        event_note["members"] = members_str
         note = json.dumps(event_note)
         log_processor.write_event_to_db(driver=ctx.guild.id,
                                         epoch=rightnow(),
@@ -895,7 +932,6 @@ def run():
                                         doer=str(ctx.author),
                                         isPair=False,
                                         note=note)
-
         
 
 
