@@ -1,5 +1,6 @@
 import json
 from typing import Optional
+
 import settings
 import discord
 from discord.ext import commands
@@ -908,7 +909,13 @@ def run():
     async def talk_with(ctx, member: discord.Member,
                         member3: discord.Member | None = None, member4: discord.Member |None = None):
         category = discord.utils.get(ctx.guild.categories, name="MEETINGS")
-        channel = await ctx.guild.create_voice_channel(name=ctx.author.name + "'s meeting", category=category)
+        overwrites = {
+            ctx.guild.default_role: discord.PermissionOverwrite(connect=False),
+            ctx.author: discord.PermissionOverwrite(connect=True),
+            member: discord.PermissionOverwrite(connect=True)
+        }
+        channel = await ctx.guild.create_voice_channel(name=ctx.author.name + "'s meeting",
+                                                       category=category, overwrites=overwrites)
 
         view = TalkWithView()
 
@@ -918,13 +925,16 @@ def run():
         members = []
         members.append(ctx.author)
         members.append(member)
+    
         
         if (member3 != None):
             text = text + ", " + member3.mention
             members.append(member3)
+            overwrites[member3] = discord.PermissionOverwrite(connect=True)
         if (member4 != None):
             text = text + ", " + member4.mention
             members.append(member4)
+            overwrites[member4] = discord.PermissionOverwrite(connect=True)
 
         global temp_channels
         temp_channels.append(channel)
