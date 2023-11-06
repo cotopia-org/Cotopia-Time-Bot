@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 import settings
 import discord
 from discord.ext import commands
@@ -51,8 +52,10 @@ def rightnow():
 
 class TalkWithView(discord.ui.View):
 
-    members = []
-    interacted = []
+    def __init__(self, *, timeout: float | None = 180):
+        super().__init__(timeout=timeout)
+        self.members = []
+        self.interacted = []
 
     @discord.ui.button(label="decline",
                        style=discord.ButtonStyle.red)
@@ -908,7 +911,7 @@ def run():
         channel = await ctx.guild.create_voice_channel(name=ctx.author.name + "'s meeting", category=category)
 
         view = TalkWithView()
-        
+
 
         await ctx.author.move_to(channel)
         text = ctx.author.mention + " wants to talk with you " + member.mention
@@ -928,6 +931,7 @@ def run():
 
         view.members = members
         the_message = await ctx.send(text + "\n\n" + channel.jump_url, view=view)
+
 
         global temp_messages
         temp_messages[channel] = the_message
