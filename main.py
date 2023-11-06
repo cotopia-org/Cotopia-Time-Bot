@@ -52,31 +52,44 @@ def rightnow():
 class TalkWithView(discord.ui.View):
 
     members = []
+    interacted = []
 
     @discord.ui.button(label="decline",
                        style=discord.ButtonStyle.red)
     async def decline(self, interaction: discord.Integration, button: discord.ui.Button):
         if (interaction.user in self.members):
-            await interaction.response.send_message(
-                str(interaction.user.mention) + " declined!")
+            if (interaction.user not in self.interacted):
+                await interaction.response.edit_message(
+                    content=interaction.message.content + "\n:red_circle: " + str(interaction.user.mention) + " declined!\n")
+                self.interacted.append(interaction.user)
+            else:
+                await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
         else:
-            await interaction.response.send_message(":unamused:", ephemeral=True)
+            await interaction.response.send_message("You're not even invited! :unamused:", ephemeral=True)
     
     @discord.ui.button(label="I'll join in 5 mins")
     async def fivemins(self, interaction: discord.Integration, button: discord.ui.Button):
         if (interaction.user in self.members):
-            await interaction.response.send_message(
-                str(interaction.user.mention) + ": I'll be there in 5 minutes.")
+            if (interaction.user not in self.interacted):
+                await interaction.response.edit_message(
+                    content=interaction.message.content + "\n:orange_circle: " + str(interaction.user.mention) + ": I'll be there in 5 minutes.\n")
+                self.interacted.append(interaction.user)
+            else:
+                await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
         else:
-            await interaction.response.send_message(":unamused:", ephemeral=True)
+            await interaction.response.send_message("You're not even invited! :unamused:", ephemeral=True)
     
     @discord.ui.button(label="I'll join in 15 mins")
     async def fifteenmins(self, interaction: discord.Integration, button: discord.ui.Button):
         if (interaction.user in self.members):
-            await interaction.response.send_message(
-                str(interaction.user.mention) + ": I'll be there in 15 minutes.")
+            if (interaction.user not in self.interacted):
+                await interaction.response.edit_message(
+                    content=interaction.message.content + "\n:orange_circle: " + str(interaction.user.mention) + ": I'll be there in 15 minutes.\n")
+                self.interacted.append(interaction.user)
+            else:
+                await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
         else:
-            await interaction.response.send_message(":unamused:", ephemeral=True)
+            await interaction.response.send_message("You're not even invited! :unamused:", ephemeral=True)
 
 
 def run():
