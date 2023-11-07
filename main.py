@@ -187,6 +187,8 @@ def run():
             global temp_channels
             if (len(channel.members) == 0):
                 try:
+                    print("trying to delete channel:    ")
+                    print(channel)
                     await channel.delete()
                     temp_channels.remove(channel)
                     print("channel was removed")
@@ -195,6 +197,8 @@ def run():
                 try:
                     global temp_messages
                     msg = temp_messages[channel]
+                    print("trying to delete text:   ")
+                    print(msg)
                     await msg.delete()
                     del temp_messages[channel]
                     print("message was removed")
@@ -955,6 +959,8 @@ def run():
 
         global temp_channels
         temp_channels.append(channel)
+        print("temp_channels:   ")
+        print(temp_channels)
 
         view.members = members
 
@@ -966,6 +972,8 @@ def run():
 
         global temp_messages
         temp_messages[channel] = the_message
+        print("temp_messages:   ")
+        print(temp_messages)
 
         event_note = {}
         members_str = []
