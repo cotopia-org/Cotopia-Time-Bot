@@ -921,18 +921,20 @@ def run():
 
 
         await ctx.author.move_to(channel)
-        text = ctx.author.mention + " wants to talk with you " + member.mention
+        text = "Hey " + member.mention + ",\n" + ctx.author.mention + " wants to talk with you."
         members = []
         members.append(ctx.author)
         members.append(member)
     
         
         if (member3 != None):
-            text = text + ", " + member3.mention
+            split = text.split(",\n", 1)
+            text = split[0] + ", " + member3.mention + ",\n" + split[1]
             members.append(member3)
             overwrites[member3] = discord.PermissionOverwrite(connect=True)
         if (member4 != None):
-            text = text + ", " + member4.mention
+            split = text.split(",\n", 1)
+            text = split[0] + ", " + member4.mention + ",\n" + split[1]
             members.append(member4)
             overwrites[member4] = discord.PermissionOverwrite(connect=True)
 
