@@ -66,6 +66,12 @@ class TalkWithView(discord.ui.View):
                 await interaction.response.edit_message(
                     content=interaction.message.content + "\n\n:red_circle: " + str(interaction.user.mention) + " declined!")
                 self.interacted.append(interaction.user)
+                log_processor.write_event_to_db(driver=interaction.guild.id,
+                                                epoch=rightnow(),
+                                                kind="DECLINE TALK",
+                                                doer=str(interaction.user),
+                                                isPair=False,
+                                                note=json.dumps(interaction.message.content))
             else:
                 await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
         else:
