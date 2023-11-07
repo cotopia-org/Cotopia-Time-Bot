@@ -32,7 +32,7 @@ last_brief_ask = {}
 last_profile_update = {}
 temp_channels = []
 temp_messages = {}
-# the_context = None
+
 
 def today_g():
     the_string = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -64,7 +64,7 @@ class TalkWithView(discord.ui.View):
         if (interaction.user in self.members):
             if (interaction.user not in self.interacted):
                 await interaction.response.edit_message(
-                    content=interaction.message.content + "\n:red_circle: " + str(interaction.user.mention) + " declined!\n")
+                    content=interaction.message.content + "\n\n:red_circle: " + str(interaction.user.mention) + " declined!")
                 self.interacted.append(interaction.user)
             else:
                 await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
@@ -76,7 +76,7 @@ class TalkWithView(discord.ui.View):
         if (interaction.user in self.members):
             if (interaction.user not in self.interacted):
                 await interaction.response.edit_message(
-                    content=interaction.message.content + "\n:orange_circle: " + str(interaction.user.mention) + ": I'll be there in 5 minutes.\n")
+                    content=interaction.message.content + "\n\n:orange_circle: " + str(interaction.user.mention) + ": I'll be there in 5 minutes.")
                 self.interacted.append(interaction.user)
             else:
                 await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
@@ -88,12 +88,14 @@ class TalkWithView(discord.ui.View):
         if (interaction.user in self.members):
             if (interaction.user not in self.interacted):
                 await interaction.response.edit_message(
-                    content=interaction.message.content + "\n:orange_circle: " + str(interaction.user.mention) + ": I'll be there in 15 minutes.\n")
+                    content=interaction.message.content + "\n\n:orange_circle: " + str(interaction.user.mention) + ": I'll be there in 15 minutes.")
                 self.interacted.append(interaction.user)
             else:
                 await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
         else:
             await interaction.response.send_message("You're not even invited! :unamused:", ephemeral=True)
+    
+
 
 
 def run():
