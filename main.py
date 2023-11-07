@@ -183,11 +183,17 @@ def run():
                 try:
                     await channel.delete()
                     temp_channels.remove(channel)
+                    print("channel was removed")
+                except:
+                    print("Sorry couldn't delete the temp channel!")
+                try:
                     global temp_messages
                     msg = temp_messages[channel]
                     await msg.delete()
+                    print("message was removed")
                 except:
-                    print("Sorry couldn't delete the temp channel!")
+                    print("Sorry couldn't delete the /talk_with message!")
+                
         # calling the  del_temp_chan(channel) func
         global temp_channels
         if (before.channel in temp_channels):
