@@ -48,7 +48,7 @@ def make_report (driver: str, doer: str, start_epoch: int, end_epoch: int):
     
     on_mobile_hours = round((on_mobile_duration(driver, doer, start_epoch, end_epoch, cur)/3600), 1)
 
-    net_sd_hours = round((total_sd_hours - total_pd_hours - on_mobile_hours), 1)
+    net_sd_hours = round((total_sd_hours - total_pd_hours), 1)
 
 
 
