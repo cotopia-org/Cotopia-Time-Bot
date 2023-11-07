@@ -196,6 +196,7 @@ def run():
                     global temp_messages
                     msg = temp_messages[channel]
                     await msg.delete()
+                    del temp_messages[channel]
                     print("message was removed")
                 except:
                     print("Sorry couldn't delete the /talk_with message!")
