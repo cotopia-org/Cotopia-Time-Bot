@@ -906,7 +906,7 @@ def run():
 
 
     @bot.hybrid_command()
-    async def talk_with(ctx, member: discord.Member,
+    async def talk_with(ctx, member: discord.Member, description: str | None = None,
                         member3: discord.Member | None = None, member4: discord.Member |None = None):
         category = discord.utils.get(ctx.guild.categories, name="MEETINGS")
         overwrites = {
@@ -940,6 +940,10 @@ def run():
         temp_channels.append(channel)
 
         view.members = members
+
+        if (description != None):
+            text = text + "\n\nDescription:\n" + description
+
         the_message = await ctx.send(text + "\n\n" + channel.jump_url, view=view)
 
 
