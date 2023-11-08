@@ -950,12 +950,12 @@ def run():
             split = text.split(",\n", 1)
             text = split[0] + ", " + member3.mention + ",\n" + split[1]
             members.append(member3)
-            overwrites[member3] = discord.PermissionOverwrite(connect=True)
+            overwrites[member3]: discord.PermissionOverwrite(connect=True)
         if (member4 != None):
             split = text.split(",\n", 1)
             text = split[0] + ", " + member4.mention + ",\n" + split[1]
             members.append(member4)
-            overwrites[member4] = discord.PermissionOverwrite(connect=True)
+            overwrites[member4]: discord.PermissionOverwrite(connect=True)
 
         global temp_channels
         temp_channels.append(channel)
