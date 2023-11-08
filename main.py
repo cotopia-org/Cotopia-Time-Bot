@@ -933,29 +933,28 @@ def run():
             ctx.author: discord.PermissionOverwrite(connect=True),
             member: discord.PermissionOverwrite(connect=True)
         }
-        channel = await ctx.guild.create_voice_channel(name=ctx.author.name + "'s meeting",
-                                                       category=category, overwrites=overwrites)
-
-        view = TalkWithView()
-
-
-        await ctx.author.move_to(channel)
+        
         text = "Hey " + member.mention + ",\n" + ctx.author.mention + " wants to talk with you."
         members = []
         members.append(ctx.author)
         members.append(member)
-    
-        
+
         if (member3 != None):
             split = text.split(",\n", 1)
             text = split[0] + ", " + member3.mention + ",\n" + split[1]
             members.append(member3)
-            overwrites[member3]: discord.PermissionOverwrite(connect=True)
+            overwrites[member3] = discord.PermissionOverwrite(connect=True)
         if (member4 != None):
             split = text.split(",\n", 1)
             text = split[0] + ", " + member4.mention + ",\n" + split[1]
             members.append(member4)
-            overwrites[member4]: discord.PermissionOverwrite(connect=True)
+            overwrites[member4] = discord.PermissionOverwrite(connect=True)
+        
+        channel = await ctx.guild.create_voice_channel(name=ctx.author.name + "'s meeting",
+                                                       category=category, overwrites=overwrites)
+        await ctx.author.move_to(channel)
+
+        view = TalkWithView()
 
         global temp_channels
         temp_channels.append(channel)
