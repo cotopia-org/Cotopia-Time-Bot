@@ -210,7 +210,7 @@ def run():
         if (before.channel in temp_channels):
             if (len(before.channel.members) == 0):
                 task_del_chan = asyncio.create_task(del_temp_chan(before.channel),
-                                                    name=f"deleting temp channel {before.channel}")
+                                                    name=f"deleting temp channel {before.channel.id}")
                 await task_del_chan
                 
 
@@ -988,6 +988,22 @@ def run():
                                         isPair=False,
                                         note=note)
         
+
+    @bot.hybrid_command()
+    async def server_log(ctx):
+        if (ctx.author.id == 592386692569366559):
+            global the_zombie
+            global last_brief_ask
+            global last_profile_update
+            global temp_channels
+            global temp_messages
+            await ctx.send("the_zombie: \n" + str(the_zombie), ephemeral=True)
+            await ctx.send("last_brief_ask: \n" + str(last_brief_ask), ephemeral=True)
+            await ctx.send("last_profile_update: \n" + str(last_profile_update), ephemeral=True)
+            await ctx.send("temp_channels: \n" + str(temp_channels), ephemeral=True)
+            await ctx.send("temp_messages: \n" + str(temp_messages), ephemeral=True)
+        else:
+            await ctx.send("Sorry you connot see this!", ephemeral=True)
 
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
