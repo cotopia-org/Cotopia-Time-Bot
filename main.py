@@ -929,9 +929,9 @@ def run():
                         member3: discord.Member | None = None, member4: discord.Member |None = None):
         category = discord.utils.get(ctx.guild.categories, name="MEETINGS")
         overwrites = {
-            ctx.guild.default_role: discord.PermissionOverwrite(connect=False),
-            ctx.author: discord.PermissionOverwrite(connect=True),
-            member: discord.PermissionOverwrite(connect=True)
+            ctx.guild.default_role: discord.PermissionOverwrite(connect=False, view_channel=False),
+            ctx.author: discord.PermissionOverwrite(connect=True, view_channel=True),
+            member: discord.PermissionOverwrite(connect=True, view_channel=True)
         }
         
         text = "Hey " + member.mention + ",\n" + ctx.author.mention + " wants to talk with you."
@@ -943,12 +943,12 @@ def run():
             split = text.split(",\n", 1)
             text = split[0] + ", " + member3.mention + ",\n" + split[1]
             members.append(member3)
-            overwrites[member3] = discord.PermissionOverwrite(connect=True)
+            overwrites[member3] = discord.PermissionOverwrite(connect=True, view_channel=True)
         if (member4 != None):
             split = text.split(",\n", 1)
             text = split[0] + ", " + member4.mention + ",\n" + split[1]
             members.append(member4)
-            overwrites[member4] = discord.PermissionOverwrite(connect=True)
+            overwrites[member4] = discord.PermissionOverwrite(connect=True, view_channel=True)
         
         channel = await ctx.guild.create_voice_channel(name=ctx.author.name + "'s meeting",
                                                        category=category, overwrites=overwrites)
