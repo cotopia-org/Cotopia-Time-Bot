@@ -309,3 +309,29 @@ async def protected(request: Request):
 @app.get("/login")
 async def login():
      return FileResponse('static/login.html')
+
+@app.get("/me")
+async def me(request: Request):
+    token = request.headers.get("Authorization")
+    if (token == None):
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "You are not logged in!")
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:
+             raise HTTPException(
+                  status_code = status.HTTP_406_NOT_ACCEPTABLE,
+                  detail = "Unable to read token!")
+        
+        if (decoded == False):
+             raise HTTPException(
+                  status_code = status.HTTP_401_UNAUTHORIZED,
+                  detail = "Invalid Token! Login Again!")
+        else:
+             guild_id = str(decoded['discord_guild'])
+             discord_id = str(decoded['discord_id'])
+    person = Person()
+    info = person.get_person_info_by_id(guild_id, discord_id)
+    return info
