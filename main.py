@@ -57,6 +57,8 @@ class TalkWithView(discord.ui.View):
         super().__init__(timeout=timeout)
         self.members = []
         self.interacted = []
+        self.author_id = None
+        self.voice_channel = None
 
     @discord.ui.button(label="decline",
                        style=discord.ButtonStyle.red)
@@ -74,6 +76,21 @@ class TalkWithView(discord.ui.View):
                                                 note=json.dumps(interaction.message.content))
             else:
                 await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
+            
+            if(interaction.user.id == self.author_id):
+                # Author declined her own meeting
+                # deleting everything
+                await interaction.response.send_message(
+                    """
+                    You have declined your own talking request!\n
+                    The request is cancelled!\n
+                    The temp voice channel will be deleted.\n
+                    You and all other members in the temp voice channel, will be disconnected from all voice channels!
+                    """,
+                    ephemeral=True)
+                await self.voice_channel.delete()
+                await interaction.message.delete()
+
         else:
             await interaction.response.send_message("You're not even invited! :unamused:", ephemeral=True)
     
@@ -958,6 +975,8 @@ def run():
         await ctx.author.move_to(channel)
 
         view = TalkWithView()
+        view.author_id = ctx.author.id
+        view.voice_channel = channel
 
         global temp_channels
         temp_channels.append(channel)
