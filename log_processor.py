@@ -1,4 +1,4 @@
-from discord import VoiceState, Member
+from discord import VoiceState, Member, VoiceChannel
 import time
 import psycopg2
 import json
@@ -27,7 +27,7 @@ def record(member: Member, before: VoiceState, after: VoiceState, extra: dict):
 
     if (before.channel != after.channel):
         # channel changed
-        channel_change(member, after.channel.name, extra)
+        channel_change(member, after.channel, extra)
     elif (before.channel == after.channel):
         # mute or defen changed
         if (before.self_deaf == False and after.self_deaf == True):
@@ -91,8 +91,13 @@ def session_resume(m: Member, channel: str, e: dict):
         add_pairid_to_db(start, stop)
 
 # 🚗
-def channel_change(m: Member, channel: str, e: dict):
-    notedic = {"channel": channel}
+def channel_change(m: Member, channel: VoiceChannel, e: dict):
+    notedic = {
+        "channel": {
+            "name": channel.name,
+            "id": channel.id
+            }
+        }
     notedic = notedic | e
     note = json.dumps(notedic)
     print ('CHANNEL CHANGED')
