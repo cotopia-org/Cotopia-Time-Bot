@@ -56,6 +56,7 @@ class TalkWithView(discord.ui.View):
     def __init__(self, *, timeout: float | None = 180):
         super().__init__(timeout=timeout)
         self.members = []
+        self.members_str = []
         self.interacted = []
         self.author_id = None
         self.voice_channel = None
@@ -68,12 +69,20 @@ class TalkWithView(discord.ui.View):
                 await interaction.response.edit_message(
                     content=interaction.message.content + "\n\n:red_circle: " + str(interaction.user.mention) + " declined!")
                 self.interacted.append(interaction.user)
+                event_note = {
+                    "members": self.members_str,
+                    "channel": {
+                        "name": self.voice_channel.name,
+                        "id": self.voice_channel.id
+                    },
+                    "message": interaction.message.content
+                }
                 log_processor.write_event_to_db(driver=interaction.guild.id,
                                                 epoch=rightnow(),
                                                 kind="DECLINE TALK",
                                                 doer=str(interaction.user),
                                                 isPair=False,
-                                                note=json.dumps(interaction.message.content))
+                                                note=json.dumps(event_note))
             else:
                 await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
             
@@ -984,6 +993,11 @@ def run():
         print(temp_channels)
 
         view.members = members
+        
+        members_str = []
+        for m in members:
+            members_str.append(str(m))
+        view.members_str = members_str
 
         if (description != None):
             text = text + "\n\nDescription:\n" + description
@@ -997,11 +1011,11 @@ def run():
         print(temp_messages)
 
         event_note = {}
-        members_str = []
-        for m in members:
-            members_str.append(str(m))
-        
         event_note["members"] = members_str
+        event_note["channel"] = {
+            "name": channel.name,
+            "id": channel.id
+        }
         note = json.dumps(event_note)
         log_processor.write_event_to_db(driver=ctx.guild.id,
                                         epoch=rightnow(),
