@@ -91,7 +91,12 @@ async def get_doers(start: int, end: int, request: Request):
     result = {}
     person = Person()
     for each in doers:
-         result[each] = person.get_person_info(driver, each)
+        if ("#" in each):
+            s = each.split("#", 1)
+            result[each] = person.get_person_info(driver, s[0])
+        else:
+             result[each] = person.get_person_info(driver, each)
+             
 
     return result
 
