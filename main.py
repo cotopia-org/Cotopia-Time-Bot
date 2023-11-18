@@ -1040,6 +1040,10 @@ def run():
             await ctx.send("temp_messages: \n" + str(temp_messages), ephemeral=True)
         else:
             await ctx.send("Sorry you connot see this!", ephemeral=True)
+    
+    @bot.hybrid_command()
+    async def free_time(ctx, member: discord.Member):
+        await ctx.send(member.mention + "'s  free time for this week :\nSat       : none\nSun      : none\nMon     : 9-17\nTues     : 9-10,12-17\nWed     : 12-17\nThurs  : 9-17\nFri        : 9-10, 12-17\n")
 
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
