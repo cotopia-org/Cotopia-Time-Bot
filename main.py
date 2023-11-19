@@ -981,7 +981,10 @@ def run():
         
         channel = await ctx.guild.create_voice_channel(name=ctx.author.name + "'s meeting",
                                                        category=category, overwrites=overwrites)
-        await ctx.author.move_to(channel)
+        try:
+            await ctx.author.move_to(channel)
+        except:
+            print("user is not connected to voice.")
 
         view = TalkWithView()
         view.author_id = ctx.author.id
