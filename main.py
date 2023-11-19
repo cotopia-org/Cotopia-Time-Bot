@@ -67,7 +67,7 @@ class TalkWithView(discord.ui.View):
         if (interaction.user in self.members):
             if (interaction.user not in self.interacted):
                 await interaction.response.edit_message(
-                    content=interaction.message.content + "\n\n:red_circle: " + str(interaction.user.mention) + " declined!")
+                    content=interaction.message.content + "\n\n:red_circle: " + datetime.datetime.now().strftime('%H:%M:%S') + "   " + str(interaction.user.mention) + " declined!")
                 self.interacted.append(interaction.user)
                 event_note = {
                     "members": self.members_str,
@@ -108,7 +108,7 @@ class TalkWithView(discord.ui.View):
         if (interaction.user in self.members):
             if (interaction.user not in self.interacted):
                 await interaction.response.edit_message(
-                    content=interaction.message.content + "\n\n:orange_circle: " + str(interaction.user.mention) + ": I'll be there in 5 minutes.")
+                    content=interaction.message.content + "\n\n:orange_circle: " + datetime.datetime.now().strftime('%H:%M:%S') + "   " + str(interaction.user.mention) + ": I'll be there in 5 minutes.")
                 self.interacted.append(interaction.user)
             else:
                 await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
@@ -120,7 +120,7 @@ class TalkWithView(discord.ui.View):
         if (interaction.user in self.members):
             if (interaction.user not in self.interacted):
                 await interaction.response.edit_message(
-                    content=interaction.message.content + "\n\n:orange_circle: " + str(interaction.user.mention) + ": I'll be there in 15 minutes.")
+                    content=interaction.message.content + "\n\n:orange_circle: " + datetime.datetime.now().strftime('%H:%M:%S') + "   " + str(interaction.user.mention) + ": I'll be there in 15 minutes.")
                 self.interacted.append(interaction.user)
             else:
                 await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
@@ -289,6 +289,13 @@ def run():
                 task.cancel()
             except:
                 print("Asking for brief was not canceled! Don't panic tho.")
+        
+        # When user joins a /talk_with channel
+        global temp_messages
+        if (after.channel in temp_messages):
+            talk_with_text = await temp_messages[after.channel].channel.fetch_message(temp_messages[after.channel].id)
+            await talk_with_text.edit(
+                content = talk_with_text.content + "\n\n:green_circle: " + datetime.datetime.now().strftime('%H:%M:%S') + "   " + member.mention + " joined!")
 
 
         # Sending events
