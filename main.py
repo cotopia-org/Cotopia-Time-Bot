@@ -957,6 +957,9 @@ def run():
     async def talk_with(ctx, member: discord.Member, description: str | None = None,
                         member3: discord.Member | None = None, member4: discord.Member |None = None):
         category = discord.utils.get(ctx.guild.categories, name="MEETINGS")
+        if category is None:
+            category = await ctx.guild.create_category('MEETINGS')
+
         overwrites = {
             ctx.guild.default_role: discord.PermissionOverwrite(connect=False, view_channel=False),
             ctx.author: discord.PermissionOverwrite(connect=True, view_channel=True),
