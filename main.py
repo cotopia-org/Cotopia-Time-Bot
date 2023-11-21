@@ -968,9 +968,9 @@ def run():
             category = await ctx.guild.create_category('MEETINGS')
 
         overwrites = {
-            ctx.guild.default_role: discord.PermissionOverwrite(connect=False, view_channel=False),
-            ctx.author: discord.PermissionOverwrite(connect=True, view_channel=True),
-            member: discord.PermissionOverwrite(connect=True, view_channel=True)
+            ctx.guild.default_role: discord.PermissionOverwrite(connect=False),
+            ctx.author: discord.PermissionOverwrite(connect=True),
+            member: discord.PermissionOverwrite(connect=True)
         }
         
         text = "Hey " + member.mention + ",\n" + ctx.author.mention + " wants to talk with you."
