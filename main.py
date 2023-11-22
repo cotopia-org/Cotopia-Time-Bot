@@ -993,8 +993,10 @@ def run():
                                                        category=category, overwrites=overwrites)
         try:
             await ctx.author.move_to(channel)
+            author_moved = True
         except:
             print("user is not connected to voice.")
+            author_moved = False
 
         view = TalkWithView()
         view.author_id = ctx.author.id
@@ -1008,8 +1010,10 @@ def run():
         view.members = members
         
         members_str = []
+        the_table = "\n\n--------------------"
         for m in members:
             members_str.append(str(m))
+            the_table = the_table + "\n" + m.mention + ":   :hourglass_flowing_sand: pending"
         view.members_str = members_str
 
         if (description != None):
@@ -1037,6 +1041,17 @@ def run():
                                         isPair=False,
                                         note=note)
         
+        # Now lets edit the message with what habibi wants
+        await the_message.edit(content = the_message.content + the_table + "\n--------------------")
+        if (author_moved):
+            talk_with_text = await ctx.channel.fetch_message(the_message.id)
+            c1 = talk_with_text.content
+            c2 = c1.replace(
+                ctx.author.mention + ":   :hourglass_flowing_sand: pending",
+                  ctx.author.mention + ":   :green_circle: joined `" + datetime.datetime.now().strftime('%H:%M:%S') + "`",
+                    1)
+            await talk_with_text.edit(content = c2)
+            
 
     @bot.hybrid_command()
     async def server_log(ctx):
