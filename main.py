@@ -1112,13 +1112,29 @@ def run():
         # Now lets edit the message with what habibi wants
         await the_message.edit(content = the_message.content + the_table + "\n--------------------")
         if (author_moved):
-            talk_with_text = await ctx.channel.fetch_message(the_message.id)
-            c1 = talk_with_text.content
+            talk_with_msg = await ctx.channel.fetch_message(the_message.id)
+            c1 = talk_with_msg.content
             c2 = c1.replace(
                 ctx.author.mention + ":   :hourglass_flowing_sand: pending",
                 ctx.author.mention + ":   :green_circle: joined `" + datetime.datetime.now().strftime('%H:%M:%S') + "`",
                 1)
-            await talk_with_text.edit(content = c2)
+            await talk_with_msg.edit(content = c2)
+        
+        # Handling No Response
+        async def write_no_response(msg_id: int):
+            await asyncio.sleep(180)    # 3 minutes
+            talk_with_msg = await ctx.channel.fetch_message(msg_id)
+            c1 = talk_with_msg.content
+            c2 = c1.replace(
+                ":   :hourglass_flowing_sand: pending",
+                ":   :interrobang: no response")
+            await talk_with_msg.edit(content = c2)
+
+        task_edit_msg= asyncio.create_task(
+            write_no_response(the_message.id),
+            name=f"editing talk_with msg with no response {the_message.id} at {ctx.guild.id}")
+        await task_edit_msg
+
             
 
     @bot.hybrid_command()
