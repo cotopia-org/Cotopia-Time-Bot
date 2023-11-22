@@ -65,9 +65,34 @@ class TalkWithView(discord.ui.View):
                        style=discord.ButtonStyle.red)
     async def decline(self, interaction: discord.Integration, button: discord.ui.Button):
         if (interaction.user in self.members):
+
+
+            if(interaction.user.id == self.author_id):
+                # Author declined her own meeting
+                # deleting everything
+                await interaction.response.send_message(
+                    """
+You have declined your own talking request!
+The request is cancelled!
+The temp voice channel will be deleted.
+You and all other members in the temp voice channel, will be disconnected from all voice channels!
+                    """,
+                    ephemeral=True)
+                await self.voice_channel.delete()
+                await interaction.message.delete()
+            
+
             if (interaction.user not in self.interacted):
-                await interaction.response.edit_message(
-                    content=interaction.message.content + "\n\n:red_circle: " + datetime.datetime.now().strftime('%H:%M:%S') + "   " + str(interaction.user.mention) + " declined!")
+                c1 = interaction.message.content
+                c2 = c1.replace(
+                    interaction.user.mention + ":   :hourglass_flowing_sand: pending",
+                    interaction.user.mention + ":   :red_circle: declined `" + datetime.datetime.now().strftime('%H:%M:%S') + "`",
+                    1)
+                try:
+                    await interaction.response.edit_message(content = c2)
+                except:
+                    print("could not edit talk_with message!")
+                
                 self.interacted.append(interaction.user)
                 event_note = {
                     "members": self.members_str,
@@ -84,21 +109,11 @@ class TalkWithView(discord.ui.View):
                                                 isPair=False,
                                                 note=json.dumps(event_note))
             else:
-                await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
+                try:
+                    await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
+                except:
+                    print("could not response with You've already reacted to this!")
             
-            if(interaction.user.id == self.author_id):
-                # Author declined her own meeting
-                # deleting everything
-                await interaction.response.send_message(
-                    """
-                    You have declined your own talking request!\n
-                    The request is cancelled!\n
-                    The temp voice channel will be deleted.\n
-                    You and all other members in the temp voice channel, will be disconnected from all voice channels!
-                    """,
-                    ephemeral=True)
-                await self.voice_channel.delete()
-                await interaction.message.delete()
 
         else:
             await interaction.response.send_message("You're not even invited! :unamused:", ephemeral=True)
@@ -107,8 +122,12 @@ class TalkWithView(discord.ui.View):
     async def fivemins(self, interaction: discord.Integration, button: discord.ui.Button):
         if (interaction.user in self.members):
             if (interaction.user not in self.interacted):
-                await interaction.response.edit_message(
-                    content=interaction.message.content + "\n\n:orange_circle: " + datetime.datetime.now().strftime('%H:%M:%S') + "   " + str(interaction.user.mention) + ": I'll be there in 5 minutes.")
+                c1 = interaction.message.content
+                c2 = c1.replace(
+                    interaction.user.mention + ":   :hourglass_flowing_sand: pending",
+                    interaction.user.mention + ":   :orange_circle: will join in 5 mins `" + datetime.datetime.now().strftime('%H:%M:%S') + "`",
+                    1)
+                await interaction.response.edit_message(content = c2)
                 self.interacted.append(interaction.user)
             else:
                 await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
@@ -119,8 +138,12 @@ class TalkWithView(discord.ui.View):
     async def fifteenmins(self, interaction: discord.Integration, button: discord.ui.Button):
         if (interaction.user in self.members):
             if (interaction.user not in self.interacted):
-                await interaction.response.edit_message(
-                    content=interaction.message.content + "\n\n:orange_circle: " + datetime.datetime.now().strftime('%H:%M:%S') + "   " + str(interaction.user.mention) + ": I'll be there in 15 minutes.")
+                c1 = interaction.message.content
+                c2 = c1.replace(
+                    interaction.user.mention + ":   :hourglass_flowing_sand: pending",
+                    interaction.user.mention + ":   :orange_circle: will join in 15 mins `" + datetime.datetime.now().strftime('%H:%M:%S') + "`",
+                    1)
+                await interaction.response.edit_message(content = c2)
                 self.interacted.append(interaction.user)
             else:
                 await interaction.response.send_message("You've already reacted to this!", ephemeral=True)
@@ -1048,8 +1071,8 @@ def run():
             c1 = talk_with_text.content
             c2 = c1.replace(
                 ctx.author.mention + ":   :hourglass_flowing_sand: pending",
-                  ctx.author.mention + ":   :green_circle: joined `" + datetime.datetime.now().strftime('%H:%M:%S') + "`",
-                    1)
+                ctx.author.mention + ":   :green_circle: joined `" + datetime.datetime.now().strftime('%H:%M:%S') + "`",
+                1)
             await talk_with_text.edit(content = c2)
             
 
