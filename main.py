@@ -196,6 +196,8 @@ def run():
                                                     description=message.content, color=discord.Color.blue())
                         em.set_author(name=str(JalaliDate.today()))
                         channel = message.guild.system_channel
+                        if (channel == None):
+                            channel = message.guild.text_channels[0]
                         webhook = await channel.create_webhook(name=message.author.name)
                         if (message.author.nick == None):
                             the_name = message.author.name
@@ -274,17 +276,25 @@ def run():
         task2 = None
         async def ask_for_brief():
             await asyncio.sleep(8)    # 8 seconds
-            await guild.system_channel.send(
-                "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
-            )
+            try:
+                await guild.system_channel.send(
+                    "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
+                )
+            except:
+                await guild.text_channels[0].send(
+                    "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
+                )
 
         # cancelling the zombie
         global the_zombie
         if (guild.id in the_zombie):
             if (member == the_zombie[guild.id]):
                 task, = [task for task in asyncio.all_tasks() if task.get_name() == f"dc zombie {guild.id}"]
-                task.cancel()         
-                await guild.system_channel.send("Well well you are not a zombie " + member.mention + "!")
+                task.cancel()
+                try:
+                    await guild.system_channel.send("Well well you are not a zombie " + member.mention + "!")
+                except:
+                    await guild.text_channels[0].send("Well well you are not a zombie " + member.mention + "!")
                 the_zombie[guild.id] = None
 
         # When user leaves voice channel
@@ -428,7 +438,6 @@ def run():
         print("this is ping. the server is:")
         print(ctx.guild.id)
         await ctx.send("Your Discord ID is " + str(ctx.author.id), ephemeral=True)
-
 
     @bot.hybrid_command(description="Generates report. default date: current month")
     async def viewstats(ctx, member: discord.Member,
@@ -586,7 +595,10 @@ def run():
             the_zombie[ctx.guild.id] = None
             zombie_hunter.record_hunt(driver=str(ctx.guild.id), reporter=str(ctx.author), zombie=str(member))
             await member.move_to(None, reason="You have been reported a zombie and didn't respond!")
-            await ctx.guild.system_channel.send(member.mention+"'s session terminated because they acted like a :zombie:!")
+            try:
+                await ctx.guild.system_channel.send(member.mention+"'s session terminated because they acted like a :zombie:!")
+            except:
+                await ctx.guild.text_channels[0].send(member.mention+"'s session terminated because they acted like a :zombie:!")
             
 
 
@@ -604,7 +616,10 @@ def run():
                 the_zombie[ctx.guild.id] = member
 
                 await ctx.send("You reported " + member.mention + " as a zombie!", ephemeral=True)
-                await ctx.guild.system_channel.send(member.mention+" you have been called a zombie. Show up in 3 minutes or you would be disconnected!")
+                try:
+                    await ctx.guild.system_channel.send(member.mention+" you have been called a zombie. Show up in 3 minutes or you would be disconnected!")
+                except:
+                    await ctx.guild.text_channels[0].send(member.mention+" you have been called a zombie. Show up in 3 minutes or you would be disconnected!")
                 task1 = asyncio.create_task(dc_user(), name=f"dc zombie {ctx.guild.id}")
                 await task1
 
