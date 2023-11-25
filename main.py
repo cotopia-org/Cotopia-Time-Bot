@@ -169,6 +169,22 @@ def run():
         await bot.tree.sync()
     
     @bot.event
+    async def on_guild_join(guild):
+        # Updating person table
+        count = 0
+        person = Person()
+        for i in guild.members:
+            if (i.bot == False):
+                if (i.avatar == None):
+                    person.add_person(guild.id, i.id, i.name)
+                else:
+                    person.add_person(guild.id, i.id, i.name, str(i.avatar))
+                
+                count = count + 1
+        
+        print(f"Updated {count} profiles!")
+    
+    @bot.event
     async def on_member_join(member):
         # Updating person table
         guild = member.guild
@@ -186,7 +202,7 @@ def run():
         print(f"Updated {count} profiles!")
     
 
-    
+
     @bot.event
     async def on_message(message):
         # print("this is on_message. the server is:")
