@@ -67,25 +67,22 @@ class Server():
         conn.close()
 
         da_dict = {}
-        # da_dict["active"] = result[4]
-        # da_dict["discord_guild_id"] = result[2]
-        # da_dict["discord_unavailable"] = result[3]
-        # da_dict["discord_banner"] = result[5]
-        # da_dict["discord_icon"] = result[6]
-        # da_dict["discord_created_at"] = result[7]
-        # da_dict["discord_name"] = result[8]
-        # da_dict["discord_description"] = result[9]
-        # da_dict["discord_member_count"] = result[10]
-        # da_dict["discord_owner_name"] = result[11]
-        # da_dict["discord_owner_name"] = result[11]
-        # da_dict["discord_preferred_locale"] = result[12]
-        # da_dict["note"] = result[13]
+        da_dict["active"] = result[4]
+        da_dict["discord_guild_id"] = result[2]
+        da_dict["discord_unavailable"] = result[3]
+        da_dict["discord_banner"] = result[5]
+        da_dict["discord_icon"] = result[6]
+        da_dict["discord_created_at"] = result[7]
+        da_dict["discord_name"] = result[8]
+        da_dict["discord_description"] = result[9]
+        da_dict["discord_member_count"] = result[10]
+        da_dict["discord_owner_name"] = result[11]
+        da_dict["discord_owner_name"] = result[11]
+        da_dict["discord_preferred_locale"] = result[12]
+        da_dict["note"] = result[13]
 
         
 
 
         return da_dict
     
-
-server = Server()
-print(server.getter(guild_id="1138441138508939274"))
