@@ -10,6 +10,7 @@ import report
 from gcal import calcal as GCalSetup
 from person import Person
 import auth
+from server import Server
 
 
 def today_jalali():
@@ -339,4 +340,32 @@ async def me(request: Request):
              discord_id = str(decoded['discord_id'])
     person = Person()
     info = person.get_person_info_by_id(guild_id, discord_id)
+    return info
+
+
+@app.get("/server")
+async def server(request: Request):
+    token = request.headers.get("Authorization")
+    if (token == None):
+        raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "You are not logged in!")
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:
+             raise HTTPException(
+                  status_code = status.HTTP_406_NOT_ACCEPTABLE,
+                  detail = "Unable to read token!")
+        
+        if (decoded == False):
+             raise HTTPException(
+                  status_code = status.HTTP_401_UNAUTHORIZED,
+                  detail = "Invalid Token! Login Again!")
+        else:
+             guild_id = str(decoded['discord_guild'])
+    
+    server = Server()
+    info = server.getter(guild_id = guild_id)
+    
     return info
