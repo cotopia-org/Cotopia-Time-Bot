@@ -366,6 +366,8 @@ async def server(request: Request):
              guild_id = str(decoded['discord_guild'])
     
     server = Server()
-    info = server.getter(guild_id = guild_id)
-    
-    return info
+    try:
+        info = server.getter(guild_id = guild_id)
+        return info
+    except:
+         return {"Message": "Not Available. Run /update_info in the server"}
