@@ -23,6 +23,7 @@ from briefing.brief_modal import BriefModal
 from person import MySettingsModal, Person
 from gcal import calcal as GCalSetup
 import auth
+from server import Server
 
 
 logger = settings.logging.getLogger("bot")
@@ -170,6 +171,19 @@ def run():
     
     @bot.event
     async def on_guild_join(guild):
+        # Updating server table
+        server = Server()
+        banner = None
+        icon = None
+        if (guild.banner != None):
+            banner = str(guild.banner)
+        if (guild.icon != None):
+            icon = str(guild.icon)
+        server.setter(guild_id = guild.id, unavailable = guild.unavailable, banner = banner,
+                      icon = icon, created_at = guild.created_at, name = guild.name,
+                      description = guild.description, member_count = guild.member_count, owner_name = guild.owner.name,
+                      preferred_locale = str(guild.preferred_locale))
+        
         # Updating person table
         count = 0
         person = Person()
@@ -1062,16 +1076,29 @@ def run():
 
 
     @bot.hybrid_command()
-    async def update_members(ctx):
+    async def update_info(ctx):
+        guild = ctx.guild
+        # Updating server table
+        server = Server()
+        banner = None
+        icon = None
+        if (guild.banner != None):
+            banner = str(guild.banner)
+        if (guild.icon != None):
+            icon = str(guild.icon)
+        server.setter(guild_id = guild.id, unavailable = guild.unavailable, banner = banner,
+                      icon = icon, created_at = guild.created_at, name = guild.name,
+                      description = guild.description, member_count = guild.member_count, owner_name = guild.owner.name,
+                      preferred_locale = str(guild.preferred_locale))
         # Updating person table
         count = 0
         person = Person()
-        for i in ctx.guild.members:
+        for i in guild.members:
             if (i.bot == False):
                 if (i.avatar == None):
-                    person.add_person(ctx.guild.id, i.id, i.name)
+                    person.add_person(guild.id, i.id, i.name)
                 else:
-                    person.add_person(ctx.guild.id, i.id, i.name, str(i.avatar))
+                    person.add_person(guild.id, i.id, i.name, str(i.avatar))
                 
                 count = count + 1
         
