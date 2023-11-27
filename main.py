@@ -347,15 +347,15 @@ def run():
             except:
                 return 1000000000
         def just_asked(doer: str):
-            if (get_previous_ask(doer) < 900): # 15 minutes
+            if (get_previous_ask(doer) < 8): # 8 seconds
                 return True
             else:
                 return False
         if (before.channel is None):
             if (briefing.should_record_brief(driver=str(guild.id), doer=str(member))):
                 if (just_asked(str(member)) == False):
-                    # Ask 15 minutes later
-                    last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow() + 900
+                    # Ask 8 seconds later
+                    last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow() + 8  # 8 seconds
                     task2 = asyncio.create_task(ask_for_brief(), name=f"ask for brief {str(member)}@{guild.id}")
                     await task2
                     
