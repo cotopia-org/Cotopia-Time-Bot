@@ -45,8 +45,22 @@ def record(member: Member, before: VoiceState, after: VoiceState, extra: dict):
             
     return
 
+
 # 🚗
 def session_start(m: Member, channel: str, e: dict):
+    # when a session starts, we expect that there is no "SESSION STARTED"
+    # in the pending_event table, logically
+    # so if we have one in there, there must be an error that we need to fix now
+    if ("SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m))):
+        print("unexpected session start is pending. Adding session end for it!")
+        notedic = {"NOTE": "Automatically added to fix an error in data!"}
+        note = json.dumps(notedic)
+        stop = write_event_to_db(str(m.guild.id), rightnow(), "SESSION ENDED", str(m), True, note)
+        start = get_pair_start_id(str(m.guild.id), str(m), "SESSION STARTED")
+        if (start != -1):
+            add_pairid_to_db(start, stop)
+        delete_all_pending_from_db(str(m.guild.id), str(m))
+
     notedic = {"channel": channel}
     notedic = notedic | e
     note = json.dumps(notedic)
@@ -54,42 +68,84 @@ def session_start(m: Member, channel: str, e: dict):
     pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note)
     write_pending_to_db(str(m.guild.id), str(m), "SESSION STARTED", pendingID)
 
+
 # 🚗
 def session_end(m: Member, channel: str, e: dict):
-    notedic = {"channel": channel}
-    notedic = notedic | e
-    note = json.dumps(notedic)
-    print ('SESSION ENDED')
-    stop = write_event_to_db(str(m.guild.id), rightnow(), "SESSION ENDED", str(m), True, note)
-    print("stop:    "+ str(stop))
-    start = get_pair_start_id(str(m.guild.id), str(m), "SESSION STARTED")
-    print("start:   "+ str(start))
-    if (start != -1):
+    # when we receive a session end, we expect a "SESSION STARTED" in pendings
+    if ("SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m))):
+        notedic = {"channel": channel}
+        notedic = notedic | e
+        note = json.dumps(notedic)
+        print ('SESSION ENDED')
+        stop = write_event_to_db(str(m.guild.id), rightnow(), "SESSION ENDED", str(m), True, note)
+        print("stop:    "+ str(stop))
+        start = get_pair_start_id(str(m.guild.id), str(m), "SESSION STARTED")
+        print("start:   "+ str(start))
+        if (start != -1):
+            add_pairid_to_db(start, stop)
+        delete_all_pending_from_db(str(m.guild.id), str(m))
+    else:
+        print("unexpected session end is received. Adding session start for it!")
+        notedic = {"NOTE": "Automatically added to fix an error in data!"}
+        note = json.dumps(notedic)
+        start = write_event_to_db(str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note)
+        notedic = {"channel": channel}
+        notedic = notedic | e
+        note = json.dumps(notedic)
+        print ('SESSION ENDED')
+        stop = write_event_to_db(str(m.guild.id), rightnow(), "SESSION ENDED", str(m), True, note)
         add_pairid_to_db(start, stop)
-    delete_all_pending_from_db(str(m.guild.id), str(m))
+        delete_all_pending_from_db(str(m.guild.id), str(m))
+
 
 # 🚗
 def session_pause(m: Member, channel: str, e: dict):
-    notedic = {"channel": channel}
-    notedic = notedic | e
-    note = json.dumps(notedic)
-    print('DEAFENED')
-    print ('SESSION PAUSED')
-    renew_pendings_of_a_doer(driver=str(m.guild.id), doer=str(m))
-    pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION PAUSED", str(m), True, note)
-    write_pending_to_db(str(m.guild.id), str(m), "SESSION PAUSED", pendingID)
+    # when we receive a session pause, we expect a "SESSION STARTED" in pendings
+    if ("SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m))):
+        notedic = {"channel": channel}
+        notedic = notedic | e
+        note = json.dumps(notedic)
+        print('DEAFENED')
+        print ('SESSION PAUSED')
+        # renew to fix that edge case, when user starts a session before midnight and pauses it,
+        # after midnight, it causes negative raw session hours for that next day
+        renew_pendings_of_a_doer(driver=str(m.guild.id), doer=str(m))
+        pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION PAUSED", str(m), True, note)
+        write_pending_to_db(str(m.guild.id), str(m), "SESSION PAUSED", pendingID)
+    else:
+        print("unexpected session pause is received. Adding session start for it!")
+        notedic = {"NOTE": "Automatically added to fix an error in data!"}
+        note = json.dumps(notedic)
+        start_pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note)
+        write_pending_to_db(str(m.guild.id), str(m), "SESSION STARTED", start_pendingID)
+        pause_pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION PAUSED", str(m), True, note)
+        write_pending_to_db(str(m.guild.id), str(m), "SESSION PAUSED", pause_pendingID)
+
 
 # 🚗
 def session_resume(m: Member, channel: str, e: dict):
-    notedic = {"channel": channel}
-    notedic = notedic | e
-    note = json.dumps(notedic)
-    print('UNDEAFENED')
-    print ('SESSION RESUMED')
-    stop = write_event_to_db(str(m.guild.id), rightnow(), "SESSION RESUMED", str(m), True, note)
-    start = get_pair_start_id(str(m.guild.id), str(m), "SESSION PAUSED")
-    if (start != -1):
+    # when we receive a session resume, we expect a "SESSION PAUSED" in pendings
+    if ("SESSION PAUSED" in get_pendings(driver=str(m.guild.id), doer=str(m))):
+        notedic = {"channel": channel}
+        notedic = notedic | e
+        note = json.dumps(notedic)
+        print('UNDEAFENED')
+        print ('SESSION RESUMED')
+        stop = write_event_to_db(str(m.guild.id), rightnow(), "SESSION RESUMED", str(m), True, note)
+        start = get_pair_start_id(str(m.guild.id), str(m), "SESSION PAUSED")
+        if (start != -1):
+            add_pairid_to_db(start, stop)
+    else:
+        print("unexpected session resume is received. Adding session pause for it!")
+        notedic = {"NOTE": "Automatically added to fix an error in data!"}
+        note = json.dumps(notedic)
+        start = write_event_to_db(str(m.guild.id), rightnow(), "SESSION PAUSED", str(m), True, note)
+        notedic = {"channel": channel}
+        notedic = notedic | e
+        note = json.dumps(notedic)
+        stop = write_event_to_db(str(m.guild.id), rightnow(), "SESSION RESUMED", str(m), True, note)
         add_pairid_to_db(start, stop)
+
 
 # 🚗
 def channel_change(m: Member, channel: VoiceChannel, e: dict):
@@ -104,27 +160,55 @@ def channel_change(m: Member, channel: VoiceChannel, e: dict):
     print ('CHANNEL CHANGED')
     write_event_to_db(str(m.guild.id), rightnow(), "CHANNEL CHANGED", str(m), False, note)
 
+
 # 🚗
 def talking_start(m: Member, channel: str, e: dict):
-    notedic = {"channel": channel}
-    notedic = notedic | e
-    note = json.dumps(notedic)
-    print('UNMUTED')
-    print('TALKING STARTED')
-    pendingID = write_event_to_db(str(m.guild.id), rightnow(), "TALKING STARTED", str(m), True, note)
-    write_pending_to_db(str(m.guild.id), str(m), "TALKING STARTED", pendingID)
+    # when we receive a talking start, we expect a "SESSION STARTED" in pendings
+    if ("SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m))):
+        notedic = {"channel": channel}
+        notedic = notedic | e
+        note = json.dumps(notedic)
+        print('UNMUTED')
+        print('TALKING STARTED')
+        pendingID = write_event_to_db(str(m.guild.id), rightnow(), "TALKING STARTED", str(m), True, note)
+        write_pending_to_db(str(m.guild.id), str(m), "TALKING STARTED", pendingID)
+    else:
+        print("unexpected talking start is received. Adding session start for it!")
+        notedic = {"NOTE": "Automatically added to fix an error in data!"}
+        note = json.dumps(notedic)
+        start_pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note)
+        write_pending_to_db(str(m.guild.id), str(m), "SESSION STARTED", start_pendingID)
+        talk_pendingID = write_event_to_db(str(m.guild.id), rightnow(), "TALKING STARTED", str(m), True, note)
+        write_pending_to_db(str(m.guild.id), str(m), "TALKING STARTED", talk_pendingID)
+
 
 # 🚗
 def talking_stop(m: Member, channel: str, e: dict):
-    notedic = {"channel": channel}
-    notedic = notedic | e
-    note = json.dumps(notedic)
-    stop = write_event_to_db(str(m.guild.id), rightnow(), "TALKING STOPPED", str(m), True, note)
-    start = get_pair_start_id(str(m.guild.id), str(m), "TALKING STARTED")
-    if (start != -1):
+    # when we receive a talking stop, we expect a "TALKING STARTED" in pendings
+    if ("TALKING STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m))):
+        notedic = {"channel": channel}
+        notedic = notedic | e
+        note = json.dumps(notedic)
+        stop = write_event_to_db(str(m.guild.id), rightnow(), "TALKING STOPPED", str(m), True, note)
+        start = get_pair_start_id(str(m.guild.id), str(m), "TALKING STARTED")
+        if (start != -1):
+            add_pairid_to_db(start, stop)
+        print('MUTED')
+        print('TALKING STOPPED')
+    else:
+        print("unexpected talking stop is received. Adding talking start for it!")
+        notedic = {"NOTE": "Automatically added to fix an error in data!"}
+        note = json.dumps(notedic)
+        start = write_event_to_db(str(m.guild.id), rightnow(), "TALKING STARTED", str(m), True, note)
+        notedic = {"channel": channel}
+        notedic = notedic | e
+        note = json.dumps(notedic)
+        stop = write_event_to_db(str(m.guild.id), rightnow(), "TALKING STOPPED", str(m), True, note)
         add_pairid_to_db(start, stop)
-    print('MUTED')
-    print('TALKING STOPPED')
+
+
+
+
 
 # returns epoch of NOW: int
 def rightnow():
@@ -358,3 +442,22 @@ def renew_pendings_of_a_doer(driver: str, doer: str):
 
 
 
+def get_pendings(driver: str, doer: str):
+    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
+                        password="Tp\ZS?gfLr|]'a", port=5432)
+    cur = conn.cursor()
+
+    cur.execute(f"SELECT * FROM pending_event WHERE driver = '{driver}' AND doer = '{doer}'")
+    current_pendings = cur.fetchall()
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    result = []
+    if (current_pendings == None):
+        return result
+    else:
+        for i in current_pendings:
+            result.append(i[3])
+        return result
