@@ -324,16 +324,24 @@ def run():
             if (c2 != "farghi nakarde ke baba"):
                 await talk_with_msg.edit(content = c2)
 
-
-        # Sending events
-        extra = {
-            "is_on_mobile": member.is_on_mobile(),
-            "raw_status": str(member.raw_status),
-            "status": str(member.status),
-            "web_status": str(member.web_status),
-            "desktop_status": str(member.desktop_status),
-            "mobile_status": str(member.mobile_status)
-        }
+        #####
+        #####
+        #####
+        # Sending the event
+        #####
+        #####
+        #####
+        try:
+            extra = {
+                "is_on_mobile": member.is_on_mobile(),
+                "raw_status": str(member.raw_status),
+                "status": str(member.status),
+                "web_status": str(member.web_status),
+                "desktop_status": str(member.desktop_status),
+                "mobile_status": str(member.mobile_status)
+            }
+        except:
+            extra = {"NOTE": "ERROR on making note!"}
         
         log_processor.record(member, before, after, extra)
         raw_logger.record(member, before, after)
