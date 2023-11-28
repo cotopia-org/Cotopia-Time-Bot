@@ -52,7 +52,7 @@ def session_start(m: Member, channel: str, e: dict):
     # in the pending_event table, logically
     # so if we have one in there, there must be an error that we need to fix now
     if ("SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m))):
-        print("unexpected session start is pending. Adding session end for it!")
+        print("unexpected session start is pending. Adding session end before it!")
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
         note = json.dumps(notedic)
         stop = write_event_to_db(str(m.guild.id), rightnow(), "SESSION ENDED", str(m), True, note)
@@ -118,6 +118,9 @@ def session_pause(m: Member, channel: str, e: dict):
         note = json.dumps(notedic)
         start_pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note)
         write_pending_to_db(str(m.guild.id), str(m), "SESSION STARTED", start_pendingID)
+        notedic = {"channel": channel}
+        notedic = notedic | e
+        note = json.dumps(notedic)
         pause_pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION PAUSED", str(m), True, note)
         write_pending_to_db(str(m.guild.id), str(m), "SESSION PAUSED", pause_pendingID)
 
@@ -180,6 +183,9 @@ def talking_start(m: Member, channel: str, e: dict):
         note = json.dumps(notedic)
         start_pendingID = write_event_to_db(str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note)
         write_pending_to_db(str(m.guild.id), str(m), "SESSION STARTED", start_pendingID)
+        notedic = {"channel": channel}
+        notedic = notedic | e
+        note = json.dumps(notedic)
         talk_pendingID = write_event_to_db(str(m.guild.id), rightnow(), "TALKING STARTED", str(m), True, note)
         write_pending_to_db(str(m.guild.id), str(m), "TALKING STARTED", talk_pendingID)
 
