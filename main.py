@@ -343,7 +343,7 @@ def run():
         except:
             extra = {"NOTE": "ERROR on making note!"}
         
-        log_processor.record(member, before, after, extra)
+        await log_processor.record(member, before, after, extra)
         raw_logger.record(member, before, after)
 
 

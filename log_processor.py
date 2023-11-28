@@ -7,7 +7,7 @@ import json
 # the discord bot calls this on_voice_state_update
 # it checks the event kind
 # and calls the methods of each kind when needed
-def record(member: Member, before: VoiceState, after: VoiceState, extra: dict):
+async def record(member: Member, before: VoiceState, after: VoiceState, extra: dict):
     
     if (before.channel is None):
         # start new session
