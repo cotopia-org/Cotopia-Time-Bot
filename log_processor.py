@@ -20,8 +20,8 @@ def record(member: Member, before: VoiceState, after: VoiceState, extra: dict):
         return
     elif (after.channel is None):
         # end session
-        talking_stop(member, before.channel.name, extra)
-        session_resume(member, before.channel.name, extra)
+        talking_stop(member, before.channel.name, extra, True)
+        session_resume(member, before.channel.name, extra, True)
         session_end(member, before.channel.name, extra)
         return
 
@@ -123,7 +123,7 @@ def session_pause(m: Member, channel: str, e: dict):
 
 
 # 🚗
-def session_resume(m: Member, channel: str, e: dict):
+def session_resume(m: Member, channel: str, e: dict, comes_from_s_end: bool | None = None):
     # when we receive a session resume, we expect a "SESSION PAUSED" in pendings
     if ("SESSION PAUSED" in get_pendings(driver=str(m.guild.id), doer=str(m))):
         notedic = {"channel": channel}
@@ -136,6 +136,8 @@ def session_resume(m: Member, channel: str, e: dict):
         if (start != -1):
             add_pairid_to_db(start, stop)
     else:
+        if (comes_from_s_end == True):
+            return
         print("unexpected session resume is received. Adding session pause for it!")
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
         note = json.dumps(notedic)
@@ -183,7 +185,7 @@ def talking_start(m: Member, channel: str, e: dict):
 
 
 # 🚗
-def talking_stop(m: Member, channel: str, e: dict):
+def talking_stop(m: Member, channel: str, e: dict, comes_from_s_end: bool | None = None):
     # when we receive a talking stop, we expect a "TALKING STARTED" in pendings
     if ("TALKING STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m))):
         notedic = {"channel": channel}
@@ -196,6 +198,8 @@ def talking_stop(m: Member, channel: str, e: dict):
         print('MUTED')
         print('TALKING STOPPED')
     else:
+        if (comes_from_s_end ==  True):
+            return
         print("unexpected talking stop is received. Adding talking start for it!")
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
         note = json.dumps(notedic)
