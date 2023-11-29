@@ -1,5 +1,5 @@
 import psycopg2
-import datetime
+from datetime import datetime, timedelta
 
 
 
@@ -16,11 +16,11 @@ class OnlinePattern():
         conn.close()
 
     # resolution is in seconds
-    def a_day(self, day: datetime.datetime, resolution: int):
-        day_start = int(datetime.datetime(
+    def a_day(self, day: datetime, resolution: int):
+        day_start = int(datetime(
                     year=day.year, month=day.month, day=day.day, hour=0, minute=0, second=0).strftime('%s'))
-        day_end = int(datetime.datetime(
-                    year=day.year, month=day.month, day=day.day + 1, hour=0, minute=0, second=0).strftime('%s'))
+        day_end = int((datetime(
+                    year=day.year, month=day.month, day=day.day, hour=0, minute=0, second=0) + timedelta(days=1)).strftime('%s'))
         number_of_slots = int(24 * 3600 / resolution)
         arr = []
         n = 1
@@ -70,6 +70,47 @@ class OnlinePattern():
         return arr
 
 
-# op = OnlinePattern(doer="kharrati")
-# day = datetime.datetime(year=2023, month=10, day=16)
-# print(op.a_day(day=day, resolution=3600))
+    def a_period(self,
+                 start_day: datetime, end_day: datetime,
+                 resolution: int, scope: str):
+        if (scope == "WEEK"):
+            return self.a_period_weekly(start_day, end_day, resolution)
+        elif (scope == "MONTH"):
+            return self.a_period_monthly(start_day, end_day, resolution)
+        
+    
+    def a_period_weekly(self,
+                        start_day: datetime, end_day: datetime,
+                        resolution: int):
+        
+        all = [[], [], [], [], [], [], []]
+        
+        the_day = start_day
+        while (the_day <= end_day):
+            arr = self.a_day(day = the_day, resolution = resolution)
+            all[the_day.weekday()].append(arr)
+            the_day = the_day + timedelta(days=1)
+        
+        return all
+
+
+    def a_period_monthly(self,
+                 start_day: datetime, end_day: datetime,
+                 resolution: int):
+        pass
+
+
+
+
+
+
+
+
+
+
+
+op = OnlinePattern(doer="kharrati")
+day = datetime(year=2023, month=10, day=14)
+end = datetime(year=2023, month=11, day=16)
+
+print(op.a_period_weekly(start_day=day, end_day=end, resolution=3600))
