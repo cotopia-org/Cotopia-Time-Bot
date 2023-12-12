@@ -19,8 +19,7 @@ class OnlinePattern():
     def a_day(self, day: datetime, resolution: int):
         day_start = int(datetime(
                     year=day.year, month=day.month, day=day.day, hour=0, minute=0, second=0).strftime('%s'))
-        day_end = int((datetime(
-                    year=day.year, month=day.month, day=day.day, hour=0, minute=0, second=0) + timedelta(days=1)).strftime('%s'))
+        day_end = day_start + 86399
         number_of_slots = int(24 * 3600 / resolution)
         arr = []
         n = 1
@@ -52,7 +51,8 @@ class OnlinePattern():
                         session_end = events[e][2] + events[e][9]
                         next_slot_start = slot_end
                         while (next_slot_start <= session_end):
-                            arr[index] = True
+                            if (index <= (number_of_slots - 1)):
+                                arr[index] = True
                             index = index + 1
                             next_slot_start = next_slot_start + resolution
                     # berim event ba'di
@@ -66,8 +66,32 @@ class OnlinePattern():
                 e = e + 1
                 if (len(events) <= e):
                         break
+        # ممکنه که روز با یه شسن باز از روز قبلی شروع بشه
+        # این هندل نشده
+        # اگر توی این روز سشن اندی بود که قبلش استارت نبود، همه‌ی اسلات‌های قبل از اون باید ترو بشن
+        first_start_of_day = events[0][2]
+        print(f"first_start_of_day is {first_start_of_day}")
+        # looking for session end before it
+        the_end_before_start = -1
+        for i in self.data:
+            if (day_start <= i[2] < first_start_of_day):
+                if (i[3] == "SESSION ENDED"):
+                    the_end_before_start = i[2]
+        
+        if (the_end_before_start != -1):
+            print(f"the_end_before_start  is {the_end_before_start }")
+            # all slots with the start smaller than this, should be true
+            slot_start = day_start
+            i = 0
+            while(slot_start < the_end_before_start):
+                arr[i] = True
+                slot_start = slot_start + resolution
+                i = i + 1
                         
         return arr
+
+
+
 
 
     def a_period(self,
