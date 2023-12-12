@@ -40,6 +40,8 @@ origins = [
     "https://app.cotopia.social/",
     "https://time-master-eight.vercel.app/",
     "https://time-master-eight.vercel.app",
+    "https://cotopia-bot-manager.vercel.app/",
+    "https://cotopia-bot-manager.vercel.app",
     "http://localhost",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
