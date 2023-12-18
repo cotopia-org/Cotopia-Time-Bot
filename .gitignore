@@ -10,3 +10,5 @@ oldlogs/
 plogs/
 rawreports/
 .DS_Store
+
+# this is just for testing git lab
