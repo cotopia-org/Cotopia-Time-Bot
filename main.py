@@ -30,7 +30,7 @@ from talk_with import TalkWithView
 logger = settings.logging.getLogger("bot")
 
 the_zombie = {}
-last_brief_ask = {}
+# last_brief_ask = {}
 last_profile_update = {}
 temp_channels = []
 temp_messages = {}
@@ -135,39 +135,39 @@ def run():
                 the_zombie[message.guild.id] = None
         
         # RECORDING BRIEF
-        try:
-            replied_to = await message.channel.fetch_message(message.reference.message_id)
-            if (replied_to.author == bot.user):
-                if ("Reply to this message to submit a brief." in replied_to.content):
-                    if (message.author in replied_to.mentions):
-                        briefing.write_to_db(brief=message.content, doer=str(message.author), driver=str(message.guild.id))
-                        em = discord.Embed(title=f"#brief",
-                                                    description=message.content, color=discord.Color.blue())
-                        em.set_author(name=str(JalaliDate.today()))
-                        channel = message.guild.system_channel
-                        if (channel == None):
-                            channel = message.guild.text_channels[0]
-                        webhook = await channel.create_webhook(name=message.author.name)
-                        if (message.author.nick == None):
-                            the_name = message.author.name
-                        else:
-                            the_name = message.author.nick
-                        await webhook.send(
-                            embed=em, username=the_name, avatar_url=message.author.avatar)
-                        webhooks = await channel.webhooks()
-                        for w in webhooks:
-                            await w.delete()
-                        await replied_to.delete()
-                        await message.delete()
-                        try:
-                            task, = [task for task in asyncio.all_tasks() if task.get_name() ==
-                                     f"ask for brief {str(message.author)}@{message.guild.id}"]
-                            task.cancel()
-                        except:
-                            print("Asking for brief was not canceled! Don't panic tho.")
+        # try:
+        #     replied_to = await message.channel.fetch_message(message.reference.message_id)
+        #     if (replied_to.author == bot.user):
+        #         if ("Reply to this message to submit a brief." in replied_to.content):
+        #             if (message.author in replied_to.mentions):
+        #                 briefing.write_to_db(brief=message.content, doer=str(message.author), driver=str(message.guild.id))
+        #                 em = discord.Embed(title=f"#brief",
+        #                                             description=message.content, color=discord.Color.blue())
+        #                 em.set_author(name=str(JalaliDate.today()))
+        #                 channel = message.guild.system_channel
+        #                 if (channel == None):
+        #                     channel = message.guild.text_channels[0]
+        #                 webhook = await channel.create_webhook(name=message.author.name)
+        #                 if (message.author.nick == None):
+        #                     the_name = message.author.name
+        #                 else:
+        #                     the_name = message.author.nick
+        #                 await webhook.send(
+        #                     embed=em, username=the_name, avatar_url=message.author.avatar)
+        #                 webhooks = await channel.webhooks()
+        #                 for w in webhooks:
+        #                     await w.delete()
+        #                 await replied_to.delete()
+        #                 await message.delete()
+        #                 try:
+        #                     task, = [task for task in asyncio.all_tasks() if task.get_name() ==
+        #                              f"ask for brief {str(message.author)}@{message.guild.id}"]
+        #                     task.cancel()
+        #                 except:
+        #                     print("Asking for brief was not canceled! Don't panic tho.")
 
-        except:
-            print("the message is not relevant!")
+        # except:
+        #     print("the message is not relevant!")
 
         
     @bot.event
@@ -222,17 +222,17 @@ def run():
         print(guild.id)
 
         # func that asks for brief after a while
-        task2 = None
-        async def ask_for_brief():
-            await asyncio.sleep(8)    # 8 seconds
-            try:
-                await guild.system_channel.send(
-                    "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
-                )
-            except:
-                await guild.text_channels[0].send(
-                    "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
-                )
+        # task2 = None
+        # async def ask_for_brief():
+        #     await asyncio.sleep(8)    # 8 seconds
+        #     try:
+        #         await guild.system_channel.send(
+        #             "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
+        #         )
+        #     except:
+        #         await guild.text_channels[0].send(
+        #             "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
+        #         )
 
         # cancelling the zombie
         global the_zombie
@@ -266,11 +266,11 @@ def run():
             except:
                 print("could not get cal!")
             # cancelling asking for brief
-            try:
-                task, = [task for task in asyncio.all_tasks() if task.get_name() == f"ask for brief {str(member)}@{guild.id}"]
-                task.cancel()
-            except:
-                print("Asking for brief was not canceled! Don't panic tho.")
+            # try:
+            #     task, = [task for task in asyncio.all_tasks() if task.get_name() == f"ask for brief {str(member)}@{guild.id}"]
+            #     task.cancel()
+            # except:
+            #     print("Asking for brief was not canceled! Don't panic tho.")
         
         # When user joins a /talk_with channel
         global temp_messages
@@ -348,24 +348,24 @@ def run():
 
 
         # ASKING FOR BRIEF
-        global last_brief_ask
-        def get_previous_ask(doer: str):
-            try:
-                return rightnow() - last_brief_ask[doer + "@" + str(guild.id)]
-            except:
-                return 1000000000
-        def just_asked(doer: str):
-            if (get_previous_ask(doer) < 8): # 8 seconds
-                return True
-            else:
-                return False
-        if (before.channel is None):
-            if (briefing.should_record_brief(driver=str(guild.id), doer=str(member))):
-                if (just_asked(str(member)) == False):
-                    # Ask 8 seconds later
-                    last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow() + 8  # 8 seconds
-                    task2 = asyncio.create_task(ask_for_brief(), name=f"ask for brief {str(member)}@{guild.id}")
-                    await task2
+        # global last_brief_ask
+        # def get_previous_ask(doer: str):
+        #     try:
+        #         return rightnow() - last_brief_ask[doer + "@" + str(guild.id)]
+        #     except:
+        #         return 1000000000
+        # def just_asked(doer: str):
+        #     if (get_previous_ask(doer) < 8): # 8 seconds
+        #         return True
+        #     else:
+        #         return False
+        # if (before.channel is None):
+        #     if (briefing.should_record_brief(driver=str(guild.id), doer=str(member))):
+        #         if (just_asked(str(member)) == False):
+        #             # Ask 8 seconds later
+        #             last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow() + 8  # 8 seconds
+        #             task2 = asyncio.create_task(ask_for_brief(), name=f"ask for brief {str(member)}@{guild.id}")
+        #             await task2
                     
         
     @bot.event
@@ -1126,12 +1126,12 @@ def run():
     async def server_log(ctx):
         if (ctx.author.id == 592386692569366559):
             global the_zombie
-            global last_brief_ask
+            # global last_brief_ask
             global last_profile_update
             global temp_channels
             global temp_messages
             await ctx.send("the_zombie: \n" + str(the_zombie), ephemeral=True)
-            await ctx.send("last_brief_ask: \n" + str(last_brief_ask), ephemeral=True)
+            # await ctx.send("last_brief_ask: \n" + str(last_brief_ask), ephemeral=True)
             await ctx.send("last_profile_update: \n" + str(last_profile_update), ephemeral=True)
             await ctx.send("temp_channels: \n" + str(temp_channels), ephemeral=True)
             await ctx.send("temp_messages: \n" + str(temp_messages), ephemeral=True)
