@@ -19,7 +19,7 @@ import psycopg2
 client = api.Oauth(
     credentials_path='gcal/credentials.json',
     scopes=['https://www.googleapis.com/auth/calendar.readonly'],
-    redirect_uri='https://app.cotopia.social/goauth'
+    redirect_uri='https://time-api.cotopia.social/goauth'
 )
 
 

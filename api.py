@@ -28,7 +28,7 @@ app = FastAPI(
         "email": "ali.kharrati+timemaster@gmail.com",
     },
     servers=[
-        {"url": "https://app.cotopia.social", "description": "Staging environment"},
+        {"url": "https://time-api.cotopia.social", "description": "Staging environment"},
         {"url": "http://127.0.0.1:8000", "description": "Local environment"},
     ]
 )
@@ -36,8 +36,8 @@ app = FastAPI(
 origins = [
     "https://time-bot.cotopia.social",
     "https://time-bot.cotopia.social/",
-    "https://app.cotopia.social",
-    "https://app.cotopia.social/",
+    "https://time-api.cotopia.social",
+    "https://time-api.cotopia.social/",
     "https://time-master-eight.vercel.app/",
     "https://time-master-eight.vercel.app",
     "https://cotopia-bot-manager.vercel.app/",
@@ -66,7 +66,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return "Visit https://app.cotopia.social/docs"
+    return "Visit https://time-api.cotopia.social/docs"
 
 @app.get("/doers")
 async def get_doers(start: int, end: int, request: Request):

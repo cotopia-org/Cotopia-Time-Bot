@@ -929,7 +929,7 @@ def run():
     @bot.hybrid_command()
     async def connect_google_calendar(ctx):
         g_redirect_url = GCalSetup.gen_GOAuth_URL()
-        link = "https://app.cotopia.social/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id) + "&c=" + str(ctx.author.name)
+        link = "https://time-api.cotopia.social/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id) + "&c=" + str(ctx.author.name)
         # link = "http://127.0.0.1:8000/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id) + "&c=" + str(ctx.author.name)
         person = Person()
         token = person.get_google_token(ctx.guild.id, ctx.author.id)
