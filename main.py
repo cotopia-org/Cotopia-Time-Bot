@@ -18,8 +18,8 @@ import log_processor
 import raw_logger
 import report
 import zombie_hunter
-import briefing.briefing as briefing
-from briefing.brief_modal import BriefModal
+# import briefing.briefing as briefing
+# from briefing.brief_modal import BriefModal
 from person import MySettingsModal, Person
 from gcal import calcal as GCalSetup
 import auth
@@ -908,12 +908,12 @@ def run():
         await ctx.send(text)
 
 
-    @bot.tree.command()
-    async def brief(interaction: discord.Interaction):
-        brief_modal = BriefModal()
-        brief_modal.user = interaction.user
-        brief_modal.driver = interaction.guild_id
-        await interaction.response.send_modal(brief_modal)
+    # @bot.tree.command()
+    # async def brief(interaction: discord.Interaction):
+    #     brief_modal = BriefModal()
+    #     brief_modal.user = interaction.user
+    #     brief_modal.driver = interaction.guild_id
+    #     await interaction.response.send_modal(brief_modal)
     
     
     @bot.tree.command()
