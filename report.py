@@ -212,35 +212,14 @@ def get_doers_list(driver: str, start_epoch: int, end_epoch: int):
 
 # ✅
 def make_board(driver: str, start_epoch: int, end_epoch: int):
-    doers = []
+    doers = get_doers_list(driver=driver, start_epoch=start_epoch, end_epoch=end_epoch)
     the_board = {}
-    conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
-                        password="Tp\ZS?gfLr|]'a", port=5432)
-    cur = conn.cursor()
-
-    cur.execute("""
-                SELECT DISTINCT doer From discord_event
-                WHERE epoch >= %s
-                AND epoch <= %s
-                AND driver = %s
-                ORDER BY doer;
-                """, (start_epoch, end_epoch, driver))
-    data = cur.fetchall()
-
-    for row in data:
-        if (row[0] != None and row[0] != "/today"):
-            doers.append(row[0])
 
     for user in doers:
         user_report = make_report(driver=driver, doer=user, start_epoch=start_epoch, end_epoch=end_epoch)
         the_board[user] = user_report["Net Session Hours"]
     
     sorted_board = sorted(the_board.items(), key=lambda x: x[1], reverse=True) 
-        
-
-    conn.commit()
-    cur.close()
-    conn.close()
 
     return sorted_board
 
