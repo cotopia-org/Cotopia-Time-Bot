@@ -24,7 +24,7 @@ class TalkWithView(discord.ui.View):
 
     @discord.ui.button(label="decline",
                        style=discord.ButtonStyle.red)
-    async def decline(self, interaction: discord.Integration, button: discord.ui.Button):
+    async def decline(self, interaction: discord.Interaction, button: discord.ui.Button):
         if (interaction.user in self.members):
 
 
@@ -80,7 +80,7 @@ You and all other members in the temp voice channel, will be disconnected from a
             await interaction.response.send_message("You're not even invited! :unamused:", ephemeral=True)
     
     @discord.ui.button(label="I'll join in 5 mins")
-    async def fivemins(self, interaction: discord.Integration, button: discord.ui.Button):
+    async def fivemins(self, interaction: discord.Interaction, button: discord.ui.Button):
         if (interaction.user in self.members):
             if (interaction.user not in self.interacted):
                 c1 = interaction.message.content
@@ -96,7 +96,7 @@ You and all other members in the temp voice channel, will be disconnected from a
             await interaction.response.send_message("You're not even invited! :unamused:", ephemeral=True)
     
     @discord.ui.button(label="I'll join in 15 mins")
-    async def fifteenmins(self, interaction: discord.Integration, button: discord.ui.Button):
+    async def fifteenmins(self, interaction: discord.Interaction, button: discord.ui.Button):
         if (interaction.user in self.members):
             if (interaction.user not in self.interacted):
                 c1 = interaction.message.content
