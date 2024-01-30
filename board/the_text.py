@@ -150,7 +150,7 @@ async def gen_inmaah_board(guild):
     title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
     updated_on = JalaliDateTime.now().strftime("%H:%M")
 
-    text = ("Net Session Hours of " + str(title_date) + "\n` updated on " + updated_on + "`\n------------------------------\n")
+    text = ("Net Session Hours of " + str(title_date) + "\n`updated on " + updated_on + "`\n------------------------------\n")
     for l in the_board:
         text = text + str(l[1]) + " | " + l[0] + "\n"
     
@@ -216,7 +216,7 @@ async def update_inmaah_board(guild):
         updated_on = JalaliDateTime.now().strftime("%H:%M")
 
 
-        text = ("Net Session Hours of " + str(title_date) + "\n` updated on " + updated_on + "`\n------------------------------\n")
+        text = ("Net Session Hours of " + str(title_date) + "\n`updated on " + updated_on + "`\n------------------------------\n")
         for l in the_board:
             text = text + str(l[1]) + " | " + l[0] + "\n"
         
