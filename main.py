@@ -237,8 +237,7 @@ def run():
 
         # when user joins voice
         if (before.channel is None):
-            await update_dirooz_board(guild=guild)
-            await update_inmaah_board(guild=guild)
+            pass
         
         # When user leaves voice channel
         if (after.channel is None):
@@ -339,6 +338,11 @@ def run():
         
         await log_processor.record(member, before, after, extra)
         raw_logger.record(member, before, after)
+
+
+        # updating boards 
+        await update_dirooz_board(guild=guild)
+        await update_inmaah_board(guild=guild)
 
 
                     
