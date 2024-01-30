@@ -1,4 +1,5 @@
 import json
+import sqlite3
 from typing import Optional
 
 import settings
@@ -25,7 +26,7 @@ from gcal import calcal as GCalSetup
 import auth
 from server import Server
 from talk_with import TalkWithView
-
+from board.the_text import gen_dirooz_board, update_dirooz_board
 
 logger = settings.logging.getLogger("bot")
 
@@ -221,18 +222,6 @@ def run():
         print("this is on_voice_state_update. the server is:")
         print(guild.id)
 
-        # func that asks for brief after a while
-        # task2 = None
-        # async def ask_for_brief():
-        #     await asyncio.sleep(8)    # 8 seconds
-        #     try:
-        #         await guild.system_channel.send(
-        #             "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
-        #         )
-        #     except:
-        #         await guild.text_channels[0].send(
-        #             "Welcome " + member.mention + "!\nWhat are you going to do today?\nReply to this message to submit a brief."
-        #         )
 
         # cancelling the zombie
         global the_zombie
@@ -246,6 +235,10 @@ def run():
                     await guild.text_channels[0].send("Well well you are not a zombie " + member.mention + "!")
                 the_zombie[guild.id] = None
 
+        # when user joins voice
+        if (before.channel is None):
+            await update_dirooz_board(guild=guild)
+        
         # When user leaves voice channel
         if (after.channel is None):
             # Update user profile
@@ -347,25 +340,6 @@ def run():
         raw_logger.record(member, before, after)
 
 
-        # ASKING FOR BRIEF
-        # global last_brief_ask
-        # def get_previous_ask(doer: str):
-        #     try:
-        #         return rightnow() - last_brief_ask[doer + "@" + str(guild.id)]
-        #     except:
-        #         return 1000000000
-        # def just_asked(doer: str):
-        #     if (get_previous_ask(doer) < 8): # 8 seconds
-        #         return True
-        #     else:
-        #         return False
-        # if (before.channel is None):
-        #     if (briefing.should_record_brief(driver=str(guild.id), doer=str(member))):
-        #         if (just_asked(str(member)) == False):
-        #             # Ask 8 seconds later
-        #             last_brief_ask[str(member) + "@" + str(guild.id)] = rightnow() + 8  # 8 seconds
-        #             task2 = asyncio.create_task(ask_for_brief(), name=f"ask for brief {str(member)}@{guild.id}")
-        #             await task2
                     
         
     @bot.event
@@ -1142,6 +1116,10 @@ def run():
     async def free_time(ctx, member: discord.Member):
         await ctx.send(member.mention + "'s  free time for this week :\nSat       : none\nSun      : none\nMon     : 9-17\nTues     : 9-10,12-17\nWed     : 12-17\nThurs  : 9-17\nFri        : 9-10, 12-17\n")
 
+    @bot.hybrid_command()
+    async def create_dirooz_board(ctx):
+        await gen_dirooz_board(guild=ctx.guild)
+        await ctx.send("Done!", ephemeral=True)
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
 
