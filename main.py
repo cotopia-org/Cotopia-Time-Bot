@@ -26,7 +26,7 @@ from gcal import calcal as GCalSetup
 import auth
 from server import Server
 from talk_with import TalkWithView
-from board.the_text import gen_dirooz_board, update_dirooz_board
+from board.the_text import gen_dirooz_board, update_dirooz_board, gen_inmaah_board, update_inmaah_board
 
 logger = settings.logging.getLogger("bot")
 
@@ -238,6 +238,7 @@ def run():
         # when user joins voice
         if (before.channel is None):
             await update_dirooz_board(guild=guild)
+            await update_inmaah_board(guild=guild)
         
         # When user leaves voice channel
         if (after.channel is None):
@@ -1119,6 +1120,11 @@ def run():
     @bot.hybrid_command()
     async def create_dirooz_board(ctx):
         await gen_dirooz_board(guild=ctx.guild)
+        await ctx.send("Done!", ephemeral=True)
+    
+    @bot.hybrid_command()
+    async def create_inmaah_board(ctx):
+        await gen_inmaah_board(guild=ctx.guild)
         await ctx.send("Done!", ephemeral=True)
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
