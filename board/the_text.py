@@ -26,9 +26,9 @@ async def gen_dirooz_board(guild):
     category = discord.utils.get(guild.categories, name="JOBS")
     if category is None:
         category = await guild.create_category("JOBS")
-    da_channel = discord.utils.get(guild.text_channels, name="status")
+    da_channel = discord.utils.get(guild.text_channels, name="📊-status")
     if da_channel is None:
-        da_channel = await guild.create_text_channel(category=category, name="status")
+        da_channel = await guild.create_text_channel(category=category, name="📊-status")
     
     # make the board
     now = today_jalali()
@@ -128,9 +128,9 @@ async def gen_inmaah_board(guild):
     category = discord.utils.get(guild.categories, name="JOBS")
     if category is None:
         category = await guild.create_category("JOBS")
-    da_channel = discord.utils.get(guild.text_channels, name="status")
+    da_channel = discord.utils.get(guild.text_channels, name="📊-status")
     if da_channel is None:
-        da_channel = await guild.create_text_channel(category=category, name="status")
+        da_channel = await guild.create_text_channel(category=category, name="📊-status")
     
     # make the board
     log_processor.renew_pendings(driver=str(guild.id))
