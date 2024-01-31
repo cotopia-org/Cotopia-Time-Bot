@@ -98,6 +98,9 @@ def run():
                 count = count + 1
         
         print(f"Updated {count} profiles!")
+
+        await gen_inmaah_board(guild=guild)
+        await gen_dirooz_board(guild=guild)
     
     @bot.event
     async def on_member_join(member):
