@@ -343,9 +343,11 @@ def run():
         raw_logger.record(member, before, after)
 
 
-        # updating boards 
-        await update_dirooz_board(guild=guild)
+        # updating boards
+        # updating inmaah first, so pendings are renewed for dirooz report
         await update_inmaah_board(guild=guild)
+        await update_dirooz_board(guild=guild)
+        
 
 
                     
