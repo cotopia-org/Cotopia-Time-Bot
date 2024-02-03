@@ -53,7 +53,7 @@ async def gen_dirooz_board(guild):
         text = text + str(l[1]) + " | " + l[0] + "\n"
     
     # send the text
-    msg = await da_channel.send(text)
+    msg = await da_channel.send(text + "‌")
 
     # record to db
     conn = sqlite3.connect("timeboards.db")
@@ -116,7 +116,7 @@ async def update_dirooz_board(guild):
             text = text + str(l[1]) + " | " + l[0] + "\n"
 
         # send edit
-        await message.edit(content=text)
+        await message.edit(content=text + "‌")
         # update db
         cursor.execute(f"UPDATE dirooz_boards SET last_update = {rightnow()} WHERE guild_id = {guild.id};")
         conn.commit()
@@ -157,7 +157,7 @@ async def gen_inmaah_board(guild):
         text = text + str(l[1]) + " | " + l[0] + "\n"
     
     # send the text
-    msg = await da_channel.send(text)
+    msg = await da_channel.send(text + "‌")
 
     # record to db
     conn = sqlite3.connect("timeboards.db")
@@ -223,7 +223,7 @@ async def update_inmaah_board(guild):
             text = text + str(l[1]) + " | " + l[0] + "\n"
         
         # send edit
-        await message.edit(content=text)
+        await message.edit(content=text + "‌")
         # update db
         cursor.execute(f"UPDATE inmaah_boards SET last_update = {rightnow()} WHERE guild_id = {guild.id};")
         conn.commit()
