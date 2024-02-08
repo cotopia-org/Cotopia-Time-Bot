@@ -1,8 +1,8 @@
-import sqlite3
 import discord
 
 from persiantools.jdatetime import JalaliDateTime
 from persiantools.jdatetime import JalaliDate
+import psycopg2
 import pytz
 import time
 
@@ -56,14 +56,20 @@ async def gen_dirooz_board(guild):
     msg = await da_channel.send(text + "‌")
 
     # record to db
-    conn = sqlite3.connect("timeboards.db")
+    conn = psycopg2.connect(
+        host="localhost",
+        dbname="postgres",
+        user="postgres",
+        password="Tp\ZS?gfLr|]'a",
+        port=5432,
+    )
     cursor = conn.cursor()
     cursor.execute(
         """   CREATE TABLE IF NOT EXISTS dirooz_boards(
-                                guild_id INT NOT NULL,
-                                channel_id INT NOT NULL,
-                                msg_id INT NOT NULL,
-                                last_update INT NOT NULL); """)
+                                guild_id BIGINT NOT NULL,
+                                channel_id BIGINT NOT NULL,
+                                msg_id BIGINT NOT NULL,
+                                last_update BIGINT NOT NULL); """)
     cursor.execute(f"DELETE FROM dirooz_boards WHERE guild_id = {guild.id};")
     cursor.execute(f"""     INSERT INTO dirooz_boards VALUES
                                 ({guild.id}, {da_channel.id}, {msg.id}, {rightnow()});""")
@@ -74,7 +80,13 @@ async def gen_dirooz_board(guild):
 
 async def update_dirooz_board(guild):
     # get msg from db
-    conn = sqlite3.connect("timeboards.db")
+    conn = psycopg2.connect(
+        host="localhost",
+        dbname="postgres",
+        user="postgres",
+        password="Tp\ZS?gfLr|]'a",
+        port=5432,
+    )
     cursor = conn.cursor()
     cursor.execute(f"SELECT * FROM dirooz_boards WHERE guild_id = {guild.id};")
     db_msg = cursor.fetchone()
@@ -160,14 +172,20 @@ async def gen_inmaah_board(guild):
     msg = await da_channel.send(text + "‌")
 
     # record to db
-    conn = sqlite3.connect("timeboards.db")
+    conn = psycopg2.connect(
+        host="localhost",
+        dbname="postgres",
+        user="postgres",
+        password="Tp\ZS?gfLr|]'a",
+        port=5432,
+    )
     cursor = conn.cursor()
     cursor.execute(
         """   CREATE TABLE IF NOT EXISTS inmaah_boards(
-                                guild_id INT NOT NULL,
-                                channel_id INT NOT NULL,
-                                msg_id INT NOT NULL,
-                                last_update INT NOT NULL); """)
+                                guild_id BIGINT NOT NULL,
+                                channel_id BIGINT NOT NULL,
+                                msg_id BIGINT NOT NULL,
+                                last_update BIGINT NOT NULL); """)
     cursor.execute(f"DELETE FROM inmaah_boards WHERE guild_id = {guild.id};")
     cursor.execute(f"""     INSERT INTO inmaah_boards VALUES
                                 ({guild.id}, {da_channel.id}, {msg.id}, {rightnow()});""")
@@ -178,7 +196,13 @@ async def gen_inmaah_board(guild):
 
 async def update_inmaah_board(guild):
     # get msg from db
-    conn = sqlite3.connect("timeboards.db")
+    conn = psycopg2.connect(
+        host="localhost",
+        dbname="postgres",
+        user="postgres",
+        password="Tp\ZS?gfLr|]'a",
+        port=5432,
+    )
     cursor = conn.cursor()
     cursor.execute(f"SELECT * FROM inmaah_boards WHERE guild_id = {guild.id};")
     db_msg = cursor.fetchone()
