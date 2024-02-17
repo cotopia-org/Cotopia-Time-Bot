@@ -4,11 +4,17 @@ notes.md
 __pycache__
 *.db
 raw_logs.txt
-.vscode/
 logs/
 oldlogs/
 plogs/
 rawreports/
 .DS_Store
 
-# this is just for testing git lab
+#################### VisualStudioCode.gitignore ####################
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
