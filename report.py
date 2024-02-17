@@ -217,7 +217,8 @@ def make_board(driver: str, start_epoch: int, end_epoch: int):
 
     for user in doers:
         user_report = make_report(driver=driver, doer=user, start_epoch=start_epoch, end_epoch=end_epoch)
-        the_board[user] = user_report["Net Session Hours"]
+        if user_report["Net Session Hours"] > 0:
+            the_board[user] = user_report["Net Session Hours"]
     
     sorted_board = sorted(the_board.items(), key=lambda x: x[1], reverse=True) 
 
