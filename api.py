@@ -75,20 +75,20 @@ async def root():
 @app.get("/doers")
 async def get_doers(start: int, end: int, request: Request):
     token = request.headers.get("Authorization")
-    if token == None:
+    if token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
         )
     else:
         try:
             decoded = auth.decode_token(token)
-        except:
+        except:  # noqa: E722
             raise HTTPException(
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 detail="Unable to read token!",
             )
 
-        if decoded == False:
+        if decoded is False:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid Token! Login Again!",
@@ -170,8 +170,8 @@ async def this_month(request: Request):
     result = {}
     result["The Board Title"] = title
 
-    for l in the_board:
-        result[l[0]] = l[1]
+    for each in the_board:
+        result[each[0]] = each[1]
 
     return result
 
@@ -179,20 +179,20 @@ async def this_month(request: Request):
 @app.get("/events")
 async def get_events(request: Request, start: int, end: int, doer: str | None = None):
     token = request.headers.get("Authorization")
-    if token == None:
+    if token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
         )
     else:
         try:
             decoded = auth.decode_token(token)
-        except:
+        except:  # noqa: E722
             raise HTTPException(
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 detail="Unable to read token!",
             )
 
-        if decoded == False:
+        if decoded is False:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid Token! Login Again!",
@@ -200,7 +200,7 @@ async def get_events(request: Request, start: int, end: int, doer: str | None = 
         else:
             driver = str(decoded["discord_guild"])
 
-    if doer == None:
+    if doer is None:
         all = report.get_events(driver=driver, start=start, end=end)
     else:
         all = report.get_events_of_doer(driver=driver, start=start, end=end, doer=doer)
@@ -226,7 +226,7 @@ async def get_events(request: Request, start: int, end: int, doer: str | None = 
 
 
 @app.get("/goauth")
-async def google_oauth(code: str, state: str, request: Request):
+async def g_oauth(code: str, state: str, request: Request):
     # TO-DO
     # Handle no code response
 
@@ -253,7 +253,7 @@ async def google_oauth(a: int, b: int):
     guild_id = b
     person = Person()
     token = person.get_google_token(discord_guild=guild_id, discord_id=discord_id)
-    if token == None:
+    if token is None:
         return FileResponse("static/gcal.html")
     else:
         return "You already did this before!"
@@ -262,20 +262,20 @@ async def google_oauth(a: int, b: int):
 @app.get("/getcal")
 async def get_calendar(doer: str, request: Request):
     token = request.headers.get("Authorization")
-    if token == None:
+    if token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
         )
     else:
         try:
             decoded = auth.decode_token(token)
-        except:
+        except:  # noqa: E722
             raise HTTPException(
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 detail="Unable to read token!",
             )
 
-        if decoded == False:
+        if decoded is False:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid Token! Login Again!",
@@ -287,7 +287,7 @@ async def get_calendar(doer: str, request: Request):
 
     cal = None
     cal = person.get_cal_by_name(guild_id, doer)
-    if cal == None:
+    if cal is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Calendar is not available for this user!",
@@ -299,20 +299,20 @@ async def get_calendar(doer: str, request: Request):
 @app.get("/doer")
 async def get_doer(doer: str, request: Request):
     token = request.headers.get("Authorization")
-    if token == None:
+    if token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
         )
     else:
         try:
             decoded = auth.decode_token(token)
-        except:
+        except:  # noqa: E722
             raise HTTPException(
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 detail="Unable to read token!",
             )
 
-        if decoded == False:
+        if decoded is False:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid Token! Login Again!",
@@ -328,20 +328,20 @@ async def get_doer(doer: str, request: Request):
 @app.get("/protected")
 async def protected(request: Request):
     token = request.headers.get("Authorization")
-    if token == None:
+    if token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
         )
     else:
         try:
             decoded = auth.decode_token(token)
-        except:
+        except:  # noqa: E722
             raise HTTPException(
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 detail="Unable to read token!",
             )
 
-        if decoded == False:
+        if decoded is False:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid Token! Login Again!",
@@ -358,20 +358,20 @@ async def login():
 @app.get("/me")
 async def me(request: Request):
     token = request.headers.get("Authorization")
-    if token == None:
+    if token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
         )
     else:
         try:
             decoded = auth.decode_token(token)
-        except:
+        except:  # noqa: E722
             raise HTTPException(
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 detail="Unable to read token!",
             )
 
-        if decoded == False:
+        if decoded is False:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid Token! Login Again!",
@@ -387,20 +387,20 @@ async def me(request: Request):
 @app.get("/server")
 async def server(request: Request):
     token = request.headers.get("Authorization")
-    if token == None:
+    if token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
         )
     else:
         try:
             decoded = auth.decode_token(token)
-        except:
+        except:  # noqa: E722
             raise HTTPException(
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 detail="Unable to read token!",
             )
 
-        if decoded == False:
+        if decoded is False:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid Token! Login Again!",
@@ -412,5 +412,5 @@ async def server(request: Request):
     try:
         info = server.getter(guild_id=guild_id)
         return info
-    except:
+    except:  # noqa: E722
         return {"Message": "Not Available. Run /update_info in the server"}
