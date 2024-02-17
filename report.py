@@ -1,5 +1,3 @@
-import datetime
-
 import psycopg2
 import pytz
 from persiantools.jdatetime import JalaliDateTime
@@ -106,7 +104,7 @@ def on_mobile_count(driver: str, doer: str, start_epoch: int, end_epoch: int, cu
         (doer, start_epoch, end_epoch, driver),
     )
     number_of_on_mobile = cursor.fetchone()[0]
-    if number_of_on_mobile == None:
+    if number_of_on_mobile is None:
         return 0
     else:
         return number_of_on_mobile
@@ -133,7 +131,7 @@ def on_mobile_duration(
 
     duration_of_on_mobile = cursor.fetchone()[0]
 
-    if duration_of_on_mobile == None:
+    if duration_of_on_mobile is None:
         return 0
     else:
         cursor.execute(
@@ -152,7 +150,7 @@ def on_mobile_duration(
         )
 
         paused_on_mobile = cursor.fetchone()[0]
-        if paused_on_mobile == None:
+        if paused_on_mobile is None:
             paused_on_mobile = 0
 
         return duration_of_on_mobile - paused_on_mobile
@@ -257,7 +255,7 @@ def get_doers_list(driver: str, start_epoch: int, end_epoch: int):
         discord_ids.append(str(i[0]))
 
     for row in d1:
-        if row[0] != None and row[0] != "/today":
+        if row[0] is not None and row[0] != "/today":
             if row[0] not in discord_ids:
                 doers.append(row[0])
 
