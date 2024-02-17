@@ -13,10 +13,10 @@ async def record(member: Member, before: VoiceState, after: VoiceState, extra: d
     if before.channel is None:
         # start new session
         session_start(member, after.channel.name, extra)
-        if after.self_deaf == True:
+        if after.self_deaf is True:
             # pause the session
             session_pause(member, after.channel.name, extra)
-        elif after.self_mute == False:
+        elif after.self_mute is False:
             talking_start(member, after.channel.name, extra)
         return
     elif after.channel is None:
@@ -31,17 +31,17 @@ async def record(member: Member, before: VoiceState, after: VoiceState, extra: d
         channel_change(member, after.channel, extra)
     elif before.channel == after.channel:
         # mute or defen changed
-        if before.self_deaf == False and after.self_deaf == True:
-            if before.self_mute == False:
+        if before.self_deaf is False and after.self_deaf is True:
+            if before.self_mute is False:
                 talking_stop(member, after.channel.name, extra)
             session_pause(member, after.channel.name, extra)
-        elif before.self_deaf == True and after.self_deaf == False:
-            if after.self_mute == False:
+        elif before.self_deaf is True and after.self_deaf is False:
+            if after.self_mute is False:
                 talking_start(member, after.channel.name, extra)
             session_resume(member, after.channel.name, extra)
-        elif before.self_mute == True and after.self_mute == False:
+        elif before.self_mute is True and after.self_mute is False:
             talking_start(member, after.channel.name, extra)
-        elif before.self_mute == False and after.self_mute == True:
+        elif before.self_mute is False and after.self_mute is True:
             talking_stop(member, after.channel.name, extra)
 
     return
@@ -160,7 +160,7 @@ def session_resume(
         if start != -1:
             add_pairid_to_db(start, stop)
     else:
-        if comes_from_s_end == True:
+        if comes_from_s_end is True:
             return
         print("unexpected session resume is received. Adding session pause for it!")
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
@@ -236,7 +236,7 @@ def talking_stop(
         print("MUTED")
         print("TALKING STOPPED")
     else:
-        if comes_from_s_end == True:
+        if comes_from_s_end is True:
             return
         print("unexpected talking stop is received. Adding talking start for it!")
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
@@ -400,7 +400,7 @@ def get_pair_start_id(driver: str, doer: str, kind: str):
 
     result = cur.fetchone()
 
-    if result == None:
+    if result is None:
         print("no pending found!")
         conn.commit()
         cur.close()
@@ -580,7 +580,7 @@ def get_pendings(driver: str, doer: str):
     conn.close()
 
     result = []
-    if current_pendings == None:
+    if current_pendings is None:
         return result
     else:
         for i in current_pendings:
