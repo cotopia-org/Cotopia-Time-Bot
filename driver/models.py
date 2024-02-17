@@ -1,5 +1,6 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime, func, JSON
 from database import Base
+from sqlalchemy import JSON, Boolean, Column, DateTime, Integer, String, func
+
 
 class Driver(Base):
     __tablename__ = "driver"
@@ -15,7 +16,6 @@ class Driver(Base):
     locale = Column(String(40), nullable=False, default="eng_us")
     other_settings = Column(JSON, nullable=True)
 
-
     def __repr__(self):
         return f"""
                     db id = {self.id} \n
@@ -29,6 +29,3 @@ class Driver(Base):
                     locale = {self.locale} \n
                     other_settings = {self.other_settings} \n
                 """
-
-
-

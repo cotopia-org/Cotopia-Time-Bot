@@ -1,9 +1,15 @@
 import psycopg2
 
-conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
-                        password="Tp\ZS?gfLr|]'a", port=5432)
+conn = psycopg2.connect(
+    host="localhost",
+    dbname="postgres",
+    user="postgres",
+    password="Tp\ZS?gfLr|]'a",
+    port=5432,
+)
 cur = conn.cursor()
-cur.execute("""CREATE TABLE IF NOT EXISTS driver(
+cur.execute(
+    """CREATE TABLE IF NOT EXISTS driver(
             id SERIAL NOT NULL PRIMARY KEY,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             discord_guild BIGINT NULL,
@@ -13,7 +19,8 @@ cur.execute("""CREATE TABLE IF NOT EXISTS driver(
             email VARCHAR(63) NULL,
             active BOOLEAN DEFAULT TRUE,
             note json NULL
-            );""")
+            );"""
+)
 conn.commit()
 cur.close()
 conn.close()
