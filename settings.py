@@ -1,6 +1,7 @@
-import os
 import logging
+import os
 from logging.config import dictConfig
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,9 +15,7 @@ LOGGING_CONFIG = {
         "verbose": {
             "format": "%(levelname)-10s - %(asctime)s - %(module)-15s : %(message)s"
         },
-        "standard": {
-            "format": "%(levelname)-10s - %(name)-15s : %(message)s"
-            },
+        "standard": {"format": "%(levelname)-10s - %(name)-15s : %(message)s"},
     },
     "handlers": {
         "console": {
@@ -38,11 +37,7 @@ LOGGING_CONFIG = {
         },
     },
     "loggers": {
-        "bot": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False
-            },
+        "bot": {"handlers": ["console"], "level": "INFO", "propagate": False},
         "discord": {
             "handlers": ["console2", "file"],
             "level": "INFO",

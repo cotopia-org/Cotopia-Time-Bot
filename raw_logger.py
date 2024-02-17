@@ -1,12 +1,26 @@
-from datetime import datetime
-from discord import VoiceState, Member
 import time
+from datetime import datetime
+
+from discord import Member, VoiceState
 
 
 # 🚗
 def record(member: Member, before: VoiceState, after: VoiceState):
     f = open("raw_logs.txt", "a")
-    f.write(str(member.guild.id) + "  *" + str(rightnow()) + "*  " + str(datetime.now()) + "  " + str(member) + " " + str(before) + " " + str(after) + "\n\n")
+    f.write(
+        str(member.guild.id)
+        + "  *"
+        + str(rightnow())
+        + "*  "
+        + str(datetime.now())
+        + "  "
+        + str(member)
+        + " "
+        + str(before)
+        + " "
+        + str(after)
+        + "\n\n"
+    )
     f.close()
 
 
