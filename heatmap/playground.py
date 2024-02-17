@@ -1,6 +1,6 @@
-import psycopg2
 import time
 
+import psycopg2
 
 # Monday	0
 # Tuesday	1
@@ -32,9 +32,13 @@ import time
 # divided by total number of that day!
 
 
-
-conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
-                        password="Tp\ZS?gfLr|]'a", port=5432)
+conn = psycopg2.connect(
+    host="localhost",
+    dbname="postgres",
+    user="postgres",
+    password="Tp\ZS?gfLr|]'a",
+    port=5432,
+)
 cur = conn.cursor()
 cur.execute("SELECT * FROM discord_event WHERE doer = 'kharrati';")
 data = cur.fetchall()
@@ -49,12 +53,12 @@ weekday_count = {
     "Thursday": 0,
     "Friday": 0,
     "Saturday": 0,
-    "Sunday": 0
+    "Sunday": 0,
 }
 
 for e in data:
 
-    if (e[3] == "SESSION STARTED"):
+    if e[3] == "SESSION STARTED":
         if e[1].weekday() == 0:
             weekday_count["Monday"] = weekday_count["Monday"] + 1
             print(e[1].time())
@@ -74,18 +78,15 @@ for e in data:
 print(weekday_count)
 
 
-
-
 # --------------------------------------------------------------
 
 end = int(time.time())
 start = end - (2678400 * 3)
 
 
-
 # ---------
-# get first apearance 
-# start = get next Monday 00:00 
+# get first apearance
+# start = get next Monday 00:00
 # get last apearance
 # end = get previous Sunday 23:59 (handle edge cases)
 # k = number of weeks

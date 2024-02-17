@@ -1,19 +1,24 @@
 import datetime
+
 import psycopg2
 
 
-class HeatMap():
+class HeatMap:
 
     def __init__(self, doer: str) -> None:
-        conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
-                        password="Tp\ZS?gfLr|]'a", port=5432)
+        conn = psycopg2.connect(
+            host="localhost",
+            dbname="postgres",
+            user="postgres",
+            password="Tp\ZS?gfLr|]'a",
+            port=5432,
+        )
         cur = conn.cursor()
         cur.execute("SELECT * FROM discord_event WHERE doer = %s ORDER BY ts;", [doer])
         self.data = cur.fetchall()
         conn.commit()
         cur.close()
         conn.close()
-
 
     def get_first_event(self):
         return self.data[0][1]
@@ -45,8 +50,8 @@ class HeatMap():
         pass
 
 
-# get first apearance 
-# start = get next Monday 00:00 
+# get first apearance
+# start = get next Monday 00:00
 # get last apearance
 # end = get previous Sunday 23:59 (handle edge cases)
 # k = number of weeks
@@ -61,8 +66,6 @@ hm = HeatMap(doer="kharrati")
 print(hm.get_first_event())
 # print(hm.get_last_event_epoch())
 print(hm.get_start())
-
-
 
 
 # f(day, res)
