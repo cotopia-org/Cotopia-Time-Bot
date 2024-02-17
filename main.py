@@ -22,9 +22,6 @@ from board.the_text import (
     update_inmaah_board,
 )
 from gcal import calcal as GCalSetup
-
-# import briefing.briefing as briefing
-# from briefing.brief_modal import BriefModal
 from person import MySettingsModal, Person
 from server import Server
 from talk_with import TalkWithView
@@ -32,7 +29,6 @@ from talk_with import TalkWithView
 logger = settings.logging.getLogger("bot")
 
 the_zombie = {}
-# last_brief_ask = {}
 last_profile_update = {}
 temp_channels = []
 temp_messages = {}
@@ -132,8 +128,6 @@ def run():
 
     @bot.event
     async def on_message(message):
-        # print("this is on_message. the server is:")
-        # print(message.guild.id)
 
         if message.author == bot.user:
             return
@@ -152,41 +146,6 @@ def run():
                     "Well well you are not a zombie " + message.author.mention + "!"
                 )
                 the_zombie[message.guild.id] = None
-
-        # RECORDING BRIEF
-        # try:
-        #     replied_to = await message.channel.fetch_message(message.reference.message_id)
-        #     if (replied_to.author == bot.user):
-        #         if ("Reply to this message to submit a brief." in replied_to.content):
-        #             if (message.author in replied_to.mentions):
-        #                 briefing.write_to_db(brief=message.content, doer=str(message.author), driver=str(message.guild.id))
-        #                 em = discord.Embed(title=f"#brief",
-        #                                             description=message.content, color=discord.Color.blue())
-        #                 em.set_author(name=str(JalaliDate.today()))
-        #                 channel = message.guild.system_channel
-        #                 if (channel == None):
-        #                     channel = message.guild.text_channels[0]
-        #                 webhook = await channel.create_webhook(name=message.author.name)
-        #                 if (message.author.nick == None):
-        #                     the_name = message.author.name
-        #                 else:
-        #                     the_name = message.author.nick
-        #                 await webhook.send(
-        #                     embed=em, username=the_name, avatar_url=message.author.avatar)
-        #                 webhooks = await channel.webhooks()
-        #                 for w in webhooks:
-        #                     await w.delete()
-        #                 await replied_to.delete()
-        #                 await message.delete()
-        #                 try:
-        #                     task, = [task for task in asyncio.all_tasks() if task.get_name() ==
-        #                              f"ask for brief {str(message.author)}@{message.guild.id}"]
-        #                     task.cancel()
-        #                 except:
-        #                     print("Asking for brief was not canceled! Don't panic tho.")
-
-        # except:
-        #     print("the message is not relevant!")
 
     @bot.event
     async def on_voice_state_update(member, before, after):
@@ -296,12 +255,6 @@ def run():
                     )
             except:
                 print("could not get cal!")
-            # cancelling asking for brief
-            # try:
-            #     task, = [task for task in asyncio.all_tasks() if task.get_name() == f"ask for brief {str(member)}@{guild.id}"]
-            #     task.cancel()
-            # except:
-            #     print("Asking for brief was not canceled! Don't panic tho.")
 
         # When user joins a /talk_with channel
         global temp_messages
@@ -1268,13 +1221,6 @@ def run():
 
         await ctx.send(text)
 
-    # @bot.tree.command()
-    # async def brief(interaction: discord.Interaction):
-    #     brief_modal = BriefModal()
-    #     brief_modal.user = interaction.user
-    #     brief_modal.driver = interaction.guild_id
-    #     await interaction.response.send_modal(brief_modal)
-
     @bot.tree.command()
     async def my_settings(interaction: discord.Interaction):
         my_settings_modal = MySettingsModal()
@@ -1538,13 +1484,6 @@ def run():
             await ctx.send("temp_messages: \n" + str(temp_messages), ephemeral=True)
         else:
             await ctx.send("Sorry you connot see this!", ephemeral=True)
-
-    @bot.hybrid_command()
-    async def free_time(ctx, member: discord.Member):
-        await ctx.send(
-            member.mention
-            + "'s  free time for this week :\nSat       : none\nSun      : none\nMon     : 9-17\nTues     : 9-10,12-17\nWed     : 12-17\nThurs  : 9-17\nFri        : 9-10, 12-17\n"
-        )
 
     @bot.hybrid_command()
     async def create_dirooz_board(ctx):
