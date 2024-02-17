@@ -16,8 +16,9 @@ def create_db():
                                 guild_id BIGINT NOT NULL,
                                 channel_id BIGINT NOT NULL,
                                 msg_id BIGINT NOT NULL,
-                                last_update BIGINT NOT NULL); """)
-    
+                                last_update BIGINT NOT NULL); """
+    )
+
     print("dirooz_boards created @postgres")
 
     cursor.execute(
@@ -25,8 +26,9 @@ def create_db():
                                 guild_id BIGINT NOT NULL,
                                 channel_id BIGINT NOT NULL,
                                 msg_id BIGINT NOT NULL,
-                                last_update BIGINT NOT NULL); """)
-    
+                                last_update BIGINT NOT NULL); """
+    )
+
     print("inmaah_boards created @postgres")
 
     conn.commit()

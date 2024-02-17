@@ -4,9 +4,7 @@ import sqlite3
 
 import psycopg2
 
-
 tables = ["dirooz_boards", "inmaah_boards"]
-
 
 
 def copy_to_postgres(table_name: str):
@@ -17,7 +15,6 @@ def copy_to_postgres(table_name: str):
     conn.commit()
     cursor.close()
     conn.close()
-
 
     conn = psycopg2.connect(
         host="localhost",
@@ -30,7 +27,7 @@ def copy_to_postgres(table_name: str):
 
     for i in data:
         cursor.execute(f"INSERT INTO {table_name} VALUES{i}")
-    
+
     conn.commit()
     cursor.close()
     conn.close()

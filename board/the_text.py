@@ -1,13 +1,12 @@
-import discord
-
-from persiantools.jdatetime import JalaliDateTime
-from persiantools.jdatetime import JalaliDate
-import psycopg2
-import pytz
 import time
 
-import report
+import discord
+import psycopg2
+import pytz
+from persiantools.jdatetime import JalaliDate, JalaliDateTime
+
 import log_processor
+import report
 
 
 def today_jalali():
@@ -16,10 +15,12 @@ def today_jalali():
     dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
     return dic
 
+
 # returns epoch of NOW: int
 def rightnow():
     epoch = int(time.time())
     return epoch
+
 
 async def gen_dirooz_board(guild):
     # get the channel
@@ -28,30 +29,56 @@ async def gen_dirooz_board(guild):
         category = await guild.create_category("JOBS")
     da_channel = discord.utils.get(guild.text_channels, name="📊-status")
     if da_channel is None:
-        da_channel = await guild.create_text_channel(category=category, name="📊-status")
-    
+        da_channel = await guild.create_text_channel(
+            category=category, name="📊-status"
+        )
+
     # make the board
     now = today_jalali()
     start_epoch = int(
-                JalaliDateTime(
-                    year=now["y"], month=now["m"], day=now["d"]-1, hour=0, minute=0, second=0,
-                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+        JalaliDateTime(
+            year=now["y"],
+            month=now["m"],
+            day=now["d"] - 1,
+            hour=0,
+            minute=0,
+            second=0,
+            tzinfo=pytz.timezone("Asia/Tehran"),
         )
+        .to_gregorian()
+        .strftime("%s")
+    )
     end_epoch = int(
-                JalaliDateTime(
-                    year=now["y"], month=now["m"], day=now["d"]-1, hour=23, minute=59, second=59,
-                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+        JalaliDateTime(
+            year=now["y"],
+            month=now["m"],
+            day=now["d"] - 1,
+            hour=23,
+            minute=59,
+            second=59,
+            tzinfo=pytz.timezone("Asia/Tehran"),
         )
-        
-    the_board = report.make_board(driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
+        .to_gregorian()
+        .strftime("%s")
+    )
+
+    the_board = report.make_board(
+        driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
+    )
 
     title_date = JalaliDate.fromtimestamp(start_epoch)
     updated_on = JalaliDateTime.now().strftime("%H:%M")
 
-    text = ("LEADERBOARD OF " + str(title_date) + "\n`updated on " + updated_on + "`\n------------------------------\n")
+    text = (
+        "LEADERBOARD OF "
+        + str(title_date)
+        + "\n`updated on "
+        + updated_on
+        + "`\n------------------------------\n"
+    )
     for l in the_board:
         text = text + str(l[1]) + " | " + l[0] + "\n"
-    
+
     # send the text
     msg = await da_channel.send(text + "‌")
 
@@ -69,10 +96,13 @@ async def gen_dirooz_board(guild):
                                 guild_id BIGINT NOT NULL,
                                 channel_id BIGINT NOT NULL,
                                 msg_id BIGINT NOT NULL,
-                                last_update BIGINT NOT NULL); """)
+                                last_update BIGINT NOT NULL); """
+    )
     cursor.execute(f"DELETE FROM dirooz_boards WHERE guild_id = {guild.id};")
-    cursor.execute(f"""     INSERT INTO dirooz_boards VALUES
-                                ({guild.id}, {da_channel.id}, {msg.id}, {rightnow()});""")
+    cursor.execute(
+        f"""     INSERT INTO dirooz_boards VALUES
+                                ({guild.id}, {da_channel.id}, {msg.id}, {rightnow()});"""
+    )
     conn.commit()
     cursor.close()
     conn.close()
@@ -108,66 +138,119 @@ async def update_dirooz_board(guild):
         # make the board
         now = today_jalali()
         start_epoch = int(
-                JalaliDateTime(
-                    year=now["y"], month=now["m"], day=now["d"]-1, hour=0, minute=0, second=0,
-                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+            JalaliDateTime(
+                year=now["y"],
+                month=now["m"],
+                day=now["d"] - 1,
+                hour=0,
+                minute=0,
+                second=0,
+                tzinfo=pytz.timezone("Asia/Tehran"),
+            )
+            .to_gregorian()
+            .strftime("%s")
         )
         end_epoch = int(
-                JalaliDateTime(
-                    year=now["y"], month=now["m"], day=now["d"]-1, hour=23, minute=59, second=59,
-                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+            JalaliDateTime(
+                year=now["y"],
+                month=now["m"],
+                day=now["d"] - 1,
+                hour=23,
+                minute=59,
+                second=59,
+                tzinfo=pytz.timezone("Asia/Tehran"),
+            )
+            .to_gregorian()
+            .strftime("%s")
         )
-        
-        the_board = report.make_board(driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
+
+        the_board = report.make_board(
+            driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
+        )
 
         title_date = JalaliDate.fromtimestamp(start_epoch)
         updated_on = JalaliDateTime.now().strftime("%H:%M")
 
-        text = ("LEADERBOARD OF " + str(title_date) + "\n`updated on " + updated_on + "`\n------------------------------\n")
+        text = (
+            "LEADERBOARD OF "
+            + str(title_date)
+            + "\n`updated on "
+            + updated_on
+            + "`\n------------------------------\n"
+        )
         for l in the_board:
             text = text + str(l[1]) + " | " + l[0] + "\n"
 
         # send edit
         await message.edit(content=text + "‌")
         # update db
-        cursor.execute(f"UPDATE dirooz_boards SET last_update = {rightnow()} WHERE guild_id = {guild.id};")
+        cursor.execute(
+            f"UPDATE dirooz_boards SET last_update = {rightnow()} WHERE guild_id = {guild.id};"
+        )
         conn.commit()
         cursor.close()
         conn.close()
-    
+
+
 async def gen_inmaah_board(guild):
-     # get the channel
+    # get the channel
     category = discord.utils.get(guild.categories, name="JOBS")
     if category is None:
         category = await guild.create_category("JOBS")
     da_channel = discord.utils.get(guild.text_channels, name="📊-status")
     if da_channel is None:
-        da_channel = await guild.create_text_channel(category=category, name="📊-status")
-    
+        da_channel = await guild.create_text_channel(
+            category=category, name="📊-status"
+        )
+
     # make the board
     log_processor.renew_pendings(driver=str(guild.id))
 
     now = today_jalali()
     start_epoch = int(
-                JalaliDateTime(
-                    year=now["y"], month=now["m"], day=1, hour=0, minute=0, second=0,
-                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+        JalaliDateTime(
+            year=now["y"],
+            month=now["m"],
+            day=1,
+            hour=0,
+            minute=0,
+            second=0,
+            tzinfo=pytz.timezone("Asia/Tehran"),
         )
+        .to_gregorian()
+        .strftime("%s")
+    )
     end_epoch = int(
-                JalaliDateTime(
-                    year=now["y"], month=now["m"], day=now["d"], hour=23, minute=59, second=59,
-                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+        JalaliDateTime(
+            year=now["y"],
+            month=now["m"],
+            day=now["d"],
+            hour=23,
+            minute=59,
+            second=59,
+            tzinfo=pytz.timezone("Asia/Tehran"),
         )
-        
-    the_board = report.make_board(driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
+        .to_gregorian()
+        .strftime("%s")
+    )
+
+    the_board = report.make_board(
+        driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
+    )
 
     title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
     updated_on = JalaliDateTime.now().strftime("%H:%M")
 
-    text = ("LEADERBOARD OF " + str(title_date) + "\n`updated on " + updated_on + "`\n------------------------------\n")
+    text = (
+        "LEADERBOARD OF "
+        + str(title_date)
+        + "\n`updated on "
+        + updated_on
+        + "`\n------------------------------\n"
+    )
     for l in the_board:
         text = text + str(l[1]) + " | " + l[0] + "\n"
-    
+
     # send the text
     msg = await da_channel.send(text + "‌")
 
@@ -185,10 +268,13 @@ async def gen_inmaah_board(guild):
                                 guild_id BIGINT NOT NULL,
                                 channel_id BIGINT NOT NULL,
                                 msg_id BIGINT NOT NULL,
-                                last_update BIGINT NOT NULL); """)
+                                last_update BIGINT NOT NULL); """
+    )
     cursor.execute(f"DELETE FROM inmaah_boards WHERE guild_id = {guild.id};")
-    cursor.execute(f"""     INSERT INTO inmaah_boards VALUES
-                                ({guild.id}, {da_channel.id}, {msg.id}, {rightnow()});""")
+    cursor.execute(
+        f"""     INSERT INTO inmaah_boards VALUES
+                                ({guild.id}, {da_channel.id}, {msg.id}, {rightnow()});"""
+    )
     conn.commit()
     cursor.close()
     conn.close()
@@ -226,30 +312,55 @@ async def update_inmaah_board(guild):
 
         now = today_jalali()
         start_epoch = int(
-                JalaliDateTime(
-                    year=now["y"], month=now["m"], day=1, hour=0, minute=0, second=0,
-                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+            JalaliDateTime(
+                year=now["y"],
+                month=now["m"],
+                day=1,
+                hour=0,
+                minute=0,
+                second=0,
+                tzinfo=pytz.timezone("Asia/Tehran"),
+            )
+            .to_gregorian()
+            .strftime("%s")
         )
         end_epoch = int(
-                JalaliDateTime(
-                    year=now["y"], month=now["m"], day=now["d"], hour=23, minute=59, second=59,
-                    tzinfo=pytz.timezone("Asia/Tehran")).to_gregorian().strftime('%s')
+            JalaliDateTime(
+                year=now["y"],
+                month=now["m"],
+                day=now["d"],
+                hour=23,
+                minute=59,
+                second=59,
+                tzinfo=pytz.timezone("Asia/Tehran"),
+            )
+            .to_gregorian()
+            .strftime("%s")
         )
-        
-        the_board = report.make_board(driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch)
+
+        the_board = report.make_board(
+            driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
+        )
 
         title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
         updated_on = JalaliDateTime.now().strftime("%H:%M")
 
-
-        text = ("LEADERBOARD OF " + str(title_date) + "\n`updated on " + updated_on + "`\n------------------------------\n")
+        text = (
+            "LEADERBOARD OF "
+            + str(title_date)
+            + "\n`updated on "
+            + updated_on
+            + "`\n------------------------------\n"
+        )
         for l in the_board:
             text = text + str(l[1]) + " | " + l[0] + "\n"
-        
+
         # send edit
         await message.edit(content=text + "‌")
         # update db
-        cursor.execute(f"UPDATE inmaah_boards SET last_update = {rightnow()} WHERE guild_id = {guild.id};")
+        cursor.execute(
+            f"UPDATE inmaah_boards SET last_update = {rightnow()} WHERE guild_id = {guild.id};"
+        )
         conn.commit()
         cursor.close()
         conn.close()
