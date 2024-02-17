@@ -75,9 +75,9 @@ def run():
         server = Server()
         banner = None
         icon = None
-        if guild.banner != None:
+        if guild.banner is not None:
             banner = str(guild.banner)
-        if guild.icon != None:
+        if guild.icon is not None:
             icon = str(guild.icon)
         server.setter(
             guild_id=guild.id,
@@ -96,8 +96,8 @@ def run():
         count = 0
         person = Person()
         for i in guild.members:
-            if i.bot == False:
-                if i.avatar == None:
+            if i.bot is False:
+                if i.avatar is None:
                     person.add_person(guild.id, i.id, i.name)
                 else:
                     person.add_person(guild.id, i.id, i.name, str(i.avatar))
@@ -116,8 +116,8 @@ def run():
         count = 0
         person = Person()
         for i in guild.members:
-            if i.bot == False:
-                if i.avatar == None:
+            if i.bot is False:
+                if i.avatar is None:
                     person.add_person(guild.id, i.id, i.name)
                 else:
                     person.add_person(guild.id, i.id, i.name, str(i.avatar))
@@ -216,7 +216,7 @@ def run():
                     await guild.system_channel.send(
                         "Well well you are not a zombie " + member.mention + "!"
                     )
-                except:
+                except:  # noqa: E722
                     await guild.text_channels[0].send(
                         "Well well you are not a zombie " + member.mention + "!"
                     )
@@ -253,7 +253,7 @@ def run():
                     last_profile_update[f"{member.id}@{member.guild.id}"] = (
                         datetime.datetime.today().strftime("%Y-%m-%d")
                     )
-            except:
+            except:  # noqa: E722
                 print("could not get cal!")
 
         # When user joins a /talk_with channel
@@ -342,7 +342,7 @@ def run():
                 "desktop_status": str(member.desktop_status),
                 "mobile_status": str(member.mobile_status),
             }
-        except:
+        except:  # noqa: E722
             extra = {"NOTE": "ERROR on making note!"}
 
         await log_processor.record(member, before, after, extra)
@@ -418,7 +418,7 @@ def run():
                     minute=59,
                     second=59,
                 ).strftime("%s")
-            except:
+            except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
@@ -436,7 +436,7 @@ def run():
                     minute=0,
                     second=0,
                 ).strftime("%s")
-            except:
+            except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
@@ -536,7 +536,7 @@ def run():
                     .to_gregorian()
                     .strftime("%s")
                 )
-            except:
+            except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
@@ -569,7 +569,7 @@ def run():
                     .to_gregorian()
                     .strftime("%s")
                 )
-            except:
+            except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
@@ -652,7 +652,7 @@ def run():
                     member.mention
                     + "'s session terminated because they acted like a :zombie:!"
                 )
-            except:
+            except:  # noqa: E722
                 await ctx.guild.text_channels[0].send(
                     member.mention
                     + "'s session terminated because they acted like a :zombie:!"
@@ -663,10 +663,10 @@ def run():
 
             try:
                 members_channel = member.voice.channel
-            except:
+            except:  # noqa: E722
                 members_channel = None
 
-            if members_channel != None and member.voice.self_deaf == False:
+            if members_channel is not None and member.voice.self_deaf is False:
 
                 global the_zombie
                 the_zombie[ctx.guild.id] = member
@@ -679,7 +679,7 @@ def run():
                         member.mention
                         + " you have been called a zombie. Show up in 3 minutes or you would be disconnected!"
                     )
-                except:
+                except:  # noqa: E722
                     await ctx.guild.text_channels[0].send(
                         member.mention
                         + " you have been called a zombie. Show up in 3 minutes or you would be disconnected!"
@@ -745,7 +745,7 @@ def run():
                     .to_gregorian()
                     .strftime("%s")
                 )
-            except:
+            except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
@@ -778,7 +778,7 @@ def run():
                     .to_gregorian()
                     .strftime("%s")
                 )
-            except:
+            except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
@@ -855,8 +855,8 @@ def run():
             + str(title_date)
             + "\n------------------------------\n"
         )
-        for l in the_board:
-            text = text + str(l[1]) + " | " + l[0] + "\n"
+        for i in the_board:
+            text = text + str(i[1]) + " | " + i[0] + "\n"
 
         await ctx.send(text)
 
@@ -902,8 +902,8 @@ def run():
             + str(title_date)
             + "\n------------------------------\n"
         )
-        for l in the_board:
-            text = text + str(l[1]) + " | " + l[0] + "\n"
+        for i in the_board:
+            text = text + str(i[1]) + " | " + i[0] + "\n"
 
         await ctx.send(text)
 
@@ -952,8 +952,8 @@ def run():
             + str(title_date)
             + "\n------------------------------\n"
         )
-        for l in the_board:
-            text = text + str(l[1]) + " | " + l[0] + "\n"
+        for i in the_board:
+            text = text + str(i[1]) + " | " + i[0] + "\n"
 
         await ctx.send(text)
 
@@ -999,8 +999,8 @@ def run():
             + str(title_date)
             + "\n------------------------------\n"
         )
-        for l in the_board:
-            text = text + str(l[1]) + " | " + l[0] + "\n"
+        for i in the_board:
+            text = text + str(i[1]) + " | " + i[0] + "\n"
 
         await ctx.send(text)
 
@@ -1042,8 +1042,8 @@ def run():
             + str(title_date)
             + "\n------------------------------\n"
         )
-        for l in the_board:
-            text = text + str(l[1]) + " | " + l[0] + "\n"
+        for i in the_board:
+            text = text + str(i[1]) + " | " + i[0] + "\n"
 
         await ctx.send(text)
 
@@ -1088,8 +1088,8 @@ def run():
             + str(title_date)
             + "\n------------------------------\n"
         )
-        for l in the_board:
-            text = text + str(l[1]) + " | " + l[0] + "\n"
+        for i in the_board:
+            text = text + str(i[1]) + " | " + i[0] + "\n"
 
         await ctx.send(text)
 
@@ -1140,7 +1140,7 @@ def run():
                     .to_gregorian()
                     .strftime("%s")
                 )
-            except:
+            except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
@@ -1173,7 +1173,7 @@ def run():
                     .to_gregorian()
                     .strftime("%s")
                 )
-            except:
+            except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
@@ -1212,8 +1212,8 @@ def run():
             "Net Session Hours\n" + "From:  " + str(discordDate_from) + "\n"
             "To:  " + str(discordDate_to) + "\n------------------------------\n"
         )
-        for l in the_board:
-            string = str(l)
+        for i in the_board:
+            string = str(i)
             string = string.replace("('", "")
             string = string.replace("',", " :")
             string = string.replace(")", "")
@@ -1246,7 +1246,7 @@ def run():
         # link = "http://127.0.0.1:8000/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id) + "&c=" + str(ctx.author.name)
         person = Person()
         token = person.get_google_token(ctx.guild.id, ctx.author.id)
-        if token == None:
+        if token is None:
             await ctx.send(
                 "   ‌ ‌  \n⬇️   Please follow the link below to give access to your Google Calendar   ⬇️\n\n"
                 + link,
@@ -1262,7 +1262,7 @@ def run():
         gave_gcal_access = person.list_of_tokeners(ctx.guild.id)
         result = ""
         for each in all_members:
-            if each.bot == False:
+            if each.bot is False:
                 if each.id in gave_gcal_access:
                     # result[each.name] = True
                     result = result + "✅ " + each.name + "\n"
@@ -1305,9 +1305,9 @@ def run():
         server = Server()
         banner = None
         icon = None
-        if guild.banner != None:
+        if guild.banner is not None:
             banner = str(guild.banner)
-        if guild.icon != None:
+        if guild.icon is not None:
             icon = str(guild.icon)
         server.setter(
             guild_id=guild.id,
@@ -1325,8 +1325,8 @@ def run():
         count = 0
         person = Person()
         for i in guild.members:
-            if i.bot == False:
-                if i.avatar == None:
+            if i.bot is False:
+                if i.avatar is None:
                     person.add_person(guild.id, i.id, i.name)
                 else:
                     person.add_person(guild.id, i.id, i.name, str(i.avatar))
@@ -1364,14 +1364,14 @@ def run():
         members.append(ctx.author)
         members.append(member)
 
-        if member3 != None:
+        if member3 is not None:
             split = text.split(",\n", 1)
             text = split[0] + ", " + member3.mention + ",\n" + split[1]
             members.append(member3)
             overwrites[member3] = discord.PermissionOverwrite(
                 connect=True, view_channel=True
             )
-        if member4 != None:
+        if member4 is not None:
             split = text.split(",\n", 1)
             text = split[0] + ", " + member4.mention + ",\n" + split[1]
             members.append(member4)
@@ -1387,7 +1387,7 @@ def run():
         try:
             await ctx.author.move_to(channel)
             author_moved = True
-        except:
+        except:  # noqa: E722
             print("user is not connected to voice.")
             author_moved = False
 
@@ -1411,7 +1411,7 @@ def run():
             )
         view.members_str = members_str
 
-        if description != None:
+        if description is not None:
             text = text + "\n\nDescription:\n" + description
 
         the_message = await ctx.send(text + "\n\n" + channel.jump_url, view=view)
