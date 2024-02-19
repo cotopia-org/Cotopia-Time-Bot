@@ -189,7 +189,9 @@ def run():
                     author_mention = author_mention.split(" wants to talk with you.")[0]
                     # calculating the duration of the meeting
                     msg_created_at = msg.created_at.timestamp()
-                    duration = rightnow() - msg_created_at
+                    duration = (
+                        rightnow() - msg_created_at - 180
+                    )  # minus 180 seconds, time of waiting before deleting voice channel
                     duration = round((duration / 60), 1)
                     #
                     # await msg.delete()
