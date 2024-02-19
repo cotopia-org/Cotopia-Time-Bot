@@ -179,13 +179,36 @@ def run():
                     msg = await temp_messages[channel].channel.fetch_message(
                         temp_messages[channel].id
                     )
-                    print("trying to delete text:   ")
+                    print("trying to edit text:   ")
                     print(msg)
-                    await msg.delete()
+                    msg_content = msg.content
+                    # getting the status part
+                    status_part = msg_content.split("--------------------")[1]
+                    # getting the author mention
+                    author_mention = msg_content.split(">,\n")[1]
+                    author_mention = author_mention.split(" wants to talk with you.")[0]
+                    # calculating the duration of the meeting
+                    msg_created_at = msg.created_at.timestamp()
+                    duration = rightnow() - msg_created_at
+                    duration = round((duration / 60), 1)
+                    #
+                    # await msg.delete()
+                    # editing the message
+                    new_content = (
+                        author_mention
+                        + "'s meeting ended!\n"
+                        + "Duration: "
+                        + str(duration)
+                        + " minutes"
+                        + "\n--------------------"
+                        + status_part
+                        + "--------------------"
+                    )
+                    await msg.edit(content=new_content, view=None)
                     del temp_messages[channel]
-                    print("message was removed")
+                    print("message was edited")
                 except Exception as e:
-                    print("Sorry couldn't delete the /talk_with message!")
+                    print("Sorry couldn't edit the /talk_with message!")
                     print(e)
 
         # calling the  del_temp_chan(channel) func
