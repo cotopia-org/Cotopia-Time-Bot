@@ -3,7 +3,7 @@ import time
 import discord
 import psycopg2
 import pytz
-from persiantools.jdatetime import JalaliDate, JalaliDateTime
+from persiantools.jdatetime import JalaliDate, JalaliDateTime, timedelta
 
 import log_processor
 import report
@@ -34,33 +34,11 @@ async def gen_dirooz_board(guild):
         )
 
     # make the board
-    now = today_jalali()
+    dirooz = JalaliDate.today() - timedelta(days=1)
     start_epoch = int(
-        JalaliDateTime(
-            year=now["y"],
-            month=now["m"],
-            day=now["d"] - 1,
-            hour=0,
-            minute=0,
-            second=0,
-            tzinfo=pytz.timezone("Asia/Tehran"),
-        )
-        .to_gregorian()
-        .strftime("%s")
+        JalaliDateTime(year=dirooz.year, month=dirooz.month, day=dirooz.day).timestamp()
     )
-    end_epoch = int(
-        JalaliDateTime(
-            year=now["y"],
-            month=now["m"],
-            day=now["d"] - 1,
-            hour=23,
-            minute=59,
-            second=59,
-            tzinfo=pytz.timezone("Asia/Tehran"),
-        )
-        .to_gregorian()
-        .strftime("%s")
-    )
+    end_epoch = start_epoch + 86400
 
     the_board = report.make_board(
         driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
@@ -124,7 +102,8 @@ async def update_dirooz_board(guild):
     # check if it's outdated
     last_update = JalaliDate.fromtimestamp(db_msg[3])
 
-    if JalaliDate.today().day == last_update.day:
+    # if JalaliDate.today().day == last_update.day:
+    if False:
         print("no need to update dirooz board")
         conn.commit()
         cursor.close()
@@ -136,33 +115,13 @@ async def update_dirooz_board(guild):
         message = await channel.fetch_message(db_msg[2])
 
         # make the board
-        now = today_jalali()
+        dirooz = JalaliDate.today() - timedelta(days=1)
         start_epoch = int(
             JalaliDateTime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"] - 1,
-                hour=0,
-                minute=0,
-                second=0,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            )
-            .to_gregorian()
-            .strftime("%s")
+                year=dirooz.year, month=dirooz.month, day=dirooz.day
+            ).timestamp()
         )
-        end_epoch = int(
-            JalaliDateTime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"] - 1,
-                hour=23,
-                minute=59,
-                second=59,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            )
-            .to_gregorian()
-            .strftime("%s")
-        )
+        end_epoch = start_epoch + 86400
 
         the_board = report.make_board(
             driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
