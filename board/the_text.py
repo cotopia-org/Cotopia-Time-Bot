@@ -102,8 +102,7 @@ async def update_dirooz_board(guild):
     # check if it's outdated
     last_update = JalaliDate.fromtimestamp(db_msg[3])
 
-    # if JalaliDate.today().day == last_update.day:
-    if False:
+    if JalaliDate.today().day == last_update.day:
         print("no need to update dirooz board")
         conn.commit()
         cursor.close()
