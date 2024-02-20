@@ -8,12 +8,11 @@ from persiantools.jdatetime import JalaliDate, JalaliDateTime, timedelta
 import log_processor
 import report
 
-
-def today_jalali():
-    the_string = str(JalaliDate.today())
-    slices = the_string.split("-")
-    dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
-    return dic
+# def today_jalali():
+#     the_string = str(JalaliDate.today())
+#     slices = the_string.split("-")
+#     dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
+#     return dic
 
 
 # returns epoch of NOW: int
@@ -36,7 +35,12 @@ async def gen_dirooz_board(guild):
     # make the board
     dirooz = JalaliDate.today() - timedelta(days=1)
     start_epoch = int(
-        JalaliDateTime(year=dirooz.year, month=dirooz.month, day=dirooz.day).timestamp()
+        JalaliDateTime(
+            year=dirooz.year,
+            month=dirooz.month,
+            day=dirooz.day,
+            tzinfo=pytz.timezone("Asia/Tehran"),
+        ).timestamp()
     )
     end_epoch = start_epoch + 86400
 
@@ -117,7 +121,10 @@ async def update_dirooz_board(guild):
         dirooz = JalaliDate.today() - timedelta(days=1)
         start_epoch = int(
             JalaliDateTime(
-                year=dirooz.year, month=dirooz.month, day=dirooz.day
+                year=dirooz.year,
+                month=dirooz.month,
+                day=dirooz.day,
+                tzinfo=pytz.timezone("Asia/Tehran"),
             ).timestamp()
         )
         end_epoch = start_epoch + 86400
@@ -164,32 +171,28 @@ async def gen_inmaah_board(guild):
     # make the board
     log_processor.renew_pendings(driver=str(guild.id))
 
-    now = today_jalali()
+    emrooz = JalaliDate.today()
     start_epoch = int(
         JalaliDateTime(
-            year=now["y"],
-            month=now["m"],
+            year=emrooz.year,
+            month=emrooz.month,
             day=1,
             hour=0,
             minute=0,
             second=0,
             tzinfo=pytz.timezone("Asia/Tehran"),
-        )
-        .to_gregorian()
-        .strftime("%s")
+        ).timestamp()
     )
     end_epoch = int(
         JalaliDateTime(
-            year=now["y"],
-            month=now["m"],
-            day=now["d"],
+            year=emrooz.year,
+            month=emrooz.month,
+            day=emrooz.day,
             hour=23,
             minute=59,
             second=59,
             tzinfo=pytz.timezone("Asia/Tehran"),
-        )
-        .to_gregorian()
-        .strftime("%s")
+        ).timestamp()
     )
 
     the_board = report.make_board(
@@ -268,32 +271,28 @@ async def update_inmaah_board(guild):
         # make the board
         log_processor.renew_pendings(driver=str(guild.id))
 
-        now = today_jalali()
+        emrooz = JalaliDate.today()
         start_epoch = int(
             JalaliDateTime(
-                year=now["y"],
-                month=now["m"],
+                year=emrooz.year,
+                month=emrooz.month,
                 day=1,
                 hour=0,
                 minute=0,
                 second=0,
                 tzinfo=pytz.timezone("Asia/Tehran"),
-            )
-            .to_gregorian()
-            .strftime("%s")
+            ).timestamp()
         )
         end_epoch = int(
             JalaliDateTime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"],
+                year=emrooz.year,
+                month=emrooz.month,
+                day=emrooz.day,
                 hour=23,
                 minute=59,
                 second=59,
                 tzinfo=pytz.timezone("Asia/Tehran"),
-            )
-            .to_gregorian()
-            .strftime("%s")
+            ).timestamp()
         )
 
         the_board = report.make_board(
