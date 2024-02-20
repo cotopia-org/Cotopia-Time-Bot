@@ -8,12 +8,6 @@ from persiantools.jdatetime import JalaliDate, JalaliDateTime, timedelta
 import log_processor
 import report
 
-# def today_jalali():
-#     the_string = str(JalaliDate.today())
-#     slices = the_string.split("-")
-#     dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
-#     return dic
-
 
 # returns epoch of NOW: int
 def rightnow():
