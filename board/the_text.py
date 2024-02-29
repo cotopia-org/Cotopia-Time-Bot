@@ -28,14 +28,13 @@ async def gen_dirooz_board(guild):
 
     # make the board
     dirooz = JalaliDate.today() - timedelta(days=1)
-    start_epoch = int(
-        JalaliDateTime(
-            year=dirooz.year,
-            month=dirooz.month,
-            day=dirooz.day,
-            tzinfo=pytz.timezone("Asia/Tehran"),
-        ).timestamp()
+    start_dt = JalaliDateTime(
+        year=dirooz.year,
+        month=dirooz.month,
+        day=dirooz.day,
     )
+    localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+    start_epoch = int(localized_start_dt.timestamp())
     end_epoch = start_epoch + 86400
 
     the_board = report.make_board(
@@ -113,14 +112,13 @@ async def update_dirooz_board(guild):
 
         # make the board
         dirooz = JalaliDate.today() - timedelta(days=1)
-        start_epoch = int(
-            JalaliDateTime(
-                year=dirooz.year,
-                month=dirooz.month,
-                day=dirooz.day,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            ).timestamp()
+        start_dt = JalaliDateTime(
+            year=dirooz.year,
+            month=dirooz.month,
+            day=dirooz.day,
         )
+        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        start_epoch = int(localized_start_dt.timestamp())
         end_epoch = start_epoch + 86400
 
         the_board = report.make_board(
@@ -166,28 +164,27 @@ async def gen_inmaah_board(guild):
     log_processor.renew_pendings(driver=str(guild.id))
 
     emrooz = JalaliDate.today()
-    start_epoch = int(
-        JalaliDateTime(
-            year=emrooz.year,
-            month=emrooz.month,
-            day=1,
-            hour=0,
-            minute=0,
-            second=0,
-            tzinfo=pytz.timezone("Asia/Tehran"),
-        ).timestamp()
+    start_dt = JalaliDateTime(
+        year=emrooz.year,
+        month=emrooz.month,
+        day=1,
+        hour=0,
+        minute=0,
+        second=0,
     )
-    end_epoch = int(
-        JalaliDateTime(
-            year=emrooz.year,
-            month=emrooz.month,
-            day=emrooz.day,
-            hour=23,
-            minute=59,
-            second=59,
-            tzinfo=pytz.timezone("Asia/Tehran"),
-        ).timestamp()
+    localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+    start_epoch = int(localized_start_dt.timestamp())
+
+    end_dt = JalaliDateTime(
+        year=emrooz.year,
+        month=emrooz.month,
+        day=emrooz.day,
+        hour=23,
+        minute=59,
+        second=59,
     )
+    localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+    end_epoch = int(localized_end_dt.timestamp()) + 1
 
     the_board = report.make_board(
         driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
@@ -266,28 +263,27 @@ async def update_inmaah_board(guild):
         log_processor.renew_pendings(driver=str(guild.id))
 
         emrooz = JalaliDate.today()
-        start_epoch = int(
-            JalaliDateTime(
-                year=emrooz.year,
-                month=emrooz.month,
-                day=1,
-                hour=0,
-                minute=0,
-                second=0,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            ).timestamp()
+        start_dt = JalaliDateTime(
+            year=emrooz.year,
+            month=emrooz.month,
+            day=1,
+            hour=0,
+            minute=0,
+            second=0,
         )
-        end_epoch = int(
-            JalaliDateTime(
-                year=emrooz.year,
-                month=emrooz.month,
-                day=emrooz.day,
-                hour=23,
-                minute=59,
-                second=59,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            ).timestamp()
+        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        start_epoch = int(localized_start_dt.timestamp())
+
+        end_dt = JalaliDateTime(
+            year=emrooz.year,
+            month=emrooz.month,
+            day=emrooz.day,
+            hour=23,
+            minute=59,
+            second=59,
         )
+        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
             driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
