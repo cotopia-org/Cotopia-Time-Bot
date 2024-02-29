@@ -103,26 +103,27 @@ async def get_doers(start: int, end: int, request: Request):
 
 @app.get("/thismonth")
 async def this_month(request: Request):
-    # token = request.cookies.get("token")
-    # if (token == None):
-    #     raise HTTPException(
-    #         status_code = status.HTTP_401_UNAUTHORIZED,
-    #         detail = "You are not logged in!")
-    # else:
-    #     try:
-    #         decoded = auth.decode_token(token)
-    #     except:
-    #          raise HTTPException(
-    #               status_code = status.HTTP_406_NOT_ACCEPTABLE,
-    #               detail = "Unable to read token!")
+    token = request.cookies.get("token")
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
+        )
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:  # noqa: E722
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Unable to read token!",
+            )
 
-    #     if (decoded == False):
-    #          raise HTTPException(
-    #               status_code = status.HTTP_401_UNAUTHORIZED,
-    #               detail = "Invalid Token! Login Again!")
-    #     else:
-    #          driver = str(decoded['discord_guild'])
-    driver = str(1125764070935638086)
+        if decoded is False:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid Token! Login Again!",
+            )
+        else:
+            driver = str(decoded["discord_guild"])
 
     log_processor.renew_pendings(driver=driver)
     emrooz = JalaliDate.today()
