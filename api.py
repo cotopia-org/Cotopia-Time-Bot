@@ -3,7 +3,7 @@ import json
 import pytz
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from persiantools.jdatetime import JalaliDate, JalaliDateTime
+from persiantools.jdatetime import JalaliDate, JalaliDateTime, timedelta
 from starlette.responses import FileResponse
 
 import auth
@@ -12,14 +12,6 @@ import report
 from gcal import calcal as GCalSetup
 from person import Person
 from server import Server
-
-
-def today_jalali():
-    the_string = str(JalaliDate.today())
-    slices = the_string.split("-")
-    dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
-    return dic
-
 
 app = FastAPI(
     title="TimeMaster",
@@ -133,34 +125,20 @@ async def this_month(request: Request):
     driver = str(1125764070935638086)
 
     log_processor.renew_pendings(driver=driver)
+    emrooz = JalaliDate.today()
+    start_dt = JalaliDateTime(
+        year=emrooz.year,
+        month=emrooz.month,
+        day=1,
+        hour=0,
+        minute=0,
+        second=0,
+    )
+    localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+    start_epoch = int(localized_start_dt.timestamp())
 
-    now = today_jalali()
-    start_epoch = int(
-        JalaliDateTime(
-            year=now["y"],
-            month=now["m"],
-            day=1,
-            hour=0,
-            minute=0,
-            second=0,
-            tzinfo=pytz.timezone("Asia/Tehran"),
-        )
-        .to_gregorian()
-        .strftime("%s")
-    )
-    end_epoch = int(
-        JalaliDateTime(
-            year=now["y"],
-            month=now["m"],
-            day=now["d"],
-            hour=23,
-            minute=59,
-            second=59,
-            tzinfo=pytz.timezone("Asia/Tehran"),
-        )
-        .to_gregorian()
-        .strftime("%s")
-    )
+    localized_end_dt = (localized_start_dt + timedelta(days=33)).replace(day=1)
+    end_epoch = int(localized_end_dt.timestamp())
 
     the_board = report.make_board(
         driver=driver, start_epoch=start_epoch, end_epoch=end_epoch
