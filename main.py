@@ -7,7 +7,7 @@ import typing
 import discord
 import pytz
 from discord.ext import commands
-from persiantools.jdatetime import JalaliDate, JalaliDateTime
+from persiantools.jdatetime import JalaliDate, JalaliDateTime, timedelta
 
 import auth
 import log_processor
@@ -32,20 +32,6 @@ the_zombie = {}
 last_profile_update = {}
 temp_channels = []
 temp_messages = {}
-
-
-def today_g():
-    the_string = datetime.datetime.today().strftime("%Y-%m-%d")
-    slices = the_string.split("-")
-    dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
-    return dic
-
-
-def today_jalali():
-    the_string = str(JalaliDate.today())
-    slices = the_string.split("-")
-    dic = {"y": int(slices[0]), "m": int(slices[1]), "d": int(slices[2])}
-    return dic
 
 
 # returns epoch of NOW: int
@@ -420,15 +406,14 @@ def run():
         end_mm: typing.Optional[int] = 1,
         end_dd: typing.Optional[int] = 29,
     ):
-
-        now = today_g()
+        today = datetime.date.today()
 
         # I want to set today as default end value, but passing it in Args didnt work. So I do this:
         if end_yyyy == 2037 and end_mm == 12 and end_dd == 29:
             end_epoch = datetime.datetime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"],
+                year=today.year,
+                month=today.month,
+                day=today.day,
                 hour=23,
                 minute=59,
                 second=59,
@@ -449,7 +434,7 @@ def run():
 
         if start_yyyy == 1971 and start_mm == 1 and start_dd == 1:
             start_epoch = datetime.datetime(
-                year=now["y"], month=now["m"], day=1, hour=0, minute=0, second=0
+                year=today.year, month=today.month, day=1, hour=0, minute=0, second=0
             ).strftime("%s")
         else:
             try:
@@ -528,72 +513,45 @@ def run():
         end_mm: typing.Optional[int] = 12,
         end_rr: typing.Optional[int] = 29,
     ):
-
-        now = today_jalali()
+        emrooz = JalaliDate.today()
 
         # I want to set today as default end value, but passing it in Args didnt work. So I do this:
         if end_ssss == 1415 and end_mm == 12 and end_rr == 29:
-            end_epoch = (
-                JalaliDateTime(
-                    year=now["y"],
-                    month=now["m"],
-                    day=now["d"],
+            end_dt = JalaliDateTime(
+                year=emrooz.year,
+                month=emrooz.month,
+                day=emrooz.day,
+                hour=23,
+                minute=59,
+                second=59,
+            )
+            localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+            end_epoch = int(localized_end_dt.timestamp()) + 1
+        else:
+            try:
+                end_dt = JalaliDateTime(
+                    year=end_ssss,
+                    month=end_mm,
+                    day=end_rr,
                     hour=23,
                     minute=59,
                     second=59,
-                    tzinfo=pytz.timezone("Asia/Tehran"),
                 )
-                .to_gregorian()
-                .strftime("%s")
-            )
-        else:
-            try:
-                end_epoch = (
-                    JalaliDateTime(
-                        year=end_ssss,
-                        month=end_mm,
-                        day=end_rr,
-                        hour=23,
-                        minute=59,
-                        second=59,
-                        tzinfo=pytz.timezone("Asia/Tehran"),
-                    )
-                    .to_gregorian()
-                    .strftime("%s")
-                )
+                localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+                end_epoch = int(localized_end_dt.timestamp()) + 1
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
         if start_ssss == 1349 and start_mm == 1 and start_rr == 1:
-            start_epoch = (
-                JalaliDateTime(
-                    year=now["y"],
-                    month=now["m"],
-                    day=1,
-                    hour=0,
-                    minute=0,
-                    second=0,
-                    tzinfo=pytz.timezone("Asia/Tehran"),
-                )
-                .to_gregorian()
-                .strftime("%s")
-            )
+            start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=1)
+            localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+            start_epoch = int(localized_start_dt.timestamp())
         else:
             try:
-                start_epoch = (
-                    JalaliDateTime(
-                        year=start_ssss,
-                        month=start_mm,
-                        day=start_rr,
-                        hour=0,
-                        minute=0,
-                        second=0,
-                        tzinfo=pytz.timezone("Asia/Tehran"),
-                    )
-                    .to_gregorian()
-                    .strftime("%s")
-                )
+                start_dt = JalaliDateTime(year=start_ssss, month=start_mm, day=start_rr)
+                localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+                start_epoch = int(localized_start_dt.timestamp())
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
@@ -658,7 +616,6 @@ def run():
         description="If someone is in not deafen and doesn't answer, report them as a zombie!"
     )
     async def zombie(ctx, member: discord.Member):
-
         # func that does the job after a while
         task1 = None
 
@@ -737,72 +694,45 @@ def run():
         end_mm: typing.Optional[int] = 12,
         end_rr: typing.Optional[int] = 29,
     ):
-
-        now = today_jalali()
+        emrooz = JalaliDate.today()
 
         # I want to set today as default end value, but passing it in Args didnt work. So I do this:
         if end_ssss == 1415 and end_mm == 12 and end_rr == 29:
-            end_epoch = (
-                JalaliDateTime(
-                    year=now["y"],
-                    month=now["m"],
-                    day=now["d"],
+            end_dt = JalaliDateTime(
+                year=emrooz.year,
+                month=emrooz.month,
+                day=emrooz.day,
+                hour=23,
+                minute=59,
+                second=59,
+            )
+            localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+            end_epoch = int(localized_end_dt.timestamp()) + 1
+        else:
+            try:
+                end_dt = JalaliDateTime(
+                    year=end_ssss,
+                    month=end_mm,
+                    day=end_rr,
                     hour=23,
                     minute=59,
                     second=59,
-                    tzinfo=pytz.timezone("Asia/Tehran"),
                 )
-                .to_gregorian()
-                .strftime("%s")
-            )
-        else:
-            try:
-                end_epoch = (
-                    JalaliDateTime(
-                        year=end_ssss,
-                        month=end_mm,
-                        day=end_rr,
-                        hour=23,
-                        minute=59,
-                        second=59,
-                        tzinfo=pytz.timezone("Asia/Tehran"),
-                    )
-                    .to_gregorian()
-                    .strftime("%s")
-                )
+                localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+                end_epoch = int(localized_end_dt.timestamp()) + 1
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
         if start_ssss == 1349 and start_mm == 1 and start_rr == 1:
-            start_epoch = (
-                JalaliDateTime(
-                    year=now["y"],
-                    month=now["m"],
-                    day=1,
-                    hour=0,
-                    minute=0,
-                    second=0,
-                    tzinfo=pytz.timezone("Asia/Tehran"),
-                )
-                .to_gregorian()
-                .strftime("%s")
-            )
+            start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=1)
+            localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+            start_epoch = int(localized_start_dt.timestamp())
         else:
             try:
-                start_epoch = (
-                    JalaliDateTime(
-                        year=start_ssss,
-                        month=start_mm,
-                        day=start_rr,
-                        hour=0,
-                        minute=0,
-                        second=0,
-                        tzinfo=pytz.timezone("Asia/Tehran"),
-                    )
-                    .to_gregorian()
-                    .strftime("%s")
-                )
+                start_dt = JalaliDateTime(year=start_ssss, month=start_mm, day=start_rr)
+                localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+                start_epoch = int(localized_start_dt.timestamp())
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
@@ -837,36 +767,24 @@ def run():
 
     @bot.hybrid_command(description="جدول مدت سشن های تمام شده در امروز")
     async def emrooz(ctx):
-
         log_processor.renew_pendings(driver=str(ctx.guild.id))
 
-        now = today_jalali()
-        start_epoch = int(
-            JalaliDateTime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"],
-                hour=0,
-                minute=0,
-                second=0,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            )
-            .to_gregorian()
-            .strftime("%s")
+        emrooz = JalaliDate.today()
+
+        start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=emrooz.day)
+        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        start_epoch = int(localized_start_dt.timestamp())
+
+        end_dt = JalaliDateTime(
+            year=emrooz.year,
+            month=emrooz.month,
+            day=emrooz.day,
+            hour=23,
+            minute=59,
+            second=59,
         )
-        end_epoch = int(
-            JalaliDateTime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"],
-                hour=23,
-                minute=59,
-                second=59,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            )
-            .to_gregorian()
-            .strftime("%s")
-        )
+        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
             driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
@@ -887,33 +805,22 @@ def run():
 
     @bot.hybrid_command(description="جدول مدت سشن های دیروز")
     async def dirooz(ctx):
-        now = today_jalali()
-        start_epoch = int(
-            JalaliDateTime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"] - 1,
-                hour=0,
-                minute=0,
-                second=0,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            )
-            .to_gregorian()
-            .strftime("%s")
+        dirooz = JalaliDate.today() - timedelta(days=1)
+
+        start_dt = JalaliDateTime(year=dirooz.year, month=dirooz.month, day=dirooz.day)
+        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        start_epoch = int(localized_start_dt.timestamp())
+
+        end_dt = JalaliDateTime(
+            year=dirooz.year,
+            month=dirooz.month,
+            day=dirooz.day,
+            hour=23,
+            minute=59,
+            second=59,
         )
-        end_epoch = int(
-            JalaliDateTime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"] - 1,
-                hour=23,
-                minute=59,
-                second=59,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            )
-            .to_gregorian()
-            .strftime("%s")
-        )
+        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
             driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
@@ -934,36 +841,24 @@ def run():
 
     @bot.hybrid_command(description="جدول مدت سشن های این ماه")
     async def inmaah(ctx):
-
         log_processor.renew_pendings(driver=str(ctx.guild.id))
 
-        now = today_jalali()
-        start_epoch = int(
-            JalaliDateTime(
-                year=now["y"],
-                month=now["m"],
-                day=1,
-                hour=0,
-                minute=0,
-                second=0,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            )
-            .to_gregorian()
-            .strftime("%s")
+        emrooz = JalaliDate.today()
+
+        start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=1)
+        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        start_epoch = int(localized_start_dt.timestamp())
+
+        end_dt = JalaliDateTime(
+            year=emrooz.year,
+            month=emrooz.month,
+            day=emrooz.day,
+            hour=23,
+            minute=59,
+            second=59,
         )
-        end_epoch = int(
-            JalaliDateTime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"],
-                hour=23,
-                minute=59,
-                second=59,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            )
-            .to_gregorian()
-            .strftime("%s")
-        )
+        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
             driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
@@ -984,32 +879,24 @@ def run():
 
     @bot.hybrid_command(description="Session durations of current day")
     async def today(ctx):
-
         log_processor.renew_pendings(driver=str(ctx.guild.id))
 
-        now = today_g()
-        start_epoch = int(
-            datetime.datetime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"],
-                hour=0,
-                minute=0,
-                second=0,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            ).strftime("%s")
+        today = datetime.date.today()
+
+        start_dt = datetime.datetime(year=today.year, month=today.month, day=today.day)
+        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        start_epoch = int(localized_start_dt.timestamp())
+
+        end_dt = datetime.datetime(
+            year=today.year,
+            month=today.month,
+            day=today.day,
+            hour=23,
+            minute=59,
+            second=59,
         )
-        end_epoch = int(
-            datetime.datetime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"],
-                hour=23,
-                minute=59,
-                second=59,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            ).strftime("%s")
-        )
+        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
             driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
@@ -1031,29 +918,24 @@ def run():
 
     @bot.hybrid_command(description="Session durations of last day")
     async def yesterday(ctx):
-        now = today_g()
-        start_epoch = int(
-            datetime.datetime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"] - 1,
-                hour=0,
-                minute=0,
-                second=0,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            ).strftime("%s")
+        yesterday = datetime.date.today() - timedelta(days=1)
+
+        start_dt = datetime.datetime(
+            year=yesterday.year, month=yesterday.month, day=yesterday.day
         )
-        end_epoch = int(
-            datetime.datetime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"] - 1,
-                hour=23,
-                minute=59,
-                second=59,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            ).strftime("%s")
+        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        start_epoch = int(localized_start_dt.timestamp())
+
+        end_dt = datetime.datetime(
+            year=yesterday.year,
+            month=yesterday.month,
+            day=yesterday.day,
+            hour=23,
+            minute=59,
+            second=59,
         )
+        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
             driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
@@ -1074,32 +956,24 @@ def run():
 
     @bot.hybrid_command(description="Session durations of current month")
     async def thismonth(ctx):
-
         log_processor.renew_pendings(driver=str(ctx.guild.id))
 
-        now = today_g()
-        start_epoch = int(
-            datetime.datetime(
-                year=now["y"],
-                month=now["m"],
-                day=1,
-                hour=0,
-                minute=0,
-                second=0,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            ).strftime("%s")
+        today = datetime.date.today()
+
+        start_dt = datetime.datetime(year=today.year, month=today.month, day=1)
+        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        start_epoch = int(localized_start_dt.timestamp())
+
+        end_dt = datetime.datetime(
+            year=today.year,
+            month=today.month,
+            day=today.day,
+            hour=23,
+            minute=59,
+            second=59,
         )
-        end_epoch = int(
-            datetime.datetime(
-                year=now["y"],
-                month=now["m"],
-                day=now["d"],
-                hour=23,
-                minute=59,
-                second=59,
-                tzinfo=pytz.timezone("Asia/Tehran"),
-            ).strftime("%s")
-        )
+        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
             driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
@@ -1133,71 +1007,45 @@ def run():
         end_mm: typing.Optional[int] = 12,
         end_rr: typing.Optional[int] = 29,
     ):
-        now = today_jalali()
+        emrooz = JalaliDate.today()
 
         # I want to set today as default end value, but passing it in Args didnt work. So I do this:
         if end_ssss == 1415 and end_mm == 12 and end_rr == 29:
-            end_epoch = (
-                JalaliDateTime(
-                    year=now["y"],
-                    month=now["m"],
-                    day=now["d"],
+            end_dt = JalaliDateTime(
+                year=emrooz.year,
+                month=emrooz.month,
+                day=emrooz.day,
+                hour=23,
+                minute=59,
+                second=59,
+            )
+            localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+            end_epoch = int(localized_end_dt.timestamp()) + 1
+        else:
+            try:
+                end_dt = JalaliDateTime(
+                    year=end_ssss,
+                    month=end_mm,
+                    day=end_rr,
                     hour=23,
                     minute=59,
                     second=59,
-                    tzinfo=pytz.timezone("Asia/Tehran"),
                 )
-                .to_gregorian()
-                .strftime("%s")
-            )
-        else:
-            try:
-                end_epoch = (
-                    JalaliDateTime(
-                        year=end_ssss,
-                        month=end_mm,
-                        day=end_rr,
-                        hour=23,
-                        minute=59,
-                        second=59,
-                        tzinfo=pytz.timezone("Asia/Tehran"),
-                    )
-                    .to_gregorian()
-                    .strftime("%s")
-                )
+                localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+                end_epoch = int(localized_end_dt.timestamp()) + 1
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
 
         if start_ssss == 1349 and start_mm == 1 and start_rr == 1:
-            start_epoch = (
-                JalaliDateTime(
-                    year=now["y"],
-                    month=now["m"],
-                    day=1,
-                    hour=0,
-                    minute=0,
-                    second=0,
-                    tzinfo=pytz.timezone("Asia/Tehran"),
-                )
-                .to_gregorian()
-                .strftime("%s")
-            )
+            start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=1)
+            localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+            start_epoch = int(localized_start_dt.timestamp())
         else:
             try:
-                start_epoch = (
-                    JalaliDateTime(
-                        year=start_ssss,
-                        month=start_mm,
-                        day=start_rr,
-                        hour=0,
-                        minute=0,
-                        second=0,
-                        tzinfo=pytz.timezone("Asia/Tehran"),
-                    )
-                    .to_gregorian()
-                    .strftime("%s")
-                )
+                start_dt = JalaliDateTime(year=start_ssss, month=start_mm, day=start_rr)
+                localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+                start_epoch = int(localized_start_dt.timestamp())
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
                 return
