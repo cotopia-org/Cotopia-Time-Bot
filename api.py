@@ -12,6 +12,7 @@ import report
 from gcal import calcal as GCalSetup
 from person import Person
 from server import Server
+from job_report.report import gen_user_report
 
 app = FastAPI(
     title="TimeMaster",
@@ -393,3 +394,31 @@ async def server(request: Request):
         return info
     except:  # noqa: E722
         return {"Message": "Not Available. Run /update_info in the server"}
+
+@app.get("/jobs/report")
+async def jobs_report(request: Request, start: int, end: int, discord_id: int):
+    token = request.headers.get("Authorization")
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
+        )
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:  # noqa: E722
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Unable to read token!",
+            )
+
+        if decoded is False:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid Token! Login Again!",
+            )
+        else:
+            guild_id = str(decoded["discord_guild"])
+    
+    report = gen_user_report(guild_id=guild_id, discord_id=discord_id, start_epoch=start, end_epoch=end)
+
+    return report
