@@ -1216,6 +1216,7 @@ def run():
             description: str | None = None,
             member3: discord.Member | None = None,
             member4: discord.Member | None = None,
+
     ):
 
         category = discord.utils.get(ctx.guild.categories, name="MEETINGS")
@@ -1240,7 +1241,7 @@ def run():
         members.append(member)
 
         # send bot to their channels and play ring voice
-        await play_ring_voice(discord, bot, ctx, member)
+
         if member3 is not None:
             split = text.split(",\n", 1)
             text = split[0] + ", " + member3.mention + ",\n" + split[1]
@@ -1248,8 +1249,6 @@ def run():
             overwrites[member3] = discord.PermissionOverwrite(
                 connect=True, view_channel=True
             )
-            # send bot to their channels and play ring voice
-            await play_ring_voice(discord, bot, ctx, member3)
 
         if member4 is not None:
             split = text.split(",\n", 1)
@@ -1258,8 +1257,6 @@ def run():
             overwrites[member4] = discord.PermissionOverwrite(
                 connect=True, view_channel=True
             )
-            # send bot to their channels and play ring voice
-            await play_ring_voice(discord, bot, ctx, member4)
 
         channel = await ctx.guild.create_voice_channel(
             name=ctx.author.name + "'s meeting",
@@ -1300,6 +1297,15 @@ def run():
 
         # play ring alarm when user sent the command
 
+        await play_ring_voice(discord, bot, ctx, member)
+        if member3 is not None and member3.voice.channel != member.voice.channel:
+            # send bot to their channels and play ring voice
+            await play_ring_voice(discord, bot, ctx, member3)
+
+        if member4 is not None and member4.voice.channel != member.voice.channel:
+            # send bot to their channels and play ring voice
+            await play_ring_voice(discord, bot, ctx, member4)
+
         global temp_messages
         temp_messages[channel] = the_message
         print("temp_messages:   ")
@@ -1322,6 +1328,7 @@ def run():
         await the_message.edit(
             content=the_message.content + the_table + "\n--------------------"
         )
+
         if author_moved:
             talk_with_msg = await ctx.channel.fetch_message(the_message.id)
             c1 = talk_with_msg.content
