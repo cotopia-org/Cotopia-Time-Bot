@@ -66,7 +66,7 @@ class Person:
             (discord_guild, discord_id),
         )
         result = cur.fetchone()
-        if result == None:
+        if result is None:
             return None
         else:
             return result[0]
@@ -82,7 +82,7 @@ class Person:
         )
 
         result = cur.fetchone()
-        if result == None:
+        if result is None:
             return None
         else:
             return result[0]
@@ -98,7 +98,7 @@ class Person:
         )
 
         result = cur.fetchone()
-        if result == None:
+        if result is None:
             return None
         else:
             return result[0]
@@ -107,7 +107,7 @@ class Person:
         self, cur: cursor, discord_guild: int, discord_id: int, name: str, email: str
     ):
         person_id = self.get_person(cur, discord_guild, discord_id)
-        if person_id == None:
+        if person_id is None:
             cur.execute(
                 "INSERT INTO person (discord_guild, discord_id, discord_name, email) VALUES (%s, %s, %s, %s);",
                 (discord_guild, discord_id, name, email),
@@ -121,7 +121,7 @@ class Person:
         self, cur: cursor, discord_guild: int, discord_id: int, name: str, addr: str
     ):
         person_id = self.get_person(cur, discord_guild, discord_id)
-        if person_id == None:
+        if person_id is None:
             cur.execute(
                 "INSERT INTO person (discord_guild, discord_id, discord_name, trc20_addr) VALUES (%s, %s, %s, %s);",
                 (discord_guild, discord_id, name, addr),
@@ -169,7 +169,7 @@ class Person:
         conn.commit()
         cur.close()
         conn.close()
-        if result == None:
+        if result is None:
             return None
         else:
             return result[0]
@@ -234,7 +234,7 @@ class Person:
         conn.commit()
         cur.close()
         conn.close()
-        if result == None:
+        if result is None:
             return None
         else:
             return result[0]
@@ -260,7 +260,7 @@ class Person:
         conn.commit()
         cur.close()
         conn.close()
-        if result == None:
+        if result is None:
             return None
         else:
             return result[0]
@@ -300,7 +300,7 @@ class Person:
         cur.close()
         conn.close()
 
-        if result == None:
+        if result is None:
             return None
 
         info = {}
@@ -312,11 +312,11 @@ class Person:
         info["discord_name"] = result[4]
         info["email"] = result[5]
         info["trc20_addr"] = result[6]
-        if result[8] == None:
+        if result[8] is None:
             info["has_google_token"] = False
         else:
             info["has_google_token"] = True
-        if result[9] == None:
+        if result[9] is None:
             info["has_calendar"] = False
         else:
             info["has_calendar"] = True
@@ -342,7 +342,7 @@ class Person:
         cur.close()
         conn.close()
 
-        if result == None:
+        if result is None:
             return None
 
         info = {}
@@ -354,11 +354,11 @@ class Person:
         info["discord_name"] = result[4]
         info["email"] = result[5]
         info["trc20_addr"] = result[6]
-        if result[8] == None:
+        if result[8] is None:
             info["has_google_token"] = False
         else:
             info["has_google_token"] = True
-        if result[9] == None:
+        if result[9] is None:
             info["has_calendar"] = False
         else:
             info["has_calendar"] = True
