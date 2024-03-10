@@ -62,7 +62,7 @@ def session_start(m: Member, channel: str, e: dict):
         start = get_pair_start_id(str(m.guild.id), str(m.id), "SESSION STARTED")
         if start != -1:
             add_pairid_to_db(start, stop)
-        delete_all_pending_from_db(str(m.guild.id), str(m))
+        delete_all_pending_from_db(str(m.guild.id), str(m.id))
 
     notedic = {"channel": channel}
     notedic = notedic | e
@@ -90,7 +90,7 @@ def session_end(m: Member, channel: str, e: dict):
         print("start:   " + str(start))
         if start != -1:
             add_pairid_to_db(start, stop)
-        delete_all_pending_from_db(str(m.guild.id), str(m))
+        delete_all_pending_from_db(str(m.guild.id), str(m.id))
     else:
         print("unexpected session end is received. Adding session start for it!")
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
@@ -106,7 +106,7 @@ def session_end(m: Member, channel: str, e: dict):
             str(m.guild.id), rightnow(), "SESSION ENDED", str(m.id), True, note
         )
         add_pairid_to_db(start, stop)
-        delete_all_pending_from_db(str(m.guild.id), str(m))
+        delete_all_pending_from_db(str(m.guild.id), str(m.id))
 
 
 # 🚗
