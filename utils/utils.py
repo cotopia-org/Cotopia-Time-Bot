@@ -1,7 +1,7 @@
 from asyncio import sleep
 
 
-async def play_ring_voice(discord, bot, ctx, member, voice='assets/sounds/ring.mp3'):
+async def play_ring_voice(discord, bot, ctx, member, voice='assets/sounds/ring3.mp3'):
     # play ring alarm when user sent the command
 
     if member.voice is not None:
