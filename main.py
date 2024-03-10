@@ -471,7 +471,7 @@ def run():
 
         thereport = report.make_report(
             driver=str(ctx.guild.id),
-            doer=str(member),
+            doer=str(member.id),
             start_epoch=start_epoch,
             end_epoch=end_epoch,
         )
@@ -577,7 +577,7 @@ def run():
 
         thereport = report.make_report(
             driver=str(ctx.guild.id),
-            doer=str(member),
+            doer=str(member.id),
             start_epoch=start_epoch,
             end_epoch=end_epoch,
         )
