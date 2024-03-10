@@ -244,20 +244,23 @@ def get_doers_list(driver: str, start_epoch: int, end_epoch: int):
     )
     d1 = cur.fetchall()
 
-    cur.execute(
-        f"""
-                SELECT discord_id FROM person
-                WHERE discord_guild = {driver}"""
-    )
-    d2 = cur.fetchall()
-    discord_ids = []
-    for i in d2:
-        discord_ids.append(str(i[0]))
+    #### yadam nemiad chera in kar ro karde boodam
+    #### be nazar dige bi fayede miad
+    
+    # cur.execute(
+    #     f"""
+    #             SELECT discord_id FROM person
+    #             WHERE discord_guild = {driver}"""
+    # )
+    # d2 = cur.fetchall()
+    # discord_ids = []
+    # for i in d2:
+    #     discord_ids.append(str(i[0]))
 
     for row in d1:
         if row[0] is not None and row[0] != "/today":
-            if row[0] not in discord_ids:
-                doers.append(row[0])
+            # if row[0] not in discord_ids:
+            doers.append(row[0])
 
     conn.commit()
     cur.close()
