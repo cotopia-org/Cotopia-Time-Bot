@@ -57,7 +57,7 @@ def session_start(m: Member, channel: str, e: dict):
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
         note = json.dumps(notedic)
         stop = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION ENDED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION ENDED", str(m.id), True, note
         )
         start = get_pair_start_id(str(m.guild.id), str(m), "SESSION STARTED")
         if start != -1:
@@ -69,7 +69,7 @@ def session_start(m: Member, channel: str, e: dict):
     note = json.dumps(notedic)
     print("SESSION STARTED")
     pendingID = write_event_to_db(
-        str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note
+        str(m.guild.id), rightnow(), "SESSION STARTED", str(m.id), True, note
     )
     write_pending_to_db(str(m.guild.id), str(m), "SESSION STARTED", pendingID)
 
@@ -83,7 +83,7 @@ def session_end(m: Member, channel: str, e: dict):
         note = json.dumps(notedic)
         print("SESSION ENDED")
         stop = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION ENDED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION ENDED", str(m.id), True, note
         )
         print("stop:    " + str(stop))
         start = get_pair_start_id(str(m.guild.id), str(m), "SESSION STARTED")
@@ -96,14 +96,14 @@ def session_end(m: Member, channel: str, e: dict):
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
         note = json.dumps(notedic)
         start = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION STARTED", str(m.id), True, note
         )
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
         print("SESSION ENDED")
         stop = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION ENDED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION ENDED", str(m.id), True, note
         )
         add_pairid_to_db(start, stop)
         delete_all_pending_from_db(str(m.guild.id), str(m))
@@ -122,7 +122,7 @@ def session_pause(m: Member, channel: str, e: dict):
         # after midnight, it causes negative raw session hours for that next day
         renew_pendings_of_a_doer(driver=str(m.guild.id), doer=str(m))
         pendingID = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION PAUSED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION PAUSED", str(m.id), True, note
         )
         write_pending_to_db(str(m.guild.id), str(m), "SESSION PAUSED", pendingID)
     else:
@@ -130,14 +130,14 @@ def session_pause(m: Member, channel: str, e: dict):
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
         note = json.dumps(notedic)
         start_pendingID = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION STARTED", str(m.id), True, note
         )
         write_pending_to_db(str(m.guild.id), str(m), "SESSION STARTED", start_pendingID)
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
         pause_pendingID = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION PAUSED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION PAUSED", str(m.id), True, note
         )
         write_pending_to_db(str(m.guild.id), str(m), "SESSION PAUSED", pause_pendingID)
 
@@ -154,7 +154,7 @@ def session_resume(
         print("UNDEAFENED")
         print("SESSION RESUMED")
         stop = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION RESUMED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION RESUMED", str(m.id), True, note
         )
         start = get_pair_start_id(str(m.guild.id), str(m), "SESSION PAUSED")
         if start != -1:
@@ -166,13 +166,13 @@ def session_resume(
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
         note = json.dumps(notedic)
         start = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION PAUSED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION PAUSED", str(m.id), True, note
         )
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
         stop = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION RESUMED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION RESUMED", str(m.id), True, note
         )
         add_pairid_to_db(start, stop)
 
@@ -184,7 +184,7 @@ def channel_change(m: Member, channel: VoiceChannel, e: dict):
     note = json.dumps(notedic)
     print("CHANNEL CHANGED")
     write_event_to_db(
-        str(m.guild.id), rightnow(), "CHANNEL CHANGED", str(m), False, note
+        str(m.guild.id), rightnow(), "CHANNEL CHANGED", str(m.id), False, note
     )
 
 
@@ -198,7 +198,7 @@ def talking_start(m: Member, channel: str, e: dict):
         print("UNMUTED")
         print("TALKING STARTED")
         pendingID = write_event_to_db(
-            str(m.guild.id), rightnow(), "TALKING STARTED", str(m), True, note
+            str(m.guild.id), rightnow(), "TALKING STARTED", str(m.id), True, note
         )
         write_pending_to_db(str(m.guild.id), str(m), "TALKING STARTED", pendingID)
     else:
@@ -206,14 +206,14 @@ def talking_start(m: Member, channel: str, e: dict):
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
         note = json.dumps(notedic)
         start_pendingID = write_event_to_db(
-            str(m.guild.id), rightnow(), "SESSION STARTED", str(m), True, note
+            str(m.guild.id), rightnow(), "SESSION STARTED", str(m.id), True, note
         )
         write_pending_to_db(str(m.guild.id), str(m), "SESSION STARTED", start_pendingID)
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
         talk_pendingID = write_event_to_db(
-            str(m.guild.id), rightnow(), "TALKING STARTED", str(m), True, note
+            str(m.guild.id), rightnow(), "TALKING STARTED", str(m.id), True, note
         )
         write_pending_to_db(str(m.guild.id), str(m), "TALKING STARTED", talk_pendingID)
 
@@ -228,7 +228,7 @@ def talking_stop(
         notedic = notedic | e
         note = json.dumps(notedic)
         stop = write_event_to_db(
-            str(m.guild.id), rightnow(), "TALKING STOPPED", str(m), True, note
+            str(m.guild.id), rightnow(), "TALKING STOPPED", str(m.id), True, note
         )
         start = get_pair_start_id(str(m.guild.id), str(m), "TALKING STARTED")
         if start != -1:
@@ -242,13 +242,13 @@ def talking_stop(
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
         note = json.dumps(notedic)
         start = write_event_to_db(
-            str(m.guild.id), rightnow(), "TALKING STARTED", str(m), True, note
+            str(m.guild.id), rightnow(), "TALKING STARTED", str(m.id), True, note
         )
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
         stop = write_event_to_db(
-            str(m.guild.id), rightnow(), "TALKING STOPPED", str(m), True, note
+            str(m.guild.id), rightnow(), "TALKING STOPPED", str(m.id), True, note
         )
         add_pairid_to_db(start, stop)
 

@@ -1319,7 +1319,7 @@ def run():
             driver=ctx.guild.id,
             epoch=rightnow(),
             kind="ASK FOR TALK",
-            doer=str(ctx.author),
+            doer=str(ctx.author.id),
             isPair=False,
             note=note,
         )
