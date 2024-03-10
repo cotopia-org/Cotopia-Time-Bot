@@ -52,7 +52,7 @@ def session_start(m: Member, channel: str, e: dict):
     # when a session starts, we expect that there is no "SESSION STARTED"
     # in the pending_event table, logically
     # so if we have one in there, there must be an error that we need to fix now
-    if "SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m)):
+    if "SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m.id)):
         print("unexpected session start is pending. Adding session end before it!")
         notedic = {"NOTE": "Automatically added to fix an error in data!"}
         note = json.dumps(notedic)
@@ -77,7 +77,7 @@ def session_start(m: Member, channel: str, e: dict):
 # 🚗
 def session_end(m: Member, channel: str, e: dict):
     # when we receive a session end, we expect a "SESSION STARTED" in pendings
-    if "SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m)):
+    if "SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m.id)):
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
@@ -112,7 +112,7 @@ def session_end(m: Member, channel: str, e: dict):
 # 🚗
 def session_pause(m: Member, channel: str, e: dict):
     # when we receive a session pause, we expect a "SESSION STARTED" in pendings
-    if "SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m)):
+    if "SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m.id)):
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
@@ -147,7 +147,7 @@ def session_resume(
     m: Member, channel: str, e: dict, comes_from_s_end: bool | None = None
 ):
     # when we receive a session resume, we expect a "SESSION PAUSED" in pendings
-    if "SESSION PAUSED" in get_pendings(driver=str(m.guild.id), doer=str(m)):
+    if "SESSION PAUSED" in get_pendings(driver=str(m.guild.id), doer=str(m.id)):
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
@@ -191,7 +191,7 @@ def channel_change(m: Member, channel: VoiceChannel, e: dict):
 # 🚗
 def talking_start(m: Member, channel: str, e: dict):
     # when we receive a talking start, we expect a "SESSION STARTED" in pendings
-    if "SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m)):
+    if "SESSION STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m.id)):
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
@@ -223,7 +223,7 @@ def talking_stop(
     m: Member, channel: str, e: dict, comes_from_s_end: bool | None = None
 ):
     # when we receive a talking stop, we expect a "TALKING STARTED" in pendings
-    if "TALKING STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m)):
+    if "TALKING STARTED" in get_pendings(driver=str(m.guild.id), doer=str(m.id)):
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
