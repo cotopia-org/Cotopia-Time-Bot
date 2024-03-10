@@ -120,7 +120,7 @@ def session_pause(m: Member, channel: str, e: dict):
         print("SESSION PAUSED")
         # renew to fix that edge case, when user starts a session before midnight and pauses it,
         # after midnight, it causes negative raw session hours for that next day
-        renew_pendings_of_a_doer(driver=str(m.guild.id), doer=str(m))
+        renew_pendings_of_a_doer(driver=str(m.guild.id), doer=str(m.id))
         pendingID = write_event_to_db(
             str(m.guild.id), rightnow(), "SESSION PAUSED", str(m.id), True, note
         )
