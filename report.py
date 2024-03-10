@@ -7,9 +7,9 @@ from persiantools.jdatetime import JalaliDateTime
 def make_report(driver: str, doer: str, start_epoch: int, end_epoch: int):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cur = conn.cursor()
@@ -168,11 +168,11 @@ def make_raw_file(driver: str, doer: str, start_epoch: int, end_epoch: int):
 
     try:
         conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
+        host="localhost",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
+        port=5432,
         )
         cur = conn.cursor()
         cur.execute(
@@ -288,11 +288,11 @@ def get_status(driver: str, doer: str):
     doers_list = get_doers_list(driver, start_epoch=0, end_epoch=2147483647)
     if doer in doers_list:
         conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
+        host="localhost",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
+        port=5432,
         )
         cur = conn.cursor()
         cur.execute(

@@ -60,9 +60,9 @@ async def gen_dirooz_board(guild):
     # record to db
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cursor = conn.cursor()
@@ -87,9 +87,9 @@ async def update_dirooz_board(guild):
     # get msg from db
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cursor = conn.cursor()
@@ -209,9 +209,9 @@ async def gen_inmaah_board(guild):
     # record to db
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cursor = conn.cursor()
@@ -236,9 +236,9 @@ async def update_inmaah_board(guild):
     # get msg from db
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cursor = conn.cursor()

@@ -6,7 +6,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DISCORD_API_SECRET = os.getenv("DISCORD_API_TOKEN")
+# DISCORD_API_SECRET = os.getenv("DISCORD_API_TOKEN")
+
+
+# DISCORD_API_SECRET = 'MTIxNDUyODIzNDQ4MjMxMTE4OA.GUeQOK.y6aGzmlKBp1IyUyPVguXn87O0DAalYOudQguQY'
+DISCORD_API_SECRET = 'MTEyNzQ3MzQzMzg4MjY3MzI2Mw.GIF-ZA.yNj9icp1DGzEkd4DOztjkjbMpuCToNz4lVhYRg'
+
+DATABASE = os.getenv("DATABASE", 'postgres')
+DATABASE_USER = os.getenv("DATABASE_USER", 'postgres')
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD", 'secret')
+DATABASE_HOST = os.getenv("DATABASE_HOST", 'localhost')
+DATABASE_PORT = os.getenv("DATABASE_PORT", '5432')
 
 LOGGING_CONFIG = {
     "version": 1,

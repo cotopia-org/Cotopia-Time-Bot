@@ -17,11 +17,11 @@ class MySettingsModal(discord.ui.Modal, title="Settings"):
 
     def connect_to_db(self):
         self.conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
+        host="localhost",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
+        port=5432,
         )
         self.cur = self.conn.cursor()
 

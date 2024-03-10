@@ -15,9 +15,9 @@ class Person:
     ):
         conn = psycopg2.connect(
             host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
+            dbname="discord_bot_db",
+            user="cotopia",
+            password="123123",
             port=5432,
         )
         cur = conn.cursor()
@@ -134,9 +134,9 @@ class Person:
     def set_google_token(self, person_id: int, creds_json: str):
         conn = psycopg2.connect(
             host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
+            dbname="discord_bot_db",
+            user="cotopia",
+            password="123123",
             port=5432,
         )
         cur = conn.cursor()
@@ -151,9 +151,9 @@ class Person:
     def get_google_token(self, discord_guild: int, discord_id: int):
         conn = psycopg2.connect(
             host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
+            dbname="discord_bot_db",
+            user="cotopia",
+            password="123123",
             port=5432,
         )
         cur = conn.cursor()
@@ -176,11 +176,11 @@ class Person:
 
     def list_of_tokeners(self, discord_guild: int):
         conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
+        host="localhost",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
+        port=5432,
         )
         cur = conn.cursor()
         cur.execute(
@@ -198,11 +198,11 @@ class Person:
 
     def set_cal(self, discord_guild: int, discord_id: int, cal: str):
         conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
+        host="localhost",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
+        port=5432,
         )
         cur = conn.cursor()
         cur.execute(
@@ -215,11 +215,11 @@ class Person:
 
     def get_cal(sel, discord_guild: int, discord_id: int):
         conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
+        host="localhost",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
+        port=5432,
         )
         cur = conn.cursor()
         cur.execute(
@@ -241,11 +241,11 @@ class Person:
 
     def get_cal_by_name(self, discord_guild: int, discord_name: str):
         conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
+        host="localhost",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
+        port=5432,
         )
         cur = conn.cursor()
         cur.execute(
@@ -267,11 +267,11 @@ class Person:
 
     def set_avatar(self, discord_guild: int, discord_id: int, avatar: str, name: str):
         conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
+        host="localhost",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
+        port=5432,
         )
         cur = conn.cursor()
         cur.execute(
@@ -284,11 +284,11 @@ class Person:
 
     def get_person_info(self, discord_guild: int, discord_name: str):
         conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
+        host="localhost",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
+        port=5432,
         )
         cur = conn.cursor()
         cur.execute(
@@ -326,11 +326,11 @@ class Person:
 
     def get_person_info_by_id(self, discord_guild: int, discord_id: int):
         conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
+        host="localhost",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
+        port=5432,
         )
         cur = conn.cursor()
         cur.execute(

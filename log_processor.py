@@ -268,9 +268,9 @@ def write_event_to_db(
 ):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cur = conn.cursor()
@@ -306,9 +306,9 @@ def write_event_to_db(
 def write_pending_to_db(driver: str, doer: str, kind: str, pendingID: int):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cur = conn.cursor()
@@ -339,9 +339,9 @@ def add_pairid_to_db(start: int, stop: int):
     # print("stop    :" +str(stop))
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cur = conn.cursor()
@@ -378,9 +378,9 @@ def get_pair_start_id(driver: str, doer: str, kind: str):
     pair_start_id = 0
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cur = conn.cursor()
@@ -421,9 +421,9 @@ def get_pair_start_id(driver: str, doer: str, kind: str):
 def delete_all_pending_from_db(driver: str, doer: str):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cur = conn.cursor()
@@ -441,9 +441,9 @@ def delete_all_pending_from_db(driver: str, doer: str):
 def renew_pendings(driver: str):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cur = conn.cursor()
@@ -501,9 +501,9 @@ def renew_pendings(driver: str):
 def renew_pendings_of_a_doer(driver: str, doer: str):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cur = conn.cursor()
@@ -563,9 +563,9 @@ def renew_pendings_of_a_doer(driver: str, doer: str):
 def get_pendings(driver: str, doer: str):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
+        dbname="discord_bot_db",
+        user="cotopia",
+        password="123123",
         port=5432,
     )
     cur = conn.cursor()

@@ -55,3 +55,4 @@ uvloop==0.17.0
 watchfiles==0.20.0
 websockets==11.0.3
 yarl==1.9.2
+peewee==3.17.1
