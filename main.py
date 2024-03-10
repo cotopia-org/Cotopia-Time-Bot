@@ -758,7 +758,7 @@ def run():
 
         thereport = report.make_raw_file(
             driver=str(ctx.guild.id),
-            doer=str(member),
+            doer=str(member.id),
             start_epoch=int(start_epoch),
             end_epoch=int(end_epoch),
         )
