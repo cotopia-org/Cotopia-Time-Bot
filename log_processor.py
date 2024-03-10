@@ -59,7 +59,7 @@ def session_start(m: Member, channel: str, e: dict):
         stop = write_event_to_db(
             str(m.guild.id), rightnow(), "SESSION ENDED", str(m.id), True, note
         )
-        start = get_pair_start_id(str(m.guild.id), str(m), "SESSION STARTED")
+        start = get_pair_start_id(str(m.guild.id), str(m.id), "SESSION STARTED")
         if start != -1:
             add_pairid_to_db(start, stop)
         delete_all_pending_from_db(str(m.guild.id), str(m))
@@ -86,7 +86,7 @@ def session_end(m: Member, channel: str, e: dict):
             str(m.guild.id), rightnow(), "SESSION ENDED", str(m.id), True, note
         )
         print("stop:    " + str(stop))
-        start = get_pair_start_id(str(m.guild.id), str(m), "SESSION STARTED")
+        start = get_pair_start_id(str(m.guild.id), str(m.id), "SESSION STARTED")
         print("start:   " + str(start))
         if start != -1:
             add_pairid_to_db(start, stop)
@@ -156,7 +156,7 @@ def session_resume(
         stop = write_event_to_db(
             str(m.guild.id), rightnow(), "SESSION RESUMED", str(m.id), True, note
         )
-        start = get_pair_start_id(str(m.guild.id), str(m), "SESSION PAUSED")
+        start = get_pair_start_id(str(m.guild.id), str(m.id), "SESSION PAUSED")
         if start != -1:
             add_pairid_to_db(start, stop)
     else:
@@ -230,7 +230,7 @@ def talking_stop(
         stop = write_event_to_db(
             str(m.guild.id), rightnow(), "TALKING STOPPED", str(m.id), True, note
         )
-        start = get_pair_start_id(str(m.guild.id), str(m), "TALKING STARTED")
+        start = get_pair_start_id(str(m.guild.id), str(m.id), "TALKING STARTED")
         if start != -1:
             add_pairid_to_db(start, stop)
         print("MUTED")
