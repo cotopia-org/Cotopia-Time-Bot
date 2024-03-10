@@ -213,7 +213,7 @@ class Person:
         cur.close()
         conn.close()
 
-    def get_cal(sel, discord_guild: int, discord_id: int):
+    def get_cal(self, discord_guild: int, discord_id: int):
         conn = psycopg2.connect(
             host="localhost",
             dbname="postgres",

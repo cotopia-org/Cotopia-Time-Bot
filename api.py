@@ -10,9 +10,9 @@ import auth
 import log_processor
 import report
 from gcal import calcal as GCalSetup
+from job_report.report import gen_user_report
 from person import Person
 from server import Server
-from job_report.report import gen_user_report
 
 app = FastAPI(
     title="TimeMaster",
@@ -240,7 +240,7 @@ async def google_oauth(a: int, b: int):
 
 
 @app.get("/getcal")
-async def get_calendar(doer: str, request: Request):
+async def get_calendar(discord_name: str, request: Request):
     token = request.headers.get("Authorization")
     if token is None:
         raise HTTPException(
@@ -266,7 +266,7 @@ async def get_calendar(doer: str, request: Request):
     person = Person()
 
     cal = None
-    cal = person.get_cal_by_name(guild_id, doer)
+    cal = person.get_cal_by_name(guild_id, discord_name)
     if cal is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -276,8 +276,8 @@ async def get_calendar(doer: str, request: Request):
         return cal
 
 
-@app.get("/doer")
-async def get_doer(doer: str, request: Request):
+@app.get("/doer_by_name")
+async def get_doer_by_name(discord_name: str, request: Request):
     token = request.headers.get("Authorization")
     if token is None:
         raise HTTPException(
@@ -301,7 +301,36 @@ async def get_doer(doer: str, request: Request):
             guild_id = str(decoded["discord_guild"])
 
     person = Person()
-    info = person.get_person_info(guild_id, doer)
+    info = person.get_person_info(guild_id, discord_name)
+    return info
+
+
+@app.get("/doer_by_id")
+async def get_doer_by_id(discord_id: int, request: Request):
+    token = request.headers.get("Authorization")
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
+        )
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:  # noqa: E722
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Unable to read token!",
+            )
+
+        if decoded is False:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid Token! Login Again!",
+            )
+        else:
+            guild_id = str(decoded["discord_guild"])
+
+    person = Person()
+    info = person.get_person_info_by_id(discord_guild=guild_id, discord_id=discord_id)
     return info
 
 
@@ -395,6 +424,7 @@ async def server(request: Request):
     except:  # noqa: E722
         return {"Message": "Not Available. Run /update_info in the server"}
 
+
 @app.get("/jobs/report")
 async def jobs_report(request: Request, start: int, end: int, discord_id: int):
     token = request.headers.get("Authorization")
@@ -418,7 +448,9 @@ async def jobs_report(request: Request, start: int, end: int, discord_id: int):
             )
         else:
             guild_id = str(decoded["discord_guild"])
-    
-    report = gen_user_report(guild_id=guild_id, discord_id=discord_id, start_epoch=start, end_epoch=end)
+
+    report = gen_user_report(
+        guild_id=guild_id, discord_id=discord_id, start_epoch=start, end_epoch=end
+    )
 
     return report
