@@ -799,7 +799,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -835,7 +835,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -873,7 +873,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -912,7 +912,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -950,7 +950,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -988,7 +988,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -1087,11 +1087,12 @@ def run():
             discordDate_to) + "\n------------------------------\n"
         )
         for i in the_board:
-            string = str(i)
-            string = string.replace("('", "")
-            string = string.replace("',", " :")
-            string = string.replace(")", "")
-            text = text + string + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
+            # string = str(i)
+            # string = string.replace("('", "")
+            # string = string.replace("',", " :")
+            # string = string.replace(")", "")
+            # text = text + string + "\n"
 
         await ctx.send(text)
 
