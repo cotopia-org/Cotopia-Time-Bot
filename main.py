@@ -624,7 +624,7 @@ def run():
             global the_zombie
             the_zombie[ctx.guild.id] = None
             zombie_hunter.record_hunt(
-                driver=str(ctx.guild.id), reporter=str(ctx.author), zombie=str(member)
+                driver=str(ctx.guild.id), reporter=str(ctx.author.id), zombie=str(member.id)
             )
             await member.move_to(
                 None, reason="You have been reported a zombie and didn't respond!"
