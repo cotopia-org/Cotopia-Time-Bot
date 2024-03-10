@@ -994,7 +994,7 @@ def run():
 
     @bot.hybrid_command()
     async def status(ctx, member: discord.Member):
-        status = report.get_status(driver=str(ctx.guild.id), doer=str(member))
+        status = report.get_status(driver=str(ctx.guild.id), doer=str(member.id))
         await ctx.send(member.mention + "'s current status: \n" + status)
 
     @bot.hybrid_command()
