@@ -53,7 +53,7 @@ async def gen_dirooz_board(guild):
             + "`\n------------------------------\n"
     )
     for line in the_board:
-        text = text + str(line[1]) + " | " + line[0] + "\n"
+        text = text + str(line[1]) + " | <@" + line[0] + ">\n"
 
     # send the text
     msg = await da_channel.send(text + "‌")
@@ -142,7 +142,7 @@ async def update_dirooz_board(guild):
                 + "`\n------------------------------\n"
         )
         for line in the_board:
-            text = text + str(line[1]) + " | " + line[0] + "\n"
+            text = text + str(line[1]) + " | <@" + line[0] + ">\n"
 
         # send edit
         await message.edit(content=text + "‌")
@@ -209,7 +209,7 @@ async def gen_inmaah_board(guild):
             + "`\n------------------------------\n"
     )
     for line in the_board:
-        text = text + str(line[1]) + " | " + line[0] + "\n"
+        text = text + str(line[1]) + " | <@" + line[0] + ">\n"
 
     # send the text
     msg = await da_channel.send(text + "‌")
@@ -311,7 +311,7 @@ async def update_inmaah_board(guild):
                 + "`\n------------------------------\n"
         )
         for line in the_board:
-            text = text + str(line[1]) + " | " + line[0] + "\n"
+            text = text + str(line[1]) + " | <@" + line[0] + ">\n"
 
         # send edit
         await message.edit(content=text + "‌")

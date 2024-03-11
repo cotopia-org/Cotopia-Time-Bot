@@ -1,9 +1,5 @@
-from typing import Optional
-
 import discord
 import psycopg2
-from discord.interactions import Interaction
-from discord.utils import MISSING
 
 from .db import Person
 

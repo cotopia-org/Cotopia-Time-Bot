@@ -471,7 +471,7 @@ def run():
 
         thereport = report.make_report(
             driver=str(ctx.guild.id),
-            doer=str(member),
+            doer=str(member.id),
             start_epoch=start_epoch,
             end_epoch=end_epoch,
         )
@@ -577,7 +577,7 @@ def run():
 
         thereport = report.make_report(
             driver=str(ctx.guild.id),
-            doer=str(member),
+            doer=str(member.id),
             start_epoch=start_epoch,
             end_epoch=end_epoch,
         )
@@ -624,7 +624,7 @@ def run():
             global the_zombie
             the_zombie[ctx.guild.id] = None
             zombie_hunter.record_hunt(
-                driver=str(ctx.guild.id), reporter=str(ctx.author), zombie=str(member)
+                driver=str(ctx.guild.id), reporter=str(ctx.author.id), zombie=str(member.id)
             )
             await member.move_to(
                 None, reason="You have been reported a zombie and didn't respond!"
@@ -758,7 +758,7 @@ def run():
 
         thereport = report.make_raw_file(
             driver=str(ctx.guild.id),
-            doer=str(member),
+            doer=str(member.id),
             start_epoch=int(start_epoch),
             end_epoch=int(end_epoch),
         )
@@ -799,7 +799,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -835,7 +835,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -873,7 +873,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -912,7 +912,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -950,7 +950,7 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
@@ -988,13 +988,13 @@ def run():
                 + "\n------------------------------\n"
         )
         for i in the_board:
-            text = text + str(i[1]) + " | " + i[0] + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
 
         await ctx.send(text)
 
     @bot.hybrid_command()
     async def status(ctx, member: discord.Member):
-        status = report.get_status(driver=str(ctx.guild.id), doer=str(member))
+        status = report.get_status(driver=str(ctx.guild.id), doer=str(member.id))
         await ctx.send(member.mention + "'s current status: \n" + status)
 
     @bot.hybrid_command()
@@ -1087,11 +1087,12 @@ def run():
             discordDate_to) + "\n------------------------------\n"
         )
         for i in the_board:
-            string = str(i)
-            string = string.replace("('", "")
-            string = string.replace("',", " :")
-            string = string.replace(")", "")
-            text = text + string + "\n"
+            text = text + str(i[1]) + " | <@" + i[0] + ">\n"
+            # string = str(i)
+            # string = string.replace("('", "")
+            # string = string.replace("',", " :")
+            # string = string.replace(")", "")
+            # text = text + string + "\n"
 
         await ctx.send(text)
 
@@ -1319,7 +1320,7 @@ def run():
             driver=ctx.guild.id,
             epoch=rightnow(),
             kind="ASK FOR TALK",
-            doer=str(ctx.author),
+            doer=str(ctx.author.id),
             isPair=False,
             note=note,
         )

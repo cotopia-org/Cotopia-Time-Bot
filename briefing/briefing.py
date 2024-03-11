@@ -39,7 +39,7 @@ def get_last_brief(doer: str, driver: str):
 
     result = cur.fetchone()
 
-    if result == None:
+    if result is None:
         print("no brief found!")
         conn.commit()
         cur.close()
@@ -73,7 +73,7 @@ def get_last_brief_epoch(doer: str, driver: str):
 
     result = cur.fetchone()
 
-    if result == None:
+    if result is None:
         print("no brief found!")
         conn.commit()
         cur.close()
@@ -161,7 +161,7 @@ def get_last_brief_ts(doer: str, driver: str):
 
     result = cur.fetchone()
 
-    if result == None:
+    if result is None:
         print("no brief found!")
         conn.commit()
         cur.close()

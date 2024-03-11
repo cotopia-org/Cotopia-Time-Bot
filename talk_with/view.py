@@ -56,7 +56,7 @@ You and all other members in the temp voice channel, will be disconnected from a
                 )
                 try:
                     await interaction.response.edit_message(content=c2)
-                except:
+                except:  # noqa: E722
                     print("could not edit talk_with message!")
 
                 self.interacted.append(interaction.user)
@@ -72,7 +72,7 @@ You and all other members in the temp voice channel, will be disconnected from a
                     driver=interaction.guild.id,
                     epoch=rightnow(),
                     kind="DECLINE TALK",
-                    doer=str(interaction.user),
+                    doer=str(interaction.user.id),
                     isPair=False,
                     note=json.dumps(event_note),
                 )
@@ -81,7 +81,7 @@ You and all other members in the temp voice channel, will be disconnected from a
                     await interaction.response.send_message(
                         "You've already reacted to this!", ephemeral=True
                     )
-                except:
+                except:  # noqa: E722
                     print("could not response with You've already reacted to this!")
 
         else:

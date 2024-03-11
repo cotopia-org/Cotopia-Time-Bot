@@ -17,14 +17,14 @@ class BriefModal(discord.ui.Modal, title="Submit your brief!"):
     async def on_submit(self, interaction: discord.Interaction):
         channel = interaction.guild.system_channel
         embed = discord.Embed(
-            title=f"#brief", description=self.brief.value, color=discord.Color.blue()
+            title="#brief", description=self.brief.value, color=discord.Color.blue()
         )
         embed.set_author(name=str(JalaliDate.today()))
         briefing.write_to_db(
-            brief=self.brief.value, doer=str(self.user), driver=str(self.driver)
+            brief=self.brief.value, doer=str(self.user.id), driver=str(self.driver)
         )
         webhook = await channel.create_webhook(name=self.user.name)
-        if self.user.nick == None:
+        if self.user.nick is None:
             the_name = self.user.name
         else:
             the_name = self.user.nick
@@ -39,7 +39,7 @@ class BriefModal(discord.ui.Modal, title="Submit your brief!"):
                 if task.get_name() == f"ask for brief {str(self.user)}@{self.driver}"
             ]
             task.cancel()
-        except:
+        except:  # noqa: E722
             print("No briefing tasks were canceled!")
 
         await interaction.response.send_message(
