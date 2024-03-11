@@ -21,11 +21,11 @@ class Server:
     ):
 
         conn = psycopg2.connect(
-        host="localhost",
-        dbname="discord_bot_db",
-        user="cotopia",
-        password="123123",
-        port=5432,
+            host="localhost",
+            dbname="postgres",
+            user="postgres",
+            password="Tp\ZS?gfLr|]'a",
+            port=5432,
         )
         cur = conn.cursor()
         cur.execute(f"SELECT id FROM server WHERE discord_guild_id = {guild_id};")
@@ -98,11 +98,11 @@ class Server:
 
     def getter(self, guild_id: str):
         conn = psycopg2.connect(
-        host="localhost",
-        dbname="discord_bot_db",
-        user="cotopia",
-        password="123123",
-        port=5432,
+            host="localhost",
+            dbname="postgres",
+            user="postgres",
+            password="Tp\ZS?gfLr|]'a",
+            port=5432,
         )
         cur = conn.cursor()
         cur.execute(f"SELECT * FROM server WHERE discord_guild_id = {guild_id};")

@@ -22,9 +22,9 @@ def should_record_brief(doer: str, driver: str):
 def get_last_brief(doer: str, driver: str):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="discord_bot_db",
-        user="cotopia",
-        password="123123",
+        dbname="postgres",
+        user="postgres",
+        password="Tp\ZS?gfLr|]'a",
         port=5432,
     )
     cur = conn.cursor()
@@ -56,9 +56,9 @@ def get_last_brief(doer: str, driver: str):
 def get_last_brief_epoch(doer: str, driver: str):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="discord_bot_db",
-        user="cotopia",
-        password="123123",
+        dbname="postgres",
+        user="postgres",
+        password="Tp\ZS?gfLr|]'a",
         port=5432,
     )
     cur = conn.cursor()
@@ -96,9 +96,9 @@ def rightnow():
 def write_to_db(brief: str, doer: str, driver: str):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="discord_bot_db",
-        user="cotopia",
-        password="123123",
+        dbname="postgres",
+        user="postgres",
+        password="Tp\ZS?gfLr|]'a",
         port=5432,
     )
     cur = conn.cursor()

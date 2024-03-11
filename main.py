@@ -1387,13 +1387,6 @@ def run():
         await gen_inmaah_board(guild=ctx.guild)
         await ctx.send("Done!", ephemeral=True)
 
-    @bot.hybrid_command()
-    async def buzz(ctx, members: commands.Greedy[discord.User]):
-        for member in members:
-            await play_ring_voice(discord, bot, ctx, member)
-
-        await ctx.send('Buzzed!')
-
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
 
 
