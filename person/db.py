@@ -321,6 +321,8 @@ class Person:
         else:
             info["has_calendar"] = True
         info["discord_avatar"] = result[10]
+        info["timezone"] = result[11]
+        info["calendar_system"] = result[12]
 
         return info
 
@@ -363,5 +365,7 @@ class Person:
         else:
             info["has_calendar"] = True
         info["discord_avatar"] = result[10]
+        info["timezone"] = result[11]
+        info["calendar_system"] = result[12]
 
         return info
