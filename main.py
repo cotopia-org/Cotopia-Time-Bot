@@ -22,7 +22,7 @@ from board.the_text import (
     update_inmaah_board,
 )
 from gcal import calcal as GCalSetup
-from person import MySettingsModal, Person
+from person import Person
 from server import Server
 from talk_with import TalkWithView
 from utils.utils import play_ring_voice
@@ -176,21 +176,21 @@ def run():
                     # calculating the duration of the meeting
                     msg_created_at = msg.created_at.timestamp()
                     duration = (
-                            rightnow() - msg_created_at - 180
+                        rightnow() - msg_created_at - 180
                     )  # minus 180 seconds, time of waiting before deleting voice channel
                     duration = round((duration / 60), 1)
                     #
                     # await msg.delete()
                     # editing the message
                     new_content = (
-                            author_mention
-                            + "'s meeting ended!\n"
-                            + "Duration: "
-                            + str(duration)
-                            + " minutes"
-                            + "\n--------------------"
-                            + status_part
-                            + "--------------------"
+                        author_mention
+                        + "'s meeting ended!\n"
+                        + "Duration: "
+                        + str(duration)
+                        + " minutes"
+                        + "\n--------------------"
+                        + status_part
+                        + "--------------------"
                     )
                     await msg.edit(content=new_content, view=None)
                     del temp_messages[channel]
@@ -275,8 +275,8 @@ def run():
             )
             talk_with_text = talk_with_msg.content
             if (
-                    member.mention + ":   :hourglass_flowing_sand: pending"
-                    in talk_with_text
+                member.mention + ":   :hourglass_flowing_sand: pending"
+                in talk_with_text
             ):
                 c2 = talk_with_text.replace(
                     member.mention + ":   :hourglass_flowing_sand: pending",
@@ -300,8 +300,8 @@ def run():
                 d3 = split[1].split("`", 1)[1]
                 c2 = d0 + d1 + d2 + d3
             elif (
-                    member.mention + ":   :orange_circle: will join in 5 mins `"
-                    in talk_with_text
+                member.mention + ":   :orange_circle: will join in 5 mins `"
+                in talk_with_text
             ):
                 c2 = talk_with_text.replace(
                     member.mention + ":   :orange_circle: will join in 5 mins",
@@ -316,8 +316,8 @@ def run():
                 d3 = split[1].split("`", 1)[1]
                 c2 = d0 + d1 + d2 + d3
             elif (
-                    member.mention + ":   :orange_circle: will join in 15 mins `"
-                    in talk_with_text
+                member.mention + ":   :orange_circle: will join in 15 mins `"
+                in talk_with_text
             ):
                 c2 = talk_with_text.replace(
                     member.mention + ":   :orange_circle: will join in 15 mins",
@@ -397,14 +397,14 @@ def run():
 
     @bot.hybrid_command(description="Generates report. default date: current month")
     async def viewstats(
-            ctx,
-            member: discord.Member,
-            start_yyyy: typing.Optional[int] = 1971,
-            start_mm: typing.Optional[int] = 1,
-            start_dd: typing.Optional[int] = 1,
-            end_yyyy: typing.Optional[int] = 2037,
-            end_mm: typing.Optional[int] = 1,
-            end_dd: typing.Optional[int] = 29,
+        ctx,
+        member: discord.Member,
+        start_yyyy: typing.Optional[int] = 1971,
+        start_mm: typing.Optional[int] = 1,
+        start_dd: typing.Optional[int] = 1,
+        end_yyyy: typing.Optional[int] = 2037,
+        end_mm: typing.Optional[int] = 1,
+        end_dd: typing.Optional[int] = 29,
     ):
         today = datetime.date.today()
 
@@ -478,16 +478,16 @@ def run():
         discordDate_from = "<t:" + thereport["From"] + ":D>"
         discordDate_to = "<t:" + thereport["To"] + ":D>"
         text = (
-                "Report for "
-                + member.mention
-                + "\n"
-                + "From: "
-                + discordDate_from
-                + "\n"
-                + "To: "
-                + discordDate_to
-                + "\n"
-                + "------------------------------\n"
+            "Report for "
+            + member.mention
+            + "\n"
+            + "From: "
+            + discordDate_from
+            + "\n"
+            + "To: "
+            + discordDate_to
+            + "\n"
+            + "------------------------------\n"
         )
 
         for line in thereport:
@@ -504,14 +504,14 @@ def run():
 
     @bot.hybrid_command(description="گزارش ایجاد می کند. تاریخ پیش فرض: ماه جاری")
     async def viewgozaresh(
-            ctx,
-            member: discord.Member,
-            start_ssss: typing.Optional[int] = 1349,
-            start_mm: typing.Optional[int] = 1,
-            start_rr: typing.Optional[int] = 1,
-            end_ssss: typing.Optional[int] = 1415,
-            end_mm: typing.Optional[int] = 12,
-            end_rr: typing.Optional[int] = 29,
+        ctx,
+        member: discord.Member,
+        start_ssss: typing.Optional[int] = 1349,
+        start_mm: typing.Optional[int] = 1,
+        start_rr: typing.Optional[int] = 1,
+        end_ssss: typing.Optional[int] = 1415,
+        end_mm: typing.Optional[int] = 12,
+        end_rr: typing.Optional[int] = 29,
     ):
         emrooz = JalaliDate.today()
 
@@ -588,16 +588,16 @@ def run():
             int(thereport["To"]), pytz.timezone("Asia/Tehran")
         ).strftime("%c")
         text = (
-                "Report for "
-                + member.mention
-                + "\n"
-                + "From: "
-                + discordDate_from
-                + "\n"
-                + "To: "
-                + discordDate_to
-                + "\n"
-                + "------------------------------\n"
+            "Report for "
+            + member.mention
+            + "\n"
+            + "From: "
+            + discordDate_from
+            + "\n"
+            + "To: "
+            + discordDate_to
+            + "\n"
+            + "------------------------------\n"
         )
 
         for line in thereport:
@@ -624,7 +624,9 @@ def run():
             global the_zombie
             the_zombie[ctx.guild.id] = None
             zombie_hunter.record_hunt(
-                driver=str(ctx.guild.id), reporter=str(ctx.author.id), zombie=str(member.id)
+                driver=str(ctx.guild.id),
+                reporter=str(ctx.author.id),
+                zombie=str(member.id),
             )
             await member.move_to(
                 None, reason="You have been reported a zombie and didn't respond!"
@@ -685,14 +687,14 @@ def run():
         description="داده خام یک کاربر در یک بازه زمانی. تاریخ پیش فرض: ماه جاری"
     )
     async def rawdata(
-            ctx,
-            member: discord.Member,
-            start_ssss: typing.Optional[int] = 1349,
-            start_mm: typing.Optional[int] = 1,
-            start_rr: typing.Optional[int] = 1,
-            end_ssss: typing.Optional[int] = 1415,
-            end_mm: typing.Optional[int] = 12,
-            end_rr: typing.Optional[int] = 29,
+        ctx,
+        member: discord.Member,
+        start_ssss: typing.Optional[int] = 1349,
+        start_mm: typing.Optional[int] = 1,
+        start_rr: typing.Optional[int] = 1,
+        end_ssss: typing.Optional[int] = 1415,
+        end_mm: typing.Optional[int] = 12,
+        end_rr: typing.Optional[int] = 29,
     ):
         emrooz = JalaliDate.today()
 
@@ -794,9 +796,9 @@ def run():
         # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
 
         text = (
-                "Net Session Hours of "
-                + str(title_date)
-                + "\n------------------------------\n"
+            "Net Session Hours of "
+            + str(title_date)
+            + "\n------------------------------\n"
         )
         for i in the_board:
             text = text + str(i[1]) + " | <@" + i[0] + ">\n"
@@ -830,9 +832,9 @@ def run():
         # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
 
         text = (
-                "Net Session Hours of "
-                + str(title_date)
-                + "\n------------------------------\n"
+            "Net Session Hours of "
+            + str(title_date)
+            + "\n------------------------------\n"
         )
         for i in the_board:
             text = text + str(i[1]) + " | <@" + i[0] + ">\n"
@@ -868,9 +870,9 @@ def run():
         # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
 
         text = (
-                "Net Session Hours of "
-                + str(title_date)
-                + "\n------------------------------\n"
+            "Net Session Hours of "
+            + str(title_date)
+            + "\n------------------------------\n"
         )
         for i in the_board:
             text = text + str(i[1]) + " | <@" + i[0] + ">\n"
@@ -907,9 +909,9 @@ def run():
         # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
 
         text = (
-                "Net Session Hours of "
-                + str(title_date)
-                + "\n------------------------------\n"
+            "Net Session Hours of "
+            + str(title_date)
+            + "\n------------------------------\n"
         )
         for i in the_board:
             text = text + str(i[1]) + " | <@" + i[0] + ">\n"
@@ -945,9 +947,9 @@ def run():
         # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
 
         text = (
-                "Net Session Hours of "
-                + str(title_date)
-                + "\n------------------------------\n"
+            "Net Session Hours of "
+            + str(title_date)
+            + "\n------------------------------\n"
         )
         for i in the_board:
             text = text + str(i[1]) + " | <@" + i[0] + ">\n"
@@ -983,9 +985,9 @@ def run():
         # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
 
         text = (
-                "Net Session Hours of "
-                + str(title_date)
-                + "\n------------------------------\n"
+            "Net Session Hours of "
+            + str(title_date)
+            + "\n------------------------------\n"
         )
         for i in the_board:
             text = text + str(i[1]) + " | <@" + i[0] + ">\n"
@@ -999,13 +1001,13 @@ def run():
 
     @bot.hybrid_command()
     async def makeboard(
-            ctx,
-            start_ssss: typing.Optional[int] = 1349,
-            start_mm: typing.Optional[int] = 1,
-            start_rr: typing.Optional[int] = 1,
-            end_ssss: typing.Optional[int] = 1415,
-            end_mm: typing.Optional[int] = 12,
-            end_rr: typing.Optional[int] = 29,
+        ctx,
+        start_ssss: typing.Optional[int] = 1349,
+        start_mm: typing.Optional[int] = 1,
+        start_rr: typing.Optional[int] = 1,
+        end_ssss: typing.Optional[int] = 1415,
+        end_mm: typing.Optional[int] = 12,
+        end_rr: typing.Optional[int] = 29,
     ):
         emrooz = JalaliDate.today()
 
@@ -1082,9 +1084,8 @@ def run():
         ).strftime("%c")
 
         text = (
-                "Net Session Hours\n" + "From:  " + str(discordDate_from) + "\n"
-                                                                            "To:  " + str(
-            discordDate_to) + "\n------------------------------\n"
+            "Net Session Hours\n" + "From:  " + str(discordDate_from) + "\n"
+            "To:  " + str(discordDate_to) + "\n------------------------------\n"
         )
         for i in the_board:
             text = text + str(i[1]) + " | <@" + i[0] + ">\n"
@@ -1096,27 +1097,61 @@ def run():
 
         await ctx.send(text)
 
-    @bot.tree.command()
-    async def my_settings(interaction: discord.Interaction):
-        my_settings_modal = MySettingsModal()
-        my_settings_modal.user = interaction.user
-        my_settings_modal.driver = interaction.guild_id
-        my_settings_modal.connect_to_db()
-        my_settings_modal.load_defualts()
-        await interaction.response.send_modal(my_settings_modal)
+    @bot.hybrid_command()
+    async def my_settings(ctx):
+        person = Person()
+        person_info = person.get_person_info_by_id(
+            discord_guild=ctx.guild.id, discord_id=ctx.author.id
+        )
+        if person_info is None:
+            print("person info not found!")
+            await ctx.send("Someting went wrong! Try again!", ephemeral=True)
+            if ctx.author.avatar is None:
+                person.add_person(
+                    discord_guild=ctx.guild.id,
+                    discord_id=ctx.author.id,
+                    discord_name=ctx.author.name,
+                )
+            else:
+                person.add_person(
+                    discord_guild=ctx.guild.id,
+                    discord_id=ctx.author.id,
+                    discord_name=ctx.author.name,
+                    discord_avatar=str(ctx.author.avatar),
+                )
+        else:
+            email = "-"
+            wallet = "-"
+            if person_info["email"] is not None:
+                email = person_info["email"]
+            if person_info["trc20_addr"] is not None:
+                wallet = person_info["trc20_addr"]
+            text = (
+                "Email:   `"
+                + email
+                + "`\n"
+                + "TRC20 Wallet:   `"
+                + wallet
+                + "`\nTime Zone:   `"
+                + person_info["timezone"]
+                + "`\nCalendar System:   `"
+                + person_info["calendar_system"]
+                + "`\n"
+            )
+            await ctx.send(text, ephemeral=True)
 
     @bot.hybrid_command()
     async def connect_google_calendar(ctx):
         g_redirect_url = GCalSetup.gen_GOAuth_URL()
         link = (
-                "https://time-api.cotopia.social/gcal?u="
-                + g_redirect_url
-                + "&a="
-                + str(ctx.author.id)
-                + "&b="
-                + str(ctx.guild.id)
-                + "&c="
-                + str(ctx.author.name)
+            "https://time-api.cotopia.social/gcal?u="
+            + g_redirect_url
+            + "&a="
+            + str(ctx.author.id)
+            + "&b="
+            + str(ctx.guild.id)
+            + "&c="
+            + str(ctx.author.name)
         )
         # link = "http://127.0.0.1:8000/gcal?u=" + g_redirect_url + "&a=" + str(ctx.author.id) + "&b=" + str(ctx.guild.id) + "&c=" + str(ctx.author.name)
         person = Person()
@@ -1212,12 +1247,11 @@ def run():
 
     @bot.hybrid_command()
     async def talk_with(
-            ctx,
-            member: discord.Member,
-            description: str | None = None,
-            member3: discord.Member | None = None,
-            member4: discord.Member | None = None,
-
+        ctx,
+        member: discord.Member,
+        description: str | None = None,
+        member3: discord.Member | None = None,
+        member4: discord.Member | None = None,
     ):
 
         category = discord.utils.get(ctx.guild.categories, name="MEETINGS")
@@ -1231,11 +1265,11 @@ def run():
         }
 
         text = (
-                "Hey "
-                + member.mention
-                + ",\n"
-                + ctx.author.mention
-                + " wants to talk with you."
+            "Hey "
+            + member.mention
+            + ",\n"
+            + ctx.author.mention
+            + " wants to talk with you."
         )
         members = []
         members.append(ctx.author)
@@ -1287,7 +1321,7 @@ def run():
         for m in members:
             members_str.append(str(m))
             the_table = (
-                    the_table + "\n" + m.mention + ":   :hourglass_flowing_sand: pending"
+                the_table + "\n" + m.mention + ":   :hourglass_flowing_sand: pending"
             )
         view.members_str = members_str
 
