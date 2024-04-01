@@ -369,3 +369,37 @@ class Person:
         info["calendar_system"] = result[12]
 
         return info
+
+    def set_timezone(self, discord_guild: int, discord_id: int, timezone: str):
+        conn = psycopg2.connect(
+            host="localhost",
+            dbname="postgres",
+            user="postgres",
+            password="Tp\ZS?gfLr|]'a",
+            port=5432,
+        )
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE person SET timezone = %s WHERE discord_guild = %s AND discord_id = %s;",
+            (timezone, discord_guild, discord_id),
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    def set_cal_system(self, discord_guild: int, discord_id: int, cal_system: str):
+        conn = psycopg2.connect(
+            host="localhost",
+            dbname="postgres",
+            user="postgres",
+            password="Tp\ZS?gfLr|]'a",
+            port=5432,
+        )
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE person SET cal_system = %s WHERE discord_guild = %s AND discord_id = %s;",
+            (cal_system, discord_guild, discord_id),
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
