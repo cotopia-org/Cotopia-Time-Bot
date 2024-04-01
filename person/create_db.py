@@ -20,7 +20,9 @@ cur = conn.cursor()
 #             google_token json NULL,
 #             note json NULL
 #             );""")
-cur.execute("ALTER TABLE person ADD COLUMN discord_avatar VARCHAR(255) NULL;")
+# cur.execute("ALTER TABLE person ADD COLUMN discord_avatar VARCHAR(255) NULL;")
+cur.execute("ALTER TABLE person ADD COLUMN timezone VARCHAR(255) DEFAULT 'Asia/Tehran';")
+cur.execute("ALTER TABLE person ADD COLUMN cal_system VARCHAR(255) DEFAULT 'Jalali';")
 conn.commit()
 cur.close()
 conn.close()
