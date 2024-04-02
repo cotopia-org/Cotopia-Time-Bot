@@ -4,7 +4,7 @@ import psycopg2
 from .db import Person
 
 
-class MySettingsModal(discord.ui.Modal, title="Settings"):
+class WalletModal(discord.ui.Modal, title="Email"):
 
     conn = None
     cur = None

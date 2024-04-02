@@ -1139,6 +1139,8 @@ def run():
                 + "`\n"
             )
             view = my_settings_view.SettingsView()
+            view.email = email
+            view.wallet = wallet
             await ctx.send(text, view=view, ephemeral=True)
 
     @bot.hybrid_command()
