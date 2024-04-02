@@ -514,6 +514,8 @@ def run():
         end_rr: typing.Optional[int] = 29,
     ):
         emrooz = JalaliDate.today()
+        person = Person()
+        tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
 
         # I want to set today as default end value, but passing it in Args didnt work. So I do this:
         if end_ssss == 1415 and end_mm == 12 and end_rr == 29:
@@ -525,7 +527,7 @@ def run():
                 minute=59,
                 second=59,
             )
-            localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+            localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
             end_epoch = int(localized_end_dt.timestamp()) + 1
         else:
             try:
@@ -537,7 +539,7 @@ def run():
                     minute=59,
                     second=59,
                 )
-                localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+                localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
                 end_epoch = int(localized_end_dt.timestamp()) + 1
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
@@ -545,12 +547,12 @@ def run():
 
         if start_ssss == 1349 and start_mm == 1 and start_rr == 1:
             start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=1)
-            localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+            localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
             start_epoch = int(localized_start_dt.timestamp())
         else:
             try:
                 start_dt = JalaliDateTime(year=start_ssss, month=start_mm, day=start_rr)
-                localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+                localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
                 start_epoch = int(localized_start_dt.timestamp())
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
@@ -582,10 +584,10 @@ def run():
             end_epoch=end_epoch,
         )
         discordDate_from = JalaliDateTime.fromtimestamp(
-            int(thereport["From"]), pytz.timezone("Asia/Tehran")
+            int(thereport["From"]), pytz.timezone(tz)
         ).strftime("%c")
         discordDate_to = JalaliDateTime.fromtimestamp(
-            int(thereport["To"]), pytz.timezone("Asia/Tehran")
+            int(thereport["To"]), pytz.timezone(tz)
         ).strftime("%c")
         text = (
             "Report for "
@@ -697,6 +699,8 @@ def run():
         end_rr: typing.Optional[int] = 29,
     ):
         emrooz = JalaliDate.today()
+        person = Person()
+        tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
 
         # I want to set today as default end value, but passing it in Args didnt work. So I do this:
         if end_ssss == 1415 and end_mm == 12 and end_rr == 29:
@@ -708,7 +712,7 @@ def run():
                 minute=59,
                 second=59,
             )
-            localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+            localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
             end_epoch = int(localized_end_dt.timestamp()) + 1
         else:
             try:
@@ -720,7 +724,7 @@ def run():
                     minute=59,
                     second=59,
                 )
-                localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+                localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
                 end_epoch = int(localized_end_dt.timestamp()) + 1
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
@@ -728,12 +732,12 @@ def run():
 
         if start_ssss == 1349 and start_mm == 1 and start_rr == 1:
             start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=1)
-            localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+            localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
             start_epoch = int(localized_start_dt.timestamp())
         else:
             try:
                 start_dt = JalaliDateTime(year=start_ssss, month=start_mm, day=start_rr)
-                localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+                localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
                 start_epoch = int(localized_start_dt.timestamp())
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
@@ -763,6 +767,7 @@ def run():
             doer=str(member.id),
             start_epoch=int(start_epoch),
             end_epoch=int(end_epoch),
+            asker_id=ctx.author.id
         )
 
         await ctx.send(file=discord.File(thereport))
@@ -772,9 +777,11 @@ def run():
         log_processor.renew_pendings(driver=str(ctx.guild.id))
 
         emrooz = JalaliDate.today()
+        person = Person()
+        tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
 
         start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=emrooz.day)
-        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
         start_epoch = int(localized_start_dt.timestamp())
 
         end_dt = JalaliDateTime(
@@ -785,7 +792,7 @@ def run():
             minute=59,
             second=59,
         )
-        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
         end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
@@ -793,7 +800,7 @@ def run():
         )
 
         title_date = JalaliDate.fromtimestamp(start_epoch)
-        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
+        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone(tz)).strftime("%c")
 
         text = (
             "Net Session Hours of "
@@ -808,9 +815,11 @@ def run():
     @bot.hybrid_command(description="جدول مدت سشن های دیروز")
     async def dirooz(ctx):
         dirooz = JalaliDate.today() - timedelta(days=1)
+        person = Person()
+        tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
 
         start_dt = JalaliDateTime(year=dirooz.year, month=dirooz.month, day=dirooz.day)
-        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
         start_epoch = int(localized_start_dt.timestamp())
 
         end_dt = JalaliDateTime(
@@ -821,7 +830,7 @@ def run():
             minute=59,
             second=59,
         )
-        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
         end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
@@ -829,7 +838,7 @@ def run():
         )
 
         title_date = JalaliDate.fromtimestamp(start_epoch)
-        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
+        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone(tz)).strftime("%c")
 
         text = (
             "Net Session Hours of "
@@ -846,9 +855,11 @@ def run():
         log_processor.renew_pendings(driver=str(ctx.guild.id))
 
         emrooz = JalaliDate.today()
+        person = Person()
+        tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
 
         start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=1)
-        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
         start_epoch = int(localized_start_dt.timestamp())
 
         end_dt = JalaliDateTime(
@@ -859,7 +870,7 @@ def run():
             minute=59,
             second=59,
         )
-        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
         end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
@@ -867,7 +878,7 @@ def run():
         )
 
         title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
-        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
+        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone(tz)).strftime("%c")
 
         text = (
             "Net Session Hours of "
@@ -884,9 +895,11 @@ def run():
         log_processor.renew_pendings(driver=str(ctx.guild.id))
 
         today = datetime.date.today()
+        person = Person()
+        tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
 
         start_dt = datetime.datetime(year=today.year, month=today.month, day=today.day)
-        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
         start_epoch = int(localized_start_dt.timestamp())
 
         end_dt = datetime.datetime(
@@ -897,7 +910,7 @@ def run():
             minute=59,
             second=59,
         )
-        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
         end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
@@ -906,7 +919,7 @@ def run():
 
         title_date = datetime.date.fromtimestamp(start_epoch)
 
-        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
+        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone(tz)).strftime("%c")
 
         text = (
             "Net Session Hours of "
@@ -921,11 +934,13 @@ def run():
     @bot.hybrid_command(description="Session durations of last day")
     async def yesterday(ctx):
         yesterday = datetime.date.today() - timedelta(days=1)
+        person = Person()
+        tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
 
         start_dt = datetime.datetime(
             year=yesterday.year, month=yesterday.month, day=yesterday.day
         )
-        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
         start_epoch = int(localized_start_dt.timestamp())
 
         end_dt = datetime.datetime(
@@ -936,7 +951,7 @@ def run():
             minute=59,
             second=59,
         )
-        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
         end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
@@ -944,7 +959,7 @@ def run():
         )
 
         title_date = datetime.date.fromtimestamp(start_epoch)
-        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
+        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone(tz)).strftime("%c")
 
         text = (
             "Net Session Hours of "
@@ -961,9 +976,11 @@ def run():
         log_processor.renew_pendings(driver=str(ctx.guild.id))
 
         today = datetime.date.today()
+        person = Person()
+        tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
 
         start_dt = datetime.datetime(year=today.year, month=today.month, day=1)
-        localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+        localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
         start_epoch = int(localized_start_dt.timestamp())
 
         end_dt = datetime.datetime(
@@ -974,7 +991,7 @@ def run():
             minute=59,
             second=59,
         )
-        localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+        localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
         end_epoch = int(localized_end_dt.timestamp()) + 1
 
         the_board = report.make_board(
@@ -982,7 +999,7 @@ def run():
         )
 
         title_date = datetime.date.fromtimestamp(start_epoch).strftime("%Y/%m")
-        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone("Asia/Tehran")).strftime("%c")
+        # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone(tz)).strftime("%c")
 
         text = (
             "Net Session Hours of "
@@ -1010,6 +1027,8 @@ def run():
         end_rr: typing.Optional[int] = 29,
     ):
         emrooz = JalaliDate.today()
+        person = Person()
+        tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
 
         # I want to set today as default end value, but passing it in Args didnt work. So I do this:
         if end_ssss == 1415 and end_mm == 12 and end_rr == 29:
@@ -1021,7 +1040,7 @@ def run():
                 minute=59,
                 second=59,
             )
-            localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+            localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
             end_epoch = int(localized_end_dt.timestamp()) + 1
         else:
             try:
@@ -1033,7 +1052,7 @@ def run():
                     minute=59,
                     second=59,
                 )
-                localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
+                localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
                 end_epoch = int(localized_end_dt.timestamp()) + 1
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
@@ -1041,12 +1060,12 @@ def run():
 
         if start_ssss == 1349 and start_mm == 1 and start_rr == 1:
             start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=1)
-            localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+            localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
             start_epoch = int(localized_start_dt.timestamp())
         else:
             try:
                 start_dt = JalaliDateTime(year=start_ssss, month=start_mm, day=start_rr)
-                localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+                localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
                 start_epoch = int(localized_start_dt.timestamp())
             except:  # noqa: E722
                 await ctx.send("Please enter a valid date!", ephemeral=True)
@@ -1077,10 +1096,10 @@ def run():
         )
 
         discordDate_from = JalaliDateTime.fromtimestamp(
-            int(start_epoch), pytz.timezone("Asia/Tehran")
+            int(start_epoch), pytz.timezone(tz)
         ).strftime("%c")
         discordDate_to = JalaliDateTime.fromtimestamp(
-            int(end_epoch), pytz.timezone("Asia/Tehran")
+            int(end_epoch), pytz.timezone(tz)
         ).strftime("%c")
 
         text = (

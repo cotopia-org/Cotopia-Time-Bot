@@ -2,6 +2,8 @@ import psycopg2
 import pytz
 from persiantools.jdatetime import JalaliDateTime
 
+from person import Person
+
 
 # ✅
 def make_report(driver: str, doer: str, start_epoch: int, end_epoch: int):
@@ -157,14 +159,19 @@ def on_mobile_duration(
 
 
 # ✅
-def make_raw_file(driver: str, doer: str, start_epoch: int, end_epoch: int):
+def make_raw_file(
+    driver: str, doer: str, start_epoch: int, end_epoch: int, asker_id: int
+):
+
+    person = Person()
+    tz = person.get_timezone(discord_guild=int(driver), discord_id=asker_id)
 
     from_date = JalaliDateTime.fromtimestamp(
-        int(start_epoch), pytz.timezone("Asia/Tehran")
+        int(start_epoch), pytz.timezone(tz)
     ).strftime("%c")
-    to_date = JalaliDateTime.fromtimestamp(
-        int(end_epoch), pytz.timezone("Asia/Tehran")
-    ).strftime("%c")
+    to_date = JalaliDateTime.fromtimestamp(int(end_epoch), pytz.timezone(tz)).strftime(
+        "%c"
+    )
 
     try:
         conn = psycopg2.connect(
@@ -247,7 +254,7 @@ def get_doers_list(driver: str, start_epoch: int, end_epoch: int):
     #### yadam nemiad chera in kar ro karde boodam
     #### be nazar dige bi fayede miad
 
-    #### aha fek konam chon ye seri az event ha ro ba discord_id 
+    #### aha fek konam chon ye seri az event ha ro ba discord_id
     #### sabt mikardak ye seri ro ba discord_name
     #### dige alan hame ba discord_id hastan pas niazi nist dige
 
