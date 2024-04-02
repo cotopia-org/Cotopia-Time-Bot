@@ -1,3 +1,4 @@
+import pathlib
 import logging  # noqa: F401
 import os
 from logging.config import dictConfig
@@ -7,6 +8,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DISCORD_API_SECRET = os.getenv("DISCORD_API_TOKEN")
+
+BASE_DIR = pathlib.Path(__file__).parent
+CMDS_DIR = BASE_DIR/"commands"
 
 LOGGING_CONFIG = {
     "version": 1,

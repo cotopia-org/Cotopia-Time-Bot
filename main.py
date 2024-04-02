@@ -53,7 +53,12 @@ def run():
     @bot.event
     async def on_ready():
         logger.info(f"User: {bot.user} (ID: {bot.user.id})")
+        for cmd_file in settings.CMDS_DIR.glob("*.py"):
+            if cmd_file.name != "__init__.py":
+                await bot.load_extension(f"commands.{cmd_file.name[:-3]}")
+        
         await bot.tree.sync()
+
 
     @bot.event
     async def on_guild_join(guild):
@@ -767,7 +772,7 @@ def run():
             doer=str(member.id),
             start_epoch=int(start_epoch),
             end_epoch=int(end_epoch),
-            asker_id=ctx.author.id
+            asker_id=ctx.author.id,
         )
 
         await ctx.send(file=discord.File(thereport))
@@ -1147,7 +1152,10 @@ def run():
             if person_info["email"] is not None and person_info["email"] != "":
                 email = person_info["email"]
                 view.email = email
-            if person_info["trc20_addr"] is not None and person_info["trc20_addr"] != "":
+            if (
+                person_info["trc20_addr"] is not None
+                and person_info["trc20_addr"] != ""
+            ):
                 wallet = person_info["trc20_addr"]
                 view.wallet = wallet
             text = (
