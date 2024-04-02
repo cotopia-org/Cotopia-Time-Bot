@@ -1120,12 +1120,17 @@ def run():
                     discord_avatar=str(ctx.author.avatar),
                 )
         else:
+            view = my_settings_view.SettingsView()
+            view.email = ""
+            view.wallet = ""
             email = "-"
             wallet = "-"
-            if person_info["email"] is not None:
+            if person_info["email"] is not None and person_info["email"] != "":
                 email = person_info["email"]
-            if person_info["trc20_addr"] is not None:
+                view.email = email
+            if person_info["trc20_addr"] is not None and person_info["trc20_addr"] != "":
                 wallet = person_info["trc20_addr"]
+                view.wallet = wallet
             text = (
                 "Email:   `"
                 + email
@@ -1138,9 +1143,6 @@ def run():
                 + person_info["calendar_system"]
                 + "`\n"
             )
-            view = my_settings_view.SettingsView()
-            view.email = email
-            view.wallet = wallet
             await ctx.send(text, view=view, ephemeral=True)
 
     @bot.hybrid_command()
