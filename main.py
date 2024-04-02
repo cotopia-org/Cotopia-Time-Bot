@@ -22,7 +22,7 @@ from board.the_text import (
     update_inmaah_board,
 )
 from gcal import calcal as GCalSetup
-from person import Person
+from person import Person, my_settings_view
 from server import Server
 from talk_with import TalkWithView
 from utils.utils import play_ring_voice
@@ -1138,7 +1138,8 @@ def run():
                 + person_info["calendar_system"]
                 + "`\n"
             )
-            await ctx.send(text, ephemeral=True)
+            view = my_settings_view.SettingsView()
+            await ctx.send(text, view=view, ephemeral=True)
 
     @bot.hybrid_command()
     async def connect_google_calendar(ctx):
