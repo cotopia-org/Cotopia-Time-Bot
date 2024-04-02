@@ -45,7 +45,7 @@ class EmailModal(discord.ui.Modal, title="Email"):
                 cursor.close()
                 conn.close()
                 await interaction.response.send_message(
-                    f"Your settings were submitted {self.user.mention}!", ephemeral=True
+                    f"Your email were submitted {self.user.mention}!", ephemeral=True
                 )
             else:
                 # invalid email input

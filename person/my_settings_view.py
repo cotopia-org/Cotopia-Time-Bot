@@ -1,6 +1,7 @@
 import discord
 
 from .email_modal import EmailModal
+from .wallet_modal import WalletModal
 
 
 class SettingsView(discord.ui.View):
@@ -23,7 +24,11 @@ class SettingsView(discord.ui.View):
     async def edit_wallet(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
-        pass
+        wallet_modal = WalletModal()
+        wallet_modal.guild_id = interaction.guild.id
+        wallet_modal.user = interaction.user
+        wallet_modal.load_defualts(user_wallet=self.wallet)
+        await interaction.response.send_modal(wallet_modal)
 
     @discord.ui.button(label="✏️ Time Zone", style=discord.ButtonStyle.secondary)
     async def edit_timezone(

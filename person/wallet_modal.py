@@ -4,29 +4,7 @@ import psycopg2
 from .db import Person
 
 
-class WalletModal(discord.ui.Modal, title="Email"):
-
-    conn = None
-    cur = None
-
-    the_person = Person()
-
-    def connect_to_db(self):
-        self.conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
-        self.cur = self.conn.cursor()
-
-    email = discord.ui.TextInput(
-        style=discord.TextStyle.short,
-        label="Your email",
-        placeholder="me@gmail.com",
-        required=False,
-    )
+class WalletModal(discord.ui.Modal, title="TRC20 Wallet"):
 
     trc20_wallet_addr = discord.ui.TextInput(
         style=discord.TextStyle.short,
@@ -36,36 +14,45 @@ class WalletModal(discord.ui.Modal, title="Email"):
     )
 
     async def on_submit(self, interaction: discord.Interaction):
-        if self.email.default != self.email.value:
-            self.the_person.set_email(
-                cur=self.cur,
-                discord_guild=self.driver,
-                discord_id=self.user.id,
-                name=self.user.name,
-                email=self.email.value,
-            )
         if self.trc20_wallet_addr.default != self.trc20_wallet_addr.value:
-            self.the_person.set_trc20_addr(
-                cur=self.cur,
-                discord_guild=self.driver,
-                discord_id=self.user.id,
-                name=self.user.name,
-                addr=self.trc20_wallet_addr.value,
-            )
-        self.commit_db()
-        await interaction.response.send_message(
-            f"Your settings were submitted {self.user.mention}!", ephemeral=True
-        )
+            if self.check_addr(self.trc20_wallet_addr.value):
+                conn = psycopg2.connect(
+                    host="localhost",
+                    dbname="postgres",
+                    user="postgres",
+                    password="Tp\ZS?gfLr|]'a",
+                    port=5432,
+                )
+                cursor = conn.cursor()
 
-    def load_defualts(self):
-        self.email.default = self.the_person.get_email(
-            cur=self.cur, discord_guild=self.driver, discord_id=self.user.id
-        )
-        self.trc20_wallet_addr.default = self.the_person.get_trc20_addr(
-            cur=self.cur, discord_guild=self.driver, discord_id=self.user.id
-        )
+                the_person = Person()
+                the_person.set_trc20_addr(
+                    cur=cursor,
+                    discord_guild=self.guild_id,
+                    discord_id=self.user.id,
+                    name=self.user.name,
+                    addr=self.trc20_wallet_addr.value,
+                )
+                conn.commit()
+                cursor.close()
+                conn.close()
+                await interaction.response.send_message(
+                    f"Your wallet address were submitted {self.user.mention}!",
+                    ephemeral=True,
+                )
+            else:
+                # invalid address input
+                await interaction.response.send_message(
+                    "Invalid address input! Try agin!", ephemeral=True
+                )
+        else:
+            await interaction.response.send_message("Nothing changed!", ephemeral=True)
 
-    def commit_db(self):
-        self.conn.commit()
-        self.cur.close()
-        self.conn.close()
+    def load_defualts(self, user_wallet):
+        self.trc20_wallet_addr.default = user_wallet
+
+    def check_addr(self, addr: str):
+        if " " not in addr:
+            return True
+        else:
+            return False
