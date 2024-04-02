@@ -387,6 +387,32 @@ class Person:
         cur.close()
         conn.close()
 
+    def get_timezone(self, discord_guild: int, discord_id: int):
+        conn = psycopg2.connect(
+            host="localhost",
+            dbname="postgres",
+            user="postgres",
+            password="Tp\ZS?gfLr|]'a",
+            port=5432,
+        )
+        cur = conn.cursor()
+        cur.execute(
+            """
+                    SELECT timezone FROM person
+                    WHERE discord_guild = %s
+                    AND discord_id = %s
+                    ;""",
+            (discord_guild, discord_id),
+        )
+        result = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        if result is None:
+            return "Asia/Tehran"
+        else:
+            return result[0]
+
     def set_cal_system(self, discord_guild: int, discord_id: int, cal_system: str):
         conn = psycopg2.connect(
             host="localhost",
@@ -403,3 +429,29 @@ class Person:
         conn.commit()
         cur.close()
         conn.close()
+
+    def get_cal_system(self, discord_guild: int, discord_id: int):
+        conn = psycopg2.connect(
+            host="localhost",
+            dbname="postgres",
+            user="postgres",
+            password="Tp\ZS?gfLr|]'a",
+            port=5432,
+        )
+        cur = conn.cursor()
+        cur.execute(
+            """
+                    SELECT cal_system FROM person
+                    WHERE discord_guild = %s
+                    AND discord_id = %s
+                    ;""",
+            (discord_guild, discord_id),
+        )
+        result = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        if result is None:
+            return "Jalali"
+        else:
+            return result[0]
