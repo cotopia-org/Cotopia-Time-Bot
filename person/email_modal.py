@@ -7,12 +7,12 @@ from .db import Person
 
 
 class EmailModal(discord.ui.Modal, title="Email"):
-    def __init__(
-        self, *, title: str = ..., timeout: float | None = None, custom_id: str = ...
-    ) -> None:
-        super().__init__(title=title, timeout=timeout, custom_id=custom_id)
-        self.user = None
-        self.guild_id = 0
+    # def __init__(
+    #     self, *, title: str = ..., timeout: float | None = None, custom_id: str = ...
+    # ) -> None:
+    #     super().__init__(title=title, timeout=timeout, custom_id=custom_id)
+    #     self.user = None
+    #     self.guild_id = 0
 
     email = discord.ui.TextInput(
         style=discord.TextStyle.short,
@@ -52,11 +52,16 @@ class EmailModal(discord.ui.Modal, title="Email"):
                 await interaction.response.send_message(
                     "Invalid email input! Try agin!", ephemeral=True
                 )
+        else:
+            await interaction.response.send_message(
+                    "Nothing changed!", ephemeral=True
+                )
+
 
     def load_defualts(self, user_email):
         self.email.default = user_email
 
-    def check_email(email):
+    def check_email(self, email: str):
         pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"
         if re.fullmatch(pattern, email):
             return True
