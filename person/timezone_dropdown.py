@@ -7,7 +7,7 @@ from discord.components import SelectOption
 from .db import Person
 
 
-class CalSysDropdown(discord.ui.Select):
+class TimeZoneDropdown(discord.ui.Select):
     def __init__(
         self,
         *,
@@ -20,12 +20,16 @@ class CalSysDropdown(discord.ui.Select):
         row: int | None = None,
     ) -> None:
         options = [
-            SelectOption(label="Jalali", value="Jalali"),
-            SelectOption(label="Gregorian", value="Gregorian"),
+            SelectOption(label="Asia/Tehran", value="Asia/Tehran"),
+            SelectOption(label="Asia/Dubai", value="Asia/Dubai"),
+            SelectOption(label="Asia/Istanbul", value="Asia/Istanbul"),
+            SelectOption(label="Africa/Cairo", value="Africa/Cairo"),
+            SelectOption(label="Europe/London", value="Europe/London"),
+            SelectOption(label="America/Toronto", value="America/Toronto"),
         ]
         super().__init__(
             # custom_id=custom_id,
-            placeholder="Jalali or Gregorian",
+            placeholder="Time Zone",
             min_values=min_values,
             max_values=max_values,
             options=options,
@@ -44,25 +48,25 @@ class CalSysDropdown(discord.ui.Select):
         )
         cursor = conn.cursor()
         the_person = Person()
-        the_person.set_cal_system(
+        the_person.set_timezone(
             discord_guild=interaction.guild.id,
             discord_id=interaction.user.id,
-            cal_system=self.values[0],
+            timezone=self.values[0],
         )
         conn.commit()
         cursor.close()
         conn.close()
         await interaction.followup.send(
-            "Your Calendar System preference saved!", ephemeral=True
+            "Your Time Zone preference saved!", ephemeral=True
         )
 
 
-class CalSysView(discord.ui.View):
+class TimeZoneView(discord.ui.View):
     def __init__(
         self,
         *,
         timeout: float | None = 600,
     ):
         super().__init__(timeout=timeout)
-        calsys_dropdown = CalSysDropdown()
-        self.add_item(calsys_dropdown)
+        timezone_dropdown = TimeZoneDropdown()
+        self.add_item(timezone_dropdown)

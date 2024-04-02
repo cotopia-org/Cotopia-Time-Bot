@@ -2,6 +2,7 @@ import discord
 
 from .cal_sys_dropdown import CalSysView
 from .email_modal import EmailModal
+from .timezone_dropdown import TimeZoneView
 from .wallet_modal import WalletModal
 
 
@@ -35,7 +36,10 @@ class SettingsView(discord.ui.View):
     async def edit_timezone(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
-        pass
+        view = TimeZoneView()
+        await interaction.response.send_message(
+            "Select Your Time Zone:", view=view, ephemeral=True
+        )
 
     @discord.ui.button(label="✏️ Calendar System", style=discord.ButtonStyle.secondary)
     async def edit_cal_sys(
