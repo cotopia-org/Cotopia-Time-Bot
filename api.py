@@ -190,10 +190,7 @@ async def last_maah(request: Request):
         minute=0,
         second=0,
     )
-    start_mah = emrooz - timedelta(days=1)
-    start_dt = JalaliDateTime(
-        year=start_mah.year, month=start_mah.month, day=1, hour=0, minute=0, second=0
-    )
+    start_dt = (end_dt - timedelta(days=1)).replace(day=1)
     localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
     start_epoch = int(localized_start_dt.timestamp())
 
