@@ -62,6 +62,8 @@ class EmailModal(discord.ui.Modal, title="Email"):
         self.email.default = user_email
 
     def check_email(self, email: str):
+        if email == "":
+            return True
         pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b"
         if re.fullmatch(pattern, email):
             return True
