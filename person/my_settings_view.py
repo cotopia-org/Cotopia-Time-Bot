@@ -1,5 +1,6 @@
 import discord
 
+from .cal_sys_dropdown import CalSysView
 from .email_modal import EmailModal
 from .wallet_modal import WalletModal
 
@@ -40,4 +41,7 @@ class SettingsView(discord.ui.View):
     async def edit_cal_sys(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
-        pass
+        view = CalSysView()
+        await interaction.response.send_message(
+            "Select Your Calendar System:", view=view, ephemeral=True
+        )
