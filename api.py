@@ -104,7 +104,7 @@ async def get_doers(start: int, end: int, request: Request):
 
 @app.get("/thismonth")
 async def this_month(request: Request):
-    token = request.cookies.get("token")
+    token = request.headers.get("Authorization")
     if token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
@@ -140,6 +140,64 @@ async def this_month(request: Request):
     start_epoch = int(localized_start_dt.timestamp())
 
     localized_end_dt = (localized_start_dt + timedelta(days=33)).replace(day=1)
+    end_epoch = int(localized_end_dt.timestamp())
+
+    the_board = report.make_board(
+        driver=driver, start_epoch=start_epoch, end_epoch=end_epoch
+    )
+    title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
+    title = "Net Session Hours of " + str(title_date)
+    result = {}
+    result["The Board Title"] = title
+
+    for each in the_board:
+        result[each[0]] = each[1]
+
+    return result
+
+
+@app.get("/lastmaah")
+async def last_maah(request: Request):
+    token = request.headers.get("Authorization")
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
+        )
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:  # noqa: E722
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Unable to read token!",
+            )
+
+        if decoded is False:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid Token! Login Again!",
+            )
+        else:
+            driver = str(decoded["discord_guild"])
+
+    log_processor.renew_pendings(driver=driver)
+    emrooz = JalaliDate.today()
+    end_dt = JalaliDateTime(
+        year=emrooz.year,
+        month=emrooz.month,
+        day=1,
+        hour=0,
+        minute=0,
+        second=0,
+    )
+    start_mah = emrooz - timedelta(days=1)
+    start_dt = JalaliDateTime(
+        year=start_mah.year, month=start_mah.month, day=1, hour=0, minute=0, second=0
+    )
+    localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
+    start_epoch = int(localized_start_dt.timestamp())
+
+    localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
     end_epoch = int(localized_end_dt.timestamp())
 
     the_board = report.make_board(
