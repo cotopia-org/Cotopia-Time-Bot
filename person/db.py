@@ -455,3 +455,34 @@ class Person:
             return "Jalali"
         else:
             return result[0]
+
+    def get_locale(self, discord_guild: int, discord_id: int):
+        person_locale = {}
+        person_locale["timezone"] = 'Asia/Tehran'
+        person_locale["cal_system"] = 'Jalali'
+        conn = psycopg2.connect(
+            host="localhost",
+            dbname="postgres",
+            user="postgres",
+            password="Tp\ZS?gfLr|]'a",
+            port=5432,
+        )
+        cur = conn.cursor()
+        cur.execute(
+            """
+                    SELECT timezone, cal_system FROM person
+                    WHERE discord_guild = %s
+                    AND discord_id = %s
+                    ;""",
+            (discord_guild, discord_id),
+        )
+        result = cur.fetchone()
+        conn.commit()
+        cur.close()
+        conn.close()
+        if result is None:
+            return person_locale
+        else:
+            person_locale["timezone"] = result[0]
+            person_locale["cal_system"] = result[1]
+            return person_locale
