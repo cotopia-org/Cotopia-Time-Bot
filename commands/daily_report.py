@@ -2,7 +2,7 @@ import datetime
 
 import pytz
 from discord.ext import commands
-from persiantools.jdatetime import JalaliDate
+from persiantools.jdatetime import JalaliDateTime
 
 import log_processor
 import report
@@ -27,9 +27,13 @@ async def today(ctx):
     )
 
     if calsys == "Gregorian":
-        title_date = datetime.date.fromtimestamp(start_epoch)
+        title_date = datetime.datetime.fromtimestamp(
+            start_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m/%d")
     elif calsys == "Jalali":
-        title_date = JalaliDate.fromtimestamp(start_epoch)
+        title_date = JalaliDateTime.fromtimestamp(
+            start_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m/%d")
 
     text = (
         "Net Session Hours of `"
@@ -61,9 +65,13 @@ async def yesterday(ctx):
     )
 
     if calsys == "Gregorian":
-        title_date = datetime.date.fromtimestamp(start_epoch)
+        title_date = datetime.datetime.fromtimestamp(
+            start_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m/%d")
     elif calsys == "Jalali":
-        title_date = JalaliDate.fromtimestamp(start_epoch)
+        title_date = JalaliDateTime.fromtimestamp(
+            start_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m/%d")
 
     text = (
         "Net Session Hours of `"

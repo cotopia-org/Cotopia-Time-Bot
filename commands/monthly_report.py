@@ -2,50 +2,11 @@ import datetime
 
 import pytz
 from discord.ext import commands
-from persiantools.jdatetime import JalaliDate, JalaliDateTime
+from persiantools.jdatetime import JalaliDateTime, timedelta
 
 import log_processor
 import report
 from person import Person
-
-
-@commands.hybrid_command(description="جدول مدت سشن های این ماه")
-async def inmaah(ctx):
-    log_processor.renew_pendings(driver=str(ctx.guild.id))
-
-    emrooz = JalaliDate.today()
-    person = Person()
-    tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
-
-    start_dt = JalaliDateTime(year=emrooz.year, month=emrooz.month, day=1)
-    localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
-    start_epoch = int(localized_start_dt.timestamp())
-
-    end_dt = JalaliDateTime(
-        year=emrooz.year,
-        month=emrooz.month,
-        day=emrooz.day,
-        hour=23,
-        minute=59,
-        second=59,
-    )
-    localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
-    end_epoch = int(localized_end_dt.timestamp()) + 1
-
-    the_board = report.make_board(
-        driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
-    )
-
-    title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
-    # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone(tz)).strftime("%c")
-
-    text = (
-        "Net Session Hours of " + str(title_date) + "\n------------------------------\n"
-    )
-    for i in the_board:
-        text = text + str(i[1]) + " | <@" + i[0] + ">\n"
-
-    await ctx.send(text)
 
 
 @commands.hybrid_command(description="Session durations of current month")
@@ -56,7 +17,11 @@ async def thismonth(ctx):
     tz = locale["timezone"]
     calsys = locale["cal_system"]
 
-    now = datetime.datetime.now(pytz.timezone(tz))
+    if calsys == "Gregorian":
+        now = datetime.datetime.now(pytz.timezone(tz))
+    elif calsys == "Jalali":
+        now = JalaliDateTime.now(pytz.timezone(tz))
+
     start_dt = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     start_epoch = int(start_dt.timestamp())
     end_epoch = int(now.timestamp()) + 1
@@ -66,9 +31,13 @@ async def thismonth(ctx):
     )
 
     if calsys == "Gregorian":
-        title_date = datetime.date.fromtimestamp(start_epoch).strftime("%Y/%m")
+        title_date = datetime.datetime.fromtimestamp(
+            start_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m")
     elif calsys == "Jalali":
-        title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
+        title_date = JalaliDateTime.fromtimestamp(
+            start_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m")
 
     text = (
         "Net Session Hours of `"
@@ -82,6 +51,7 @@ async def thismonth(ctx):
 
     await ctx.send(text)
 
+
 @commands.hybrid_command(description="Session durations of previous month")
 async def lastmonth(ctx):
     person = Person()
@@ -89,10 +59,17 @@ async def lastmonth(ctx):
     tz = locale["timezone"]
     calsys = locale["cal_system"]
 
-    now = datetime.datetime.now(pytz.timezone(tz))
+    if calsys == "Gregorian":
+        now = datetime.datetime.now(pytz.timezone(tz))
+    elif calsys == "Jalali":
+        now = JalaliDateTime.now(pytz.timezone(tz))
+
     end_dt = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     end_epoch = int(end_dt.timestamp())
-    last_month_day = end_dt - datetime.timedelta(days=2)
+    if calsys == "Gregorian":
+        last_month_day = end_dt - datetime.timedelta(days=2)
+    elif calsys == "Jalali":
+        last_month_day = end_dt - timedelta(days=2)
     start_dt = last_month_day.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     start_epoch = int(start_dt.timestamp())
 
@@ -101,9 +78,13 @@ async def lastmonth(ctx):
     )
 
     if calsys == "Gregorian":
-        title_date = datetime.date.fromtimestamp(start_epoch).strftime("%Y/%m")
+        title_date = datetime.datetime.fromtimestamp(
+            start_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m")
     elif calsys == "Jalali":
-        title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
+        title_date = JalaliDateTime.fromtimestamp(
+            start_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m")
 
     text = (
         "Net Session Hours of `"
