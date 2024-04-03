@@ -51,35 +51,66 @@ async def inmaah(ctx):
 @commands.hybrid_command(description="Session durations of current month")
 async def thismonth(ctx):
     log_processor.renew_pendings(driver=str(ctx.guild.id))
-
-    today = datetime.date.today()
     person = Person()
-    tz = person.get_timezone(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
+    locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
+    tz = locale["timezone"]
+    calsys = locale["cal_system"]
 
-    start_dt = datetime.datetime(year=today.year, month=today.month, day=1)
-    localized_start_dt = pytz.timezone(tz).localize(dt=start_dt)
-    start_epoch = int(localized_start_dt.timestamp())
-
-    end_dt = datetime.datetime(
-        year=today.year,
-        month=today.month,
-        day=today.day,
-        hour=23,
-        minute=59,
-        second=59,
-    )
-    localized_end_dt = pytz.timezone(tz).localize(dt=end_dt)
-    end_epoch = int(localized_end_dt.timestamp()) + 1
+    now = datetime.datetime.now(pytz.timezone(tz))
+    start_dt = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    start_epoch = int(start_dt.timestamp())
+    end_epoch = int(now.timestamp()) + 1
 
     the_board = report.make_board(
         driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
     )
 
-    title_date = datetime.date.fromtimestamp(start_epoch).strftime("%Y/%m")
-    # discordDate_to = JalaliDateTime.fromtimestamp(end_epoch, pytz.timezone(tz)).strftime("%c")
+    if calsys == "Gregorian":
+        title_date = datetime.date.fromtimestamp(start_epoch).strftime("%Y/%m")
+    elif calsys == "Jalali":
+        title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
 
     text = (
-        "Net Session Hours of " + str(title_date) + "\n------------------------------\n"
+        "Net Session Hours of `"
+        + str(title_date)
+        + "`\n`tz: "
+        + tz
+        + "`\n------------------------------\n"
+    )
+    for i in the_board:
+        text = text + str(i[1]) + " | <@" + i[0] + ">\n"
+
+    await ctx.send(text)
+
+@commands.hybrid_command(description="Session durations of previous month")
+async def lastmonth(ctx):
+    person = Person()
+    locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
+    tz = locale["timezone"]
+    calsys = locale["cal_system"]
+
+    now = datetime.datetime.now(pytz.timezone(tz))
+    end_dt = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    end_epoch = int(end_dt.timestamp())
+    last_month_day = end_dt - datetime.timedelta(days=2)
+    start_dt = last_month_day.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    start_epoch = int(start_dt.timestamp())
+
+    the_board = report.make_board(
+        driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
+    )
+
+    if calsys == "Gregorian":
+        title_date = datetime.date.fromtimestamp(start_epoch).strftime("%Y/%m")
+    elif calsys == "Jalali":
+        title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
+
+    text = (
+        "Net Session Hours of `"
+        + str(title_date)
+        + "`\n`tz: "
+        + tz
+        + "`\n------------------------------\n"
     )
     for i in the_board:
         text = text + str(i[1]) + " | <@" + i[0] + ">\n"
@@ -88,5 +119,5 @@ async def thismonth(ctx):
 
 
 async def setup(bot):
-    bot.add_command(inmaah)
     bot.add_command(thismonth)
+    bot.add_command(lastmonth)
