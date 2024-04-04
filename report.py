@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import psycopg2
 import pytz
 from persiantools.jdatetime import JalaliDateTime
@@ -162,16 +164,25 @@ def on_mobile_duration(
 def make_raw_file(
     driver: str, doer: str, start_epoch: int, end_epoch: int, asker_id: int
 ):
-
     person = Person()
-    tz = person.get_timezone(discord_guild=int(driver), discord_id=asker_id)
+    locale = person.get_locale(discord_guild=int(driver), discord_id=asker_id)
+    tz = locale["timezone"]
+    calsys = locale["cal_system"]
 
-    from_date = JalaliDateTime.fromtimestamp(
-        int(start_epoch), pytz.timezone(tz)
-    ).strftime("%c")
-    to_date = JalaliDateTime.fromtimestamp(int(end_epoch), pytz.timezone(tz)).strftime(
-        "%c"
-    )
+    if calsys == "Gregorian":
+        from_date = datetime.fromtimestamp(
+            int(start_epoch), pytz.timezone(tz)
+        ).strftime("%c")
+        to_date = datetime.fromtimestamp(int(end_epoch), pytz.timezone(tz)).strftime(
+            "%c"
+        )
+    elif calsys == "Jalali":
+        from_date = JalaliDateTime.fromtimestamp(
+            int(start_epoch), pytz.timezone(tz)
+        ).strftime("%c")
+        to_date = JalaliDateTime.fromtimestamp(
+            int(end_epoch), pytz.timezone(tz)
+        ).strftime("%c")
 
     try:
         conn = psycopg2.connect(
