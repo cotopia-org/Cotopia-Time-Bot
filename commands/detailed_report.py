@@ -6,63 +6,94 @@ from discord import Member
 from discord.ext import commands
 from persiantools.jdatetime import JalaliDate, JalaliDateTime
 
+import log_processor
 import report
 from person import Person
 
 
-@commands.hybrid_command(description="Generates report. default date: current month")
-async def viewstats(
+@commands.hybrid_command(
+    description="Generates detailed report of a member. default date: current month"
+)
+async def detailed_report(
     ctx,
     member: Member,
-    start_yyyy: Optional[int] = 1971,
-    start_mm: Optional[int] = 1,
-    start_dd: Optional[int] = 1,
-    end_yyyy: Optional[int] = 2037,
-    end_mm: Optional[int] = 1,
-    end_dd: Optional[int] = 29,
+    start_yyyy: Optional[int] = 4141,
+    start_mm: Optional[int] = 41,
+    start_dd: Optional[int] = 41,
+    end_yyyy: Optional[int] = 4242,
+    end_mm: Optional[int] = 42,
+    end_dd: Optional[int] = 42,
 ):
-    today = datetime.date.today()
+    log_processor.renew_pendings(driver=str(ctx.guild.id))
+    person = Person()
+    locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
+    tz = locale["timezone"]
+    calsys = locale["cal_system"]
 
-    # I want to set today as default end value, but passing it in Args didnt work. So I do this:
-    if end_yyyy == 2037 and end_mm == 12 and end_dd == 29:
-        end_epoch = datetime.datetime(
-            year=today.year,
-            month=today.month,
-            day=today.day,
-            hour=23,
-            minute=59,
-            second=59,
-        ).strftime("%s")
+    if calsys == "Gregorian":
+        now = datetime.datetime.now(pytz.timezone(tz))
+    elif calsys == "Jalali":
+        now = JalaliDateTime.now(pytz.timezone(tz))
+
+    # I wanted to set now as default end value, but passing it in Args didnt work. So I do this:
+    if end_yyyy == 4242 and end_mm == 42 and end_dd == 42:
+        end_epoch = int(now.timestamp()) + 1
     else:
         try:
-            end_epoch = datetime.datetime(
-                year=end_yyyy,
-                month=end_mm,
-                day=end_dd,
-                hour=23,
-                minute=59,
-                second=59,
-            ).strftime("%s")
+            if calsys == "Gregorian":
+                user_input = datetime.datetime(
+                    year=end_yyyy,
+                    month=end_mm,
+                    day=end_dd,
+                    hour=23,
+                    minute=59,
+                    second=59,
+                    tzinfo=pytz.timezone(tz),
+                )
+                print(f"END user input: {user_input}")
+                end_epoch = int(user_input.timestamp()) + 1
+            elif calsys == "Jalali":
+                user_input = JalaliDateTime(
+                    year=end_yyyy,
+                    month=end_mm,
+                    day=end_dd,
+                    hour=23,
+                    minute=59,
+                    second=59,
+                    tzinfo=pytz.timezone(tz),
+                )
+                print(f"END user input: {user_input}")
+                end_epoch = int(user_input.timestamp()) + 1
         except:  # noqa: E722
-            await ctx.send("Please enter a valid date!", ephemeral=True)
+            await ctx.send("Please enter a valid end date!", ephemeral=True)
             return
 
-    if start_yyyy == 1971 and start_mm == 1 and start_dd == 1:
-        start_epoch = datetime.datetime(
-            year=today.year, month=today.month, day=1, hour=0, minute=0, second=0
-        ).strftime("%s")
+    # I wanted to set start of the month as default end value, but passing it in Args didnt work. So I do this:
+    if start_yyyy == 4141 and start_mm == 41 and start_dd == 41:
+        start_dt = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        start_epoch = int(start_dt.timestamp())
     else:
         try:
-            start_epoch = datetime.datetime(
-                year=start_yyyy,
-                month=start_mm,
-                day=start_dd,
-                hour=0,
-                minute=0,
-                second=0,
-            ).strftime("%s")
+            if calsys == "Gregorian":
+                user_input = datetime.datetime(
+                    year=start_yyyy,
+                    month=start_mm,
+                    day=start_dd,
+                    tzinfo=pytz.timezone(tz),
+                )
+                print(f"START user input: {user_input}")
+                start_epoch = int(user_input.timestamp())
+            elif calsys == "Jalali":
+                user_input = JalaliDateTime(
+                    year=start_yyyy,
+                    month=start_mm,
+                    day=start_dd,
+                    tzinfo=pytz.timezone(tz),
+                )
+                print(f"START user input: {user_input}")
+                start_epoch = int(user_input.timestamp())
         except:  # noqa: E722
-            await ctx.send("Please enter a valid date!", ephemeral=True)
+            await ctx.send("Please enter a valid start date!", ephemeral=True)
             return
 
     if int(start_epoch) >= int(end_epoch):
@@ -90,19 +121,35 @@ async def viewstats(
         start_epoch=start_epoch,
         end_epoch=end_epoch,
     )
-    discordDate_from = "<t:" + thereport["From"] + ":D>"
-    discordDate_to = "<t:" + thereport["To"] + ":D>"
+
+    if calsys == "Gregorian":
+        reportDate_from = datetime.datetime.fromtimestamp(
+            start_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m/%d")
+        reportDate_to = datetime.datetime.fromtimestamp(
+            end_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m/%d")
+    elif calsys == "Jalali":
+        reportDate_to = JalaliDateTime.fromtimestamp(
+            start_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m/%d")
+        reportDate_from = JalaliDateTime.fromtimestamp(
+            end_epoch, tz=pytz.timezone(tz)
+        ).strftime("%Y/%m/%d")
+    
     text = (
         "Report for "
         + member.mention
         + "\n"
-        + "From: "
-        + discordDate_from
-        + "\n"
-        + "To: "
-        + discordDate_to
-        + "\n"
-        + "------------------------------\n"
+        + "From: `"
+        + reportDate_from
+        + "`\n"
+        + "To: `"
+        + reportDate_to
+        + "`\n"
+        + "`tz: "
+        + tz
+        + "`\n------------------------------\n"
     )
 
     for line in thereport:
@@ -233,4 +280,4 @@ async def viewgozaresh(
 
 async def setup(bot):
     bot.add_command(viewgozaresh)
-    bot.add_command(viewstats)
+    bot.add_command(detailed_report)
