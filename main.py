@@ -2,12 +2,9 @@ import asyncio
 import datetime
 import json
 import time
-import typing
 
 import discord
-import pytz
 from discord.ext import commands
-from persiantools.jdatetime import JalaliDate, JalaliDateTime, timedelta
 
 import auth
 import log_processor
@@ -56,9 +53,8 @@ def run():
         for cmd_file in settings.CMDS_DIR.glob("*.py"):
             if cmd_file.name != "__init__.py":
                 await bot.load_extension(f"commands.{cmd_file.name[:-3]}")
-        
-        await bot.tree.sync()
 
+        await bot.tree.sync()
 
     @bot.event
     async def on_guild_join(guild):
@@ -471,14 +467,10 @@ def run():
                 "You can not name yourself a zombie! Take a break!", ephemeral=True
             )
 
-   
-  
     @bot.hybrid_command()
     async def status(ctx, member: discord.Member):
         status = report.get_status(driver=str(ctx.guild.id), doer=str(member.id))
         await ctx.send(member.mention + "'s current status: \n" + status)
-
-   
 
     @bot.hybrid_command()
     async def my_settings(ctx):
