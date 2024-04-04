@@ -12,7 +12,7 @@ from person import Person
 
 
 @commands.hybrid_command(
-    description="Generates a file containing all the events in the db for the given member in given period of time. Default date is current month."
+    description="Generates a file containing all the events in the db for the given member in given period of time."
 )
 async def raw_data(
     ctx,
