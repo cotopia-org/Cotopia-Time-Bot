@@ -173,7 +173,7 @@ async def detailed_report(
         else:
             text = text + str(line) + ": " + str(thereport[line]) + "\n"
 
-    await ctx.send(text, ephemeral=False)
+    await ctx.send(text, ephemeral=True)
 
 
 async def setup(bot):
