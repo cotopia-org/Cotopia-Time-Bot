@@ -24,7 +24,6 @@ async def detailed_report(
     end_mm: Optional[int] = 12,
     end_dd: Optional[int] = 29,
 ):
-    log_processor.renew_pendings(driver=str(ctx.guild.id))
     person = Person()
     locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
     tz = locale["timezone"]
@@ -126,6 +125,7 @@ async def detailed_report(
     # print("start epoch: " + str(start_epoch))
     # print("end epoch: " + str(end_epoch))
 
+    log_processor.renew_pendings(driver=str(ctx.guild.id))
     thereport = report.make_report(
         driver=str(ctx.guild.id),
         doer=str(member.id),

@@ -11,7 +11,6 @@ from person import Person
 
 @commands.hybrid_command(description="Session durations of current month")
 async def thismonth(ctx):
-    log_processor.renew_pendings(driver=str(ctx.guild.id))
     person = Person()
     locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
     tz = locale["timezone"]
@@ -26,6 +25,7 @@ async def thismonth(ctx):
     start_epoch = int(start_dt.timestamp())
     end_epoch = int(now.timestamp()) + 1
 
+    log_processor.renew_pendings(driver=str(ctx.guild.id))
     the_board = report.make_board(
         driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
     )

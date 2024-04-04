@@ -11,7 +11,6 @@ from person import Person
 
 @commands.hybrid_command(description="Session durations of the current day")
 async def today(ctx):
-    log_processor.renew_pendings(driver=str(ctx.guild.id))
     person = Person()
     locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
     tz = locale["timezone"]
@@ -22,6 +21,7 @@ async def today(ctx):
     start_epoch = int(start_dt.timestamp())
     end_epoch = start_epoch + (24 * 3600)
 
+    log_processor.renew_pendings(driver=str(ctx.guild.id))
     the_board = report.make_board(
         driver=str(ctx.guild.id), start_epoch=start_epoch, end_epoch=end_epoch
     )
