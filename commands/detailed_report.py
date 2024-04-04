@@ -12,7 +12,7 @@ from person import Person
 
 
 @commands.hybrid_command(
-    description="Generates detailed report of a member. default date: current month"
+    description="Generates detailed report of a member. Default date is current month."
 )
 async def detailed_report(
     ctx,
