@@ -102,6 +102,47 @@ async def get_doers(start: int, end: int, request: Request):
     return result
 
 
+@app.get("/makeboard")
+async def make_board(start_epoch: int, end_epoch: int, request: Request):
+    token = request.headers.get("Authorization")
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
+        )
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:  # noqa: E722
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Unable to read token!",
+            )
+
+        if decoded is False:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid Token! Login Again!",
+            )
+        else:
+            driver = str(decoded["discord_guild"])
+
+    log_processor.renew_pendings(driver=driver)
+    
+    the_board = report.make_board(
+        driver=driver, start_epoch=start_epoch, end_epoch=end_epoch
+    )
+    from_date = JalaliDate.fromtimestamp(start_epoch)
+    to_date = JalaliDate.fromtimestamp(start_epoch)
+    title = f"Net Session Hours FROM: {str(from_date)} TO: {str(to_date)}"
+    result = {}
+    result["The Board Title"] = title
+
+    for each in the_board:
+        result[each[0]] = each[1]
+
+    return result
+
+
 @app.get("/thismonth")
 async def this_month(request: Request):
     token = request.headers.get("Authorization")
