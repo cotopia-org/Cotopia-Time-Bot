@@ -91,6 +91,89 @@ def make_report(driver: str, doer: str, start_epoch: int, end_epoch: int):
     return report_dic
 
 
+def make_report_seconds(driver: str, doer: str, start_epoch: int, end_epoch: int):
+    conn = psycopg2.connect(
+        host="localhost",
+        dbname="postgres",
+        user="postgres",
+        password="Tp\ZS?gfLr|]'a",
+        port=5432,
+    )
+    cur = conn.cursor()
+    cur.execute(
+        """
+                SELECT * From discord_event
+                WHERE pairid IS NOT NULL
+                AND driver = %s
+                AND kind = ANY(ARRAY['SESSION STARTED', 'TALKING STARTED', 'SESSION PAUSED'])
+                AND doer = %s
+                AND epoch >= %s
+                AND epoch <= %s
+                ORDER BY id
+                """,
+        (driver, doer, start_epoch, end_epoch),
+    )
+
+    data = cur.fetchall()
+
+    rows_count = 0
+    sessions_count = 0
+    pausings_count = 0
+    talkings_count = 0
+    total_session_duration = 0.0
+    total_pausing_duration = 0.0
+    total_talking_duration = 0.0
+
+    for row in data:
+        # print(row)
+        rows_count += 1
+        if row[3] == "SESSION STARTED":
+            sessions_count += 1
+            total_session_duration = total_session_duration + row[9]
+        elif row[3] == "SESSION PAUSED":
+            pausings_count += 1
+            total_pausing_duration = total_pausing_duration + row[9]
+        elif row[3] == "TALKING STARTED":
+            talkings_count += 1
+            total_talking_duration = total_talking_duration + row[9]
+
+    total_sd_seconds = int(total_session_duration)
+    total_pd_seocnds = int(total_pausing_duration)
+    total_td_seconds = int(total_talking_duration)
+
+    on_mobile_seconds = int(
+        on_mobile_duration(driver, doer, start_epoch, end_epoch, cur)
+    )
+
+    net_sd_seconds = total_sd_seconds - total_pd_seocnds
+
+    report_dic = {
+        "User": doer,
+        "From": start_epoch,
+        "To": end_epoch,
+        "Number Of Rows": rows_count,
+        "Number Of Sessions": sessions_count,
+        "Number Of Pausings": pausings_count,
+        "Number Of Talkings": talkings_count,
+        "Number Of On Moblies": on_mobile_count(
+            driver, doer, start_epoch, end_epoch, cur
+        ),
+        "Raw Session Hours": total_sd_seconds,
+        "Total Puasing Hours": total_pd_seocnds,
+        "Total Talking Hours": total_td_seconds,
+        "Net On Mobile Hours": on_mobile_seconds,
+        "Net Session Hours": net_sd_seconds,
+    }
+
+    # report = json.dumps(report_dic)
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return report_dic
+
+
 # # ✅
 def on_mobile_count(driver: str, doer: str, start_epoch: int, end_epoch: int, cursor):
     cursor.execute(
@@ -308,6 +391,22 @@ def make_board(driver: str, start_epoch: int, end_epoch: int):
 
     for user in doers:
         user_report = make_report(
+            driver=driver, doer=user, start_epoch=start_epoch, end_epoch=end_epoch
+        )
+        if user_report["Net Session Hours"] > 0:
+            the_board[user] = user_report["Net Session Hours"]
+
+    sorted_board = sorted(the_board.items(), key=lambda x: x[1], reverse=True)
+
+    return sorted_board
+
+
+def make_board_seconds(driver: str, start_epoch: int, end_epoch: int):
+    doers = get_doers_list(driver=driver, start_epoch=start_epoch, end_epoch=end_epoch)
+    the_board = {}
+
+    for user in doers:
+        user_report = make_report_seconds(
             driver=driver, doer=user, start_epoch=start_epoch, end_epoch=end_epoch
         )
         if user_report["Net Session Hours"] > 0:

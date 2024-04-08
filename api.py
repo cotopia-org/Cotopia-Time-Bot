@@ -127,12 +127,12 @@ async def make_board(start_epoch: int, end_epoch: int, request: Request):
             driver = str(decoded["discord_guild"])
 
     log_processor.renew_pendings(driver=driver)
-    
-    the_board = report.make_board(
+
+    the_board = report.make_board_seconds(
         driver=driver, start_epoch=start_epoch, end_epoch=end_epoch
     )
-    from_date = JalaliDate.fromtimestamp(start_epoch)
-    to_date = JalaliDate.fromtimestamp(start_epoch)
+    from_date = JalaliDateTime.fromtimestamp(start_epoch)
+    to_date = JalaliDateTime.fromtimestamp(start_epoch)
     title = f"Net Session Hours FROM: {str(from_date)} TO: {str(to_date)}"
     result = {}
     result["The Board Title"] = title
