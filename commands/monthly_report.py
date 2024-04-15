@@ -11,6 +11,7 @@ from person import Person
 
 @commands.hybrid_command(description="Session durations of current month")
 async def thismonth(ctx):
+    await ctx.defer()
     person = Person()
     locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
     tz = locale["timezone"]
@@ -54,6 +55,7 @@ async def thismonth(ctx):
 
 @commands.hybrid_command(description="Session durations of previous month")
 async def lastmonth(ctx):
+    await ctx.defer()
     person = Person()
     locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
     tz = locale["timezone"]

@@ -24,6 +24,7 @@ async def raw_data(
     end_mm: Optional[int] = 12,
     end_dd: Optional[int] = 29,
 ):
+    await ctx.defer()
     person = Person()
     locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
     tz = locale["timezone"]

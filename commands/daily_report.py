@@ -11,6 +11,7 @@ from person import Person
 
 @commands.hybrid_command(description="Session durations of the current day")
 async def today(ctx):
+    await ctx.defer()
     person = Person()
     locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
     tz = locale["timezone"]
@@ -50,6 +51,7 @@ async def today(ctx):
 
 @commands.hybrid_command(description="Session durations of the previous day")
 async def yesterday(ctx):
+    await ctx.defer()
     person = Person()
     locale = person.get_locale(discord_guild=ctx.guild.id, discord_id=ctx.author.id)
     tz = locale["timezone"]
