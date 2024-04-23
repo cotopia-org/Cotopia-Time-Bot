@@ -595,3 +595,25 @@ async def detailed_report(
     result["total"] = total_report
     if in_between == ReportInBetween.off:
         return result
+    else:
+        in_between_list = []
+        duration = 24 * 3600
+        if in_between == ReportInBetween.weekly:
+            duration = duration * 7
+        elif in_between == ReportInBetween.monthly:
+            duration = duration * 30
+
+        start = start_epoch
+        end = start + duration
+        while True:
+            ibr = report.make_board_seconds(
+                driver=driver, doer=doer, start_epoch=start, end_epoch=end
+            )
+            in_between_list.append(ibr)
+            start = end
+            end = start + duration
+            if start > end_epoch:
+                break
+        
+        result["in_between"] = in_between_list
+        return result
