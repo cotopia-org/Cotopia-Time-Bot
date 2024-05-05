@@ -1,4 +1,5 @@
 import json
+from enum import Enum as pyEnum
 
 import pytz
 from fastapi import FastAPI, HTTPException, Request, status
@@ -13,6 +14,14 @@ from gcal import calcal as GCalSetup
 from job_report.report import gen_user_report
 from person import Person
 from server import Server
+
+
+class ReportInBetween(pyEnum):
+    off = "off"
+    daily = "daily"
+    weekly = "weekly"
+    monthly = "monthly"
+
 
 app = FastAPI(
     title="TimeMaster",
@@ -552,3 +561,61 @@ async def jobs_report(request: Request, start: int, end: int, discord_id: int):
     )
 
     return report
+
+
+@app.get("/detailed_report")
+async def detailed_report(
+    request: Request, start_epoch: int, end_epoch: int, in_between: ReportInBetween
+):
+    token = request.headers.get("Authorization")
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
+        )
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:  # noqa: E722
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Unable to read token!",
+            )
+
+        if decoded is False:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid Token! Login Again!",
+            )
+        else:
+            driver = str(decoded["discord_guild"])
+            doer = str(decoded["discord_id"])
+
+    result = {}
+    total_report = report.make_report_seconds(
+        driver=driver, doer=doer, start_epoch=start_epoch, end_epoch=end_epoch
+    )
+    result["total"] = total_report
+    if in_between == ReportInBetween.off:
+        return result
+    else:
+        in_between_list = []
+        duration = 24 * 3600
+        if in_between == ReportInBetween.weekly:
+            duration = duration * 7
+        elif in_between == ReportInBetween.monthly:
+            duration = duration * 30
+
+        start = start_epoch
+        end = start + duration
+        while True:
+            ibr = report.make_board_seconds(
+                driver=driver, doer=doer, start_epoch=start, end_epoch=end
+            )
+            in_between_list.append(ibr)
+            start = end
+            end = start + duration
+            if start > end_epoch:
+                break
+        
+        result["in_between"] = in_between_list
+        return result
