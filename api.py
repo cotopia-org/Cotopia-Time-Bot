@@ -608,7 +608,7 @@ async def detailed_report(
         start = start_epoch
         end = start + duration
         while True:
-            ibr = report.make_board_seconds(
+            ibr = report.make_report_seconds(
                 driver=driver, doer=doer, start_epoch=start, end_epoch=end
             )
             in_between_list.append(ibr)
