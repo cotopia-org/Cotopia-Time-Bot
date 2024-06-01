@@ -590,7 +590,7 @@ def run():
             f"[Use this link to open your time-bot dashboard.\n(valid until {expires_at_string})]({link})",
             ephemeral=True,
         )
-    
+
     @bot.hybrid_command()
     async def insight(ctx):
         d = {}
@@ -614,6 +614,35 @@ def run():
 
         await ctx.send(
             f"[Use this link to open Cotopia Insight.\n(valid until {expires_at_string})]({link})",
+            ephemeral=True,
+        )
+
+    @bot.hybrid_command()
+    async def salary(ctx):
+        d = {}
+        d["discord_guild"] = ctx.guild.id
+        d["discord_id"] = ctx.author.id
+        d["discord_name"] = ctx.author.name
+        roles = ctx.author.roles
+        roles_list = []
+        for r in roles:
+            roles_list.append(r.name)
+        d["discord_roles"] = roles_list
+
+        token = auth.create_token(d)
+
+        # link = "http://127.0.0.1:8000/login?t=" + token
+        link = (
+            "http://tooljet.cotopia.social/applications/029f944b-5568-41e3-b160-f74a5e8e80a6/contract?access="
+            + token
+        )
+
+        now = datetime.datetime.now()
+        expires_at = now + datetime.timedelta(0, 3600)
+        expires_at_string = expires_at.strftime("%H:%M:%S")
+
+        await ctx.send(
+            f"[Use this link to open Cotopia Salary App.\n(valid until {expires_at_string})]({link})",
             ephemeral=True,
         )
 
