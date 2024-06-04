@@ -645,6 +645,35 @@ def run():
             f"[Use this link to open Cotopia Salary App.\n(valid until {expires_at_string})]({link})",
             ephemeral=True,
         )
+    
+    @bot.hybrid_command()
+    async def calendar(ctx):
+        d = {}
+        d["discord_guild"] = ctx.guild.id
+        d["discord_id"] = ctx.author.id
+        d["discord_name"] = ctx.author.name
+        roles = ctx.author.roles
+        roles_list = []
+        for r in roles:
+            roles_list.append(r.name)
+        d["discord_roles"] = roles_list
+
+        token = auth.create_token(d)
+
+        # link = "http://127.0.0.1:8000/login?t=" + token
+        link = (
+            "http://tooljet.cotopia.social/applications/da7f44db-7dd7-4019-9b49-78eef06936b8/home?access="
+            + token
+        )
+
+        now = datetime.datetime.now()
+        expires_at = now + datetime.timedelta(0, 3600)
+        expires_at_string = expires_at.strftime("%H:%M:%S")
+
+        await ctx.send(
+            f"[Use this link to open Cotopia Salary App.\n(valid until {expires_at_string})]({link})",
+            ephemeral=True,
+        )
 
     @bot.hybrid_command()
     async def update_info(ctx):
