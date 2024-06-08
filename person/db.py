@@ -1,5 +1,6 @@
-import psycopg2
 from psycopg2.extensions import cursor
+
+from db import PGConnect
 
 
 class Person:
@@ -13,13 +14,8 @@ class Person:
         discord_name: str,
         discord_avatar: str | None = None,
     ):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             """
@@ -132,13 +128,8 @@ class Person:
             )
 
     def set_google_token(self, person_id: int, creds_json: str):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             "UPDATE person SET google_token = %s WHERE id = %s;",
@@ -149,13 +140,8 @@ class Person:
         conn.close()
 
     def get_google_token(self, discord_guild: int, discord_id: int):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             """
@@ -175,13 +161,8 @@ class Person:
             return result[0]
 
     def list_of_tokeners(self, discord_guild: int):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             "SELECT discord_id FROM person WHERE discord_guild = %s AND google_token IS NOT NULL;",
@@ -197,13 +178,8 @@ class Person:
         return result
 
     def set_cal(self, discord_guild: int, discord_id: int, cal: str):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             "UPDATE person SET calendar = %s WHERE discord_guild = %s AND discord_id = %s;",
@@ -214,13 +190,8 @@ class Person:
         conn.close()
 
     def get_cal(self, discord_guild: int, discord_id: int):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             """
@@ -240,13 +211,8 @@ class Person:
             return result[0]
 
     def get_cal_by_name(self, discord_guild: int, discord_name: str):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             """
@@ -266,13 +232,8 @@ class Person:
             return result[0]
 
     def set_avatar(self, discord_guild: int, discord_id: int, avatar: str, name: str):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             "UPDATE person SET discord_avatar = %s, discord_name = %s WHERE discord_guild = %s AND discord_id = %s;",
@@ -283,13 +244,8 @@ class Person:
         conn.close()
 
     def get_person_info(self, discord_guild: int, discord_name: str):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             "SELECT * FROM person WHERE discord_guild = %s AND discord_name = %s",
@@ -327,13 +283,8 @@ class Person:
         return info
 
     def get_person_info_by_id(self, discord_guild: int, discord_id: int):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             "SELECT * FROM person WHERE discord_guild = %s AND discord_id = %s",
@@ -371,13 +322,8 @@ class Person:
         return info
 
     def set_timezone(self, discord_guild: int, discord_id: int, timezone: str):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             "UPDATE person SET timezone = %s WHERE discord_guild = %s AND discord_id = %s;",
@@ -388,13 +334,8 @@ class Person:
         conn.close()
 
     def get_timezone(self, discord_guild: int, discord_id: int):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             """
@@ -414,13 +355,8 @@ class Person:
             return result[0]
 
     def set_cal_system(self, discord_guild: int, discord_id: int, cal_system: str):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             "UPDATE person SET cal_system = %s WHERE discord_guild = %s AND discord_id = %s;",
@@ -431,13 +367,8 @@ class Person:
         conn.close()
 
     def get_cal_system(self, discord_guild: int, discord_id: int):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             """
@@ -458,15 +389,10 @@ class Person:
 
     def get_locale(self, discord_guild: int, discord_id: int):
         person_locale = {}
-        person_locale["timezone"] = 'Asia/Tehran'
-        person_locale["cal_system"] = 'Jalali'
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        person_locale["timezone"] = "Asia/Tehran"
+        person_locale["cal_system"] = "Jalali"
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             """
