@@ -6,12 +6,12 @@ import pytz
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
+from db import PGConnect
+
 from . import calapi_chngd as api
 
 sys.path.append("..")
 import json
-
-import psycopg2
 
 from person import Person
 
@@ -45,13 +45,8 @@ def store_user_creds(
 
 def get_user_creds(discord_guild: int, discord_id: int):
     creds = None
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         "SELECT google_token FROM person WHERE discord_guild = %s AND discord_id = %s;",

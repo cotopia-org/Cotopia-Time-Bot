@@ -1,7 +1,8 @@
 import re
 
 import discord
-import psycopg2
+
+from db import PGConnect
 
 from .db import Person
 
@@ -24,13 +25,8 @@ class EmailModal(discord.ui.Modal, title="Email"):
     async def on_submit(self, interaction: discord.Interaction):
         if self.email.default != self.email.value:
             if self.check_email(self.email.value):
-                conn = psycopg2.connect(
-                    host="localhost",
-                    dbname="postgres",
-                    user="postgres",
-                    password="Tp\ZS?gfLr|]'a",
-                    port=5432,
-                )
+                pgc = PGConnect()
+                conn = pgc.conn
                 cursor = conn.cursor()
 
                 the_person = Person()
@@ -53,10 +49,7 @@ class EmailModal(discord.ui.Modal, title="Email"):
                     "Invalid email input! Try agin!", ephemeral=True
                 )
         else:
-            await interaction.response.send_message(
-                    "Nothing changed!", ephemeral=True
-                )
-
+            await interaction.response.send_message("Nothing changed!", ephemeral=True)
 
     def load_defualts(self, user_email):
         self.email.default = user_email

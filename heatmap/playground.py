@@ -1,6 +1,6 @@
 import time
 
-import psycopg2
+from db import PGConnect
 
 # Monday	0
 # Tuesday	1
@@ -11,8 +11,8 @@ import psycopg2
 # Sunday	6
 
 
-# conn = psycopg2.connect(host="localhost", dbname="postgres", user="postgres",
-#                         password="Tp\ZS?gfLr|]'a", port=5432)
+# pgc = PGConnect()
+# conn = pgc.conn
 # cur = conn.cursor()
 # cur.execute("SELECT ts FROM discord_event WHERE id = 100;")
 # data = cur.fetchone()[0]
@@ -32,13 +32,8 @@ import psycopg2
 # divided by total number of that day!
 
 
-conn = psycopg2.connect(
-    host="localhost",
-    dbname="postgres",
-    user="postgres",
-    password="Tp\ZS?gfLr|]'a",
-    port=5432,
-)
+pgc = PGConnect()
+conn = pgc.conn
 cur = conn.cursor()
 cur.execute("SELECT * FROM discord_event WHERE doer = 'kharrati';")
 data = cur.fetchall()

@@ -1,12 +1,7 @@
-import psycopg2
+from db import PGConnect
 
-conn = psycopg2.connect(
-    host="localhost",
-    dbname="postgres",
-    user="postgres",
-    password="Tp\ZS?gfLr|]'a",
-    port=5432,
-)
+pgc = PGConnect()
+conn = pgc.conn
 cur = conn.cursor()
 # cur.execute("""CREATE TABLE IF NOT EXISTS person(
 #             id SERIAL NOT NULL PRIMARY KEY,
@@ -21,7 +16,9 @@ cur = conn.cursor()
 #             note json NULL
 #             );""")
 # cur.execute("ALTER TABLE person ADD COLUMN discord_avatar VARCHAR(255) NULL;")
-cur.execute("ALTER TABLE person ADD COLUMN timezone VARCHAR(255) DEFAULT 'Asia/Tehran';")
+cur.execute(
+    "ALTER TABLE person ADD COLUMN timezone VARCHAR(255) DEFAULT 'Asia/Tehran';"
+)
 cur.execute("ALTER TABLE person ADD COLUMN cal_system VARCHAR(255) DEFAULT 'Jalali';")
 conn.commit()
 cur.close()

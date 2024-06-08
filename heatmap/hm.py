@@ -1,18 +1,13 @@
 import datetime
 
-import psycopg2
+from db import PGConnect
 
 
 class HeatMap:
 
     def __init__(self, doer: str) -> None:
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute("SELECT * FROM discord_event WHERE doer = %s ORDER BY ts;", [doer])
         self.data = cur.fetchall()

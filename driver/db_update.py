@@ -1,12 +1,7 @@
-import psycopg2
+from db import PGConnect
 
-conn = psycopg2.connect(
-    host="localhost",
-    dbname="postgres",
-    user="postgres",
-    password="Tp\ZS?gfLr|]'a",
-    port=5432,
-)
+pgc = PGConnect()
+conn = pgc.conn
 cur = conn.cursor()
 cur.execute(
     "ALTER TABLE brief ADD COLUMN driver VARCHAR(255) DEFAULT '1125764070935638086';"

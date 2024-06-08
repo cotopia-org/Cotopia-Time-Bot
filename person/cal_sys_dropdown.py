@@ -1,8 +1,9 @@
 from typing import List
 
 import discord
-import psycopg2
 from discord.components import SelectOption
+
+from db import PGConnect
 
 from .db import Person
 
@@ -35,13 +36,8 @@ class CalSysDropdown(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cursor = conn.cursor()
         the_person = Person()
         the_person.set_cal_system(

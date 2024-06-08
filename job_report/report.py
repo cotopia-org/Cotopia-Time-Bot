@@ -1,14 +1,9 @@
-import psycopg2
+from db import PGConnect
 
 
 def get_user_events(guild_id: int, discord_id: int, start_epoch: int, end_epoch: int):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cursor = conn.cursor()
     cursor.execute(
         """

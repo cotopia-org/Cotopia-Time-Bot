@@ -2,7 +2,7 @@
 import datetime
 import time
 
-import psycopg2
+from db import PGConnect
 
 
 # ✅
@@ -20,13 +20,8 @@ def should_record_brief(doer: str, driver: str):
 
 # ✅
 def get_last_brief(doer: str, driver: str):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """
@@ -54,13 +49,8 @@ def get_last_brief(doer: str, driver: str):
 
 # ✅
 def get_last_brief_epoch(doer: str, driver: str):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """
@@ -94,13 +84,8 @@ def rightnow():
 
 # ✅
 def write_to_db(brief: str, doer: str, driver: str):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         "INSERT INTO brief (driver, epoch, doer, content) VALUES (%s, %s, %s, %s);",
@@ -114,13 +99,8 @@ def write_to_db(brief: str, doer: str, driver: str):
 
 # ✅
 def create_table():
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """CREATE TABLE IF NOT EXISTS brief(
@@ -142,13 +122,8 @@ def today():
 
 
 def get_last_brief_ts(doer: str, driver: str):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """
