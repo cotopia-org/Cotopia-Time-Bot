@@ -1,5 +1,6 @@
 import discord
-import psycopg2
+
+from db import PGConnect
 
 from .db import Person
 
@@ -16,13 +17,8 @@ class WalletModal(discord.ui.Modal, title="TRC20 Wallet"):
     async def on_submit(self, interaction: discord.Interaction):
         if self.trc20_wallet_addr.default != self.trc20_wallet_addr.value:
             if self.check_addr(self.trc20_wallet_addr.value):
-                conn = psycopg2.connect(
-                    host="localhost",
-                    dbname="postgres",
-                    user="postgres",
-                    password="Tp\ZS?gfLr|]'a",
-                    port=5432,
-                )
+                pgc = PGConnect()
+                conn = pgc.conn
                 cursor = conn.cursor()
 
                 the_person = Person()

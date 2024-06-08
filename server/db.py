@@ -1,6 +1,6 @@
 from datetime import datetime
 
-import psycopg2
+from db import PGConnect
 
 
 class Server:
@@ -20,13 +20,8 @@ class Server:
         note: str | None = None,
     ):
 
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(f"SELECT id FROM server WHERE discord_guild_id = {guild_id};")
         result = cur.fetchone()
@@ -97,13 +92,8 @@ class Server:
             return result[0]
 
     def getter(self, guild_id: str):
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(f"SELECT * FROM server WHERE discord_guild_id = {guild_id};")
         result = cur.fetchone()
