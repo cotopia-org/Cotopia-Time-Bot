@@ -1,8 +1,9 @@
 import json
 import time
 
-import psycopg2
 from discord import Member, VoiceChannel, VoiceState
+
+from db import PGConnect
 
 
 # the discord bot calls this on_voice_state_update
@@ -132,14 +133,18 @@ def session_pause(m: Member, channel: str, e: dict):
         start_pendingID = write_event_to_db(
             str(m.guild.id), rightnow(), "SESSION STARTED", str(m.id), True, note
         )
-        write_pending_to_db(str(m.guild.id), str(m.id), "SESSION STARTED", start_pendingID)
+        write_pending_to_db(
+            str(m.guild.id), str(m.id), "SESSION STARTED", start_pendingID
+        )
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
         pause_pendingID = write_event_to_db(
             str(m.guild.id), rightnow(), "SESSION PAUSED", str(m.id), True, note
         )
-        write_pending_to_db(str(m.guild.id), str(m.id), "SESSION PAUSED", pause_pendingID)
+        write_pending_to_db(
+            str(m.guild.id), str(m.id), "SESSION PAUSED", pause_pendingID
+        )
 
 
 # 🚗
@@ -208,14 +213,18 @@ def talking_start(m: Member, channel: str, e: dict):
         start_pendingID = write_event_to_db(
             str(m.guild.id), rightnow(), "SESSION STARTED", str(m.id), True, note
         )
-        write_pending_to_db(str(m.guild.id), str(m.id), "SESSION STARTED", start_pendingID)
+        write_pending_to_db(
+            str(m.guild.id), str(m.id), "SESSION STARTED", start_pendingID
+        )
         notedic = {"channel": channel}
         notedic = notedic | e
         note = json.dumps(notedic)
         talk_pendingID = write_event_to_db(
             str(m.guild.id), rightnow(), "TALKING STARTED", str(m.id), True, note
         )
-        write_pending_to_db(str(m.guild.id), str(m.id), "TALKING STARTED", talk_pendingID)
+        write_pending_to_db(
+            str(m.guild.id), str(m.id), "TALKING STARTED", talk_pendingID
+        )
 
 
 # 🚗
@@ -266,13 +275,8 @@ def rightnow():
 def write_event_to_db(
     driver: str, epoch: int, kind: str, doer: str, isPair: bool, note: str
 ):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """CREATE TABLE IF NOT EXISTS discord_event(
@@ -304,13 +308,8 @@ def write_event_to_db(
 # INSERTS INTO pending_event (doer, kind, pendingID)
 # 🚗
 def write_pending_to_db(driver: str, doer: str, kind: str, pendingID: int):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """CREATE TABLE IF NOT EXISTS pending_event(
@@ -337,13 +336,8 @@ def add_pairid_to_db(start: int, stop: int):
 
     # print("start    :" +str(start))
     # print("stop    :" +str(stop))
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute("UPDATE discord_event SET pairid = %s WHERE id = %s;", (start, stop))
     cur.execute("UPDATE discord_event SET pairid = %s WHERE id = %s;", (stop, start))
@@ -376,13 +370,8 @@ def add_pairid_to_db(start: int, stop: int):
 # 🚗
 def get_pair_start_id(driver: str, doer: str, kind: str):
     pair_start_id = 0
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """CREATE TABLE IF NOT EXISTS pending_event(
@@ -419,13 +408,8 @@ def get_pair_start_id(driver: str, doer: str, kind: str):
 # deletes all the pendings of a doer from pending_event table
 # 🚗
 def delete_all_pending_from_db(driver: str, doer: str):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         "DELETE FROM pending_event WHERE doer = %s AND driver = %s;", (doer, driver)
@@ -439,13 +423,8 @@ def delete_all_pending_from_db(driver: str, doer: str):
 # this would be used to produce live /today report
 # 🚗
 def renew_pendings(driver: str):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
 
     renew_epoch = rightnow()
@@ -499,13 +478,8 @@ def renew_pendings(driver: str):
 
 
 def renew_pendings_of_a_doer(driver: str, doer: str):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
 
     renew_epoch = rightnow()
@@ -561,13 +535,8 @@ def renew_pendings_of_a_doer(driver: str, doer: str):
 
 
 def get_pendings(driver: str, doer: str):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
 
     cur.execute(

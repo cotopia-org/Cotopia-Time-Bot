@@ -2,7 +2,7 @@
 
 import sqlite3
 
-import psycopg2
+from db import PGConnect
 
 tables = ["dirooz_boards", "inmaah_boards"]
 
@@ -16,13 +16,8 @@ def copy_to_postgres(table_name: str):
     cursor.close()
     conn.close()
 
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cursor = conn.cursor()
 
     for i in data:

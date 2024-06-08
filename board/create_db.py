@@ -1,14 +1,9 @@
-import psycopg2
+from db import PGConnect
 
 
 def create_db():
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cursor = conn.cursor()
 
     cursor.execute(

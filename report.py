@@ -1,21 +1,16 @@
 from datetime import datetime
 
-import psycopg2
 import pytz
 from persiantools.jdatetime import JalaliDateTime
 
+from db import PGConnect
 from person import Person
 
 
 # ✅
 def make_report(driver: str, doer: str, start_epoch: int, end_epoch: int):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """
@@ -92,13 +87,8 @@ def make_report(driver: str, doer: str, start_epoch: int, end_epoch: int):
 
 
 def make_report_seconds(driver: str, doer: str, start_epoch: int, end_epoch: int):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """
@@ -268,13 +258,8 @@ def make_raw_file(
         ).strftime("%c")
 
     try:
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             """
@@ -334,13 +319,8 @@ def make_raw_file(
 # ✅
 def get_doers_list(driver: str, start_epoch: int, end_epoch: int):
     doers = []
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
 
     cur.execute(
@@ -421,13 +401,8 @@ def make_board_seconds(driver: str, start_epoch: int, end_epoch: int):
 def get_status(driver: str, doer: str):
     doers_list = get_doers_list(driver, start_epoch=0, end_epoch=2147483647)
     if doer in doers_list:
-        conn = psycopg2.connect(
-            host="localhost",
-            dbname="postgres",
-            user="postgres",
-            password="Tp\ZS?gfLr|]'a",
-            port=5432,
-        )
+        pgc = PGConnect()
+        conn = pgc.conn
         cur = conn.cursor()
         cur.execute(
             "SELECT kind, pendingid FROM pending_event WHERE doer = %s AND driver = %s ORDER BY ts DESC",
@@ -455,13 +430,8 @@ def get_status(driver: str, doer: str):
 
 # ✅
 def get_events(driver: str, start: int, end: int):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """
@@ -484,13 +454,8 @@ def get_events(driver: str, start: int, end: int):
 
 # ✅
 def get_events_of_doer(driver: str, start: int, end: int, doer: str):
-    conn = psycopg2.connect(
-        host="localhost",
-        dbname="postgres",
-        user="postgres",
-        password="Tp\ZS?gfLr|]'a",
-        port=5432,
-    )
+    pgc = PGConnect()
+    conn = pgc.conn
     cur = conn.cursor()
     cur.execute(
         """
