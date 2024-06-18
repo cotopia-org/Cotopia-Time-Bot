@@ -2,9 +2,12 @@ import asyncio
 import datetime
 import json
 import time
+from os import getenv
 
 import discord
+import requests
 from discord.ext import commands
+from dotenv import load_dotenv
 
 import auth
 import log_processor
@@ -605,8 +608,29 @@ def run():
 
         token = auth.create_token(d)
 
+        job_manager_jwt = "empty"
+        jm_username = str(d["discord_id"]) + "@" + str(d["discord_guild"]) + ".discord"
+        load_dotenv()
+        jm_password = getenv("DBUPW") + "@!"
+        timebotsecret = getenv("TIME_BOT_SECRET")
+
+        payload = {
+            "timebotsecret": timebotsecret,
+            "username": jm_username,
+            "password": jm_password,
+        }
+        jm_url = "https://jobs-api.cotopia.social/timebotlogin"
+        r = requests.post(url=jm_url, params=payload)
+        if r.status_code == 200:
+            job_manager_jwt = r.json()
+
         # link = "http://127.0.0.1:8000/login?t=" + token
-        link = "https://insight.cotopia.social/login?t=" + token
+        link = (
+            "https://insight.cotopia.social/login?t="
+            + token
+            + "&jmt="
+            + job_manager_jwt
+        )
 
         now = datetime.datetime.now()
         expires_at = now + datetime.timedelta(0, 3600)
@@ -645,7 +669,7 @@ def run():
             f"[Use this link to open Cotopia Salary App.\n(valid until {expires_at_string})]({link})",
             ephemeral=True,
         )
-    
+
     @bot.hybrid_command()
     async def calendar(ctx):
         d = {}
