@@ -633,7 +633,7 @@ def run():
 
         # link = "http://127.0.0.1:8000/login?t=" + token
         link = (
-            "http://tooljet.cotopia.social/applications/029f944b-5568-41e3-b160-f74a5e8e80a6/contract?access="
+            "http://tooljet.cotopia.social/applications/3bc09968-15c0-4279-bb3d-04b70eb8c199/contract?access="
             + token
         )
 
@@ -662,7 +662,7 @@ def run():
 
         # link = "http://127.0.0.1:8000/login?t=" + token
         link = (
-            "http://tooljet.cotopia.social/applications/da7f44db-7dd7-4019-9b49-78eef06936b8/home?access="
+            "http://tooljet.cotopia.social/applications/e61ce10d-580e-4167-98a3-719dbfb85f5a/home?access="
             + token
         )
 
