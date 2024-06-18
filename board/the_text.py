@@ -1,12 +1,14 @@
 import time
+from os import getenv
 
 import discord
+import psycopg2
 import pytz
+from dotenv import load_dotenv
 from persiantools.jdatetime import JalaliDate, JalaliDateTime, timedelta
 
 import log_processor
 import report
-from db import PGConnect
 
 
 # returns epoch of NOW: int
@@ -58,8 +60,14 @@ async def gen_dirooz_board(guild):
     msg = await da_channel.send(text + "‌")
 
     # record to db
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cursor = conn.cursor()
     cursor.execute(
         """   CREATE TABLE IF NOT EXISTS dirooz_boards(
@@ -80,8 +88,14 @@ async def gen_dirooz_board(guild):
 
 async def update_dirooz_board(guild):
     # get msg from db
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cursor = conn.cursor()
     cursor.execute(f"SELECT * FROM dirooz_boards WHERE guild_id = {guild.id};")
     db_msg = cursor.fetchone()
@@ -197,8 +211,14 @@ async def gen_inmaah_board(guild):
     msg = await da_channel.send(text + "‌")
 
     # record to db
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cursor = conn.cursor()
     cursor.execute(
         """   CREATE TABLE IF NOT EXISTS inmaah_boards(
@@ -219,8 +239,14 @@ async def gen_inmaah_board(guild):
 
 async def update_inmaah_board(guild):
     # get msg from db
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cursor = conn.cursor()
     cursor.execute(f"SELECT * FROM inmaah_boards WHERE guild_id = {guild.id};")
     db_msg = cursor.fetchone()

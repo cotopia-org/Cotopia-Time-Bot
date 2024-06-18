@@ -1,9 +1,18 @@
-from db import PGConnect
+from os import getenv
+
+import psycopg2
+from dotenv import load_dotenv
 
 
 def get_user_events(guild_id: int, discord_id: int, start_epoch: int, end_epoch: int):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cursor = conn.cursor()
     cursor.execute(
         """

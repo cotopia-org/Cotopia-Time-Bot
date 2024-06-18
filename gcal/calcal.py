@@ -1,12 +1,13 @@
 import sys
 from datetime import datetime
+from os import getenv
 from urllib.parse import quote
 
+import psycopg2
 import pytz
+from dotenv import load_dotenv
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
-
-from db import PGConnect
 
 from . import calapi_chngd as api
 
@@ -45,8 +46,14 @@ def store_user_creds(
 
 def get_user_creds(discord_guild: int, discord_id: int):
     creds = None
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
     cur.execute(
         "SELECT google_token FROM person WHERE discord_guild = %s AND discord_id = %s;",

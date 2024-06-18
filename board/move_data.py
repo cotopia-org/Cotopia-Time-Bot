@@ -1,8 +1,10 @@
 # copy data from sqlite tables to postgres tables
 
 import sqlite3
+from os import getenv
 
-from db import PGConnect
+import psycopg2
+from dotenv import load_dotenv
 
 tables = ["dirooz_boards", "inmaah_boards"]
 
@@ -16,8 +18,14 @@ def copy_to_postgres(table_name: str):
     cursor.close()
     conn.close()
 
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cursor = conn.cursor()
 
     for i in data:

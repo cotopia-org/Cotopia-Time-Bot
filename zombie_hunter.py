@@ -1,7 +1,9 @@
 import json
 import time
+from os import getenv
 
-from db import PGConnect
+import psycopg2
+from dotenv import load_dotenv
 
 
 # returns epoch of NOW: int
@@ -13,8 +15,14 @@ def rightnow():
 # 🚗
 def record_hunt(driver: str, reporter: str, zombie: str):
 
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
 
     notedic = {"the_zombie": zombie}

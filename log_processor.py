@@ -1,9 +1,10 @@
 import json
 import time
+from os import getenv
 
+import psycopg2
 from discord import Member, VoiceChannel, VoiceState
-
-from db import PGConnect
+from dotenv import load_dotenv
 
 
 # the discord bot calls this on_voice_state_update
@@ -275,8 +276,14 @@ def rightnow():
 def write_event_to_db(
     driver: str, epoch: int, kind: str, doer: str, isPair: bool, note: str
 ):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
     cur.execute(
         """CREATE TABLE IF NOT EXISTS discord_event(
@@ -308,8 +315,14 @@ def write_event_to_db(
 # INSERTS INTO pending_event (doer, kind, pendingID)
 # 🚗
 def write_pending_to_db(driver: str, doer: str, kind: str, pendingID: int):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
     cur.execute(
         """CREATE TABLE IF NOT EXISTS pending_event(
@@ -336,8 +349,14 @@ def add_pairid_to_db(start: int, stop: int):
 
     # print("start    :" +str(start))
     # print("stop    :" +str(stop))
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
     cur.execute("UPDATE discord_event SET pairid = %s WHERE id = %s;", (start, stop))
     cur.execute("UPDATE discord_event SET pairid = %s WHERE id = %s;", (stop, start))
@@ -370,8 +389,14 @@ def add_pairid_to_db(start: int, stop: int):
 # 🚗
 def get_pair_start_id(driver: str, doer: str, kind: str):
     pair_start_id = 0
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
     cur.execute(
         """CREATE TABLE IF NOT EXISTS pending_event(
@@ -408,8 +433,14 @@ def get_pair_start_id(driver: str, doer: str, kind: str):
 # deletes all the pendings of a doer from pending_event table
 # 🚗
 def delete_all_pending_from_db(driver: str, doer: str):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
     cur.execute(
         "DELETE FROM pending_event WHERE doer = %s AND driver = %s;", (doer, driver)
@@ -423,8 +454,14 @@ def delete_all_pending_from_db(driver: str, doer: str):
 # this would be used to produce live /today report
 # 🚗
 def renew_pendings(driver: str):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
 
     renew_epoch = rightnow()
@@ -478,8 +515,14 @@ def renew_pendings(driver: str):
 
 
 def renew_pendings_of_a_doer(driver: str, doer: str):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
 
     renew_epoch = rightnow()
@@ -535,8 +578,14 @@ def renew_pendings_of_a_doer(driver: str, doer: str):
 
 
 def get_pendings(driver: str, doer: str):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
 
     cur.execute(

@@ -1,6 +1,9 @@
 from datetime import datetime
+from os import getenv
 
+import psycopg2
 import pytz
+from dotenv import load_dotenv
 from persiantools.jdatetime import JalaliDateTime
 
 from db import PGConnect
@@ -9,8 +12,14 @@ from person import Person
 
 # ✅
 def make_report(driver: str, doer: str, start_epoch: int, end_epoch: int):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
     cur.execute(
         """
@@ -87,8 +96,14 @@ def make_report(driver: str, doer: str, start_epoch: int, end_epoch: int):
 
 
 def make_report_seconds(driver: str, doer: str, start_epoch: int, end_epoch: int):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
     cur.execute(
         """
@@ -319,8 +334,14 @@ def make_raw_file(
 # ✅
 def get_doers_list(driver: str, start_epoch: int, end_epoch: int):
     doers = []
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
 
     cur.execute(
@@ -430,8 +451,14 @@ def get_status(driver: str, doer: str):
 
 # ✅
 def get_events(driver: str, start: int, end: int):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
     cur.execute(
         """
@@ -454,8 +481,14 @@ def get_events(driver: str, start: int, end: int):
 
 # ✅
 def get_events_of_doer(driver: str, start: int, end: int, doer: str):
-    pgc = PGConnect()
-    conn = pgc.conn
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
     cur = conn.cursor()
     cur.execute(
         """
