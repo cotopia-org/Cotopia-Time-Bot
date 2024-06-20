@@ -671,7 +671,7 @@ def run():
         )
 
     @bot.hybrid_command()
-    async def calendar(ctx):
+    async def schedule(ctx):
         d = {}
         d["discord_guild"] = ctx.guild.id
         d["discord_id"] = ctx.author.id
