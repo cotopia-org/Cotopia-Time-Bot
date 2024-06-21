@@ -695,7 +695,7 @@ def run():
         expires_at_string = expires_at.strftime("%H:%M:%S")
 
         await ctx.send(
-            f"[Use this link to open Cotopia Salary App.\n(valid until {expires_at_string})]({link})",
+            f"[Use this link to open Cotopia Schedule App.\n(valid until {expires_at_string})]({link})",
             ephemeral=True,
         )
 
