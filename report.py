@@ -6,7 +6,6 @@ import pytz
 from dotenv import load_dotenv
 from persiantools.jdatetime import JalaliDateTime
 
-from db import PGConnect
 from person import Person
 
 
@@ -273,8 +272,14 @@ def make_raw_file(
         ).strftime("%c")
 
     try:
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             """
@@ -422,8 +427,14 @@ def make_board_seconds(driver: str, start_epoch: int, end_epoch: int):
 def get_status(driver: str, doer: str):
     doers_list = get_doers_list(driver, start_epoch=0, end_epoch=2147483647)
     if doer in doers_list:
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             "SELECT kind, pendingid FROM pending_event WHERE doer = %s AND driver = %s ORDER BY ts DESC",

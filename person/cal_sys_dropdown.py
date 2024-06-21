@@ -1,9 +1,10 @@
+from os import getenv
 from typing import List
 
 import discord
+import psycopg2
 from discord.components import SelectOption
-
-from db import PGConnect
+from dotenv import load_dotenv
 
 from .db import Person
 
@@ -36,8 +37,14 @@ class CalSysDropdown(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cursor = conn.cursor()
         the_person = Person()
         the_person.set_cal_system(

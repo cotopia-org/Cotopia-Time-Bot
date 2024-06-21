@@ -1,6 +1,8 @@
-from psycopg2.extensions import cursor
+from os import getenv
 
-from db import PGConnect
+import psycopg2
+from dotenv import load_dotenv
+from psycopg2.extensions import cursor
 
 
 class Person:
@@ -14,8 +16,14 @@ class Person:
         discord_name: str,
         discord_avatar: str | None = None,
     ):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             """
@@ -128,8 +136,14 @@ class Person:
             )
 
     def set_google_token(self, person_id: int, creds_json: str):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             "UPDATE person SET google_token = %s WHERE id = %s;",
@@ -140,8 +154,14 @@ class Person:
         conn.close()
 
     def get_google_token(self, discord_guild: int, discord_id: int):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             """
@@ -161,8 +181,14 @@ class Person:
             return result[0]
 
     def list_of_tokeners(self, discord_guild: int):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             "SELECT discord_id FROM person WHERE discord_guild = %s AND google_token IS NOT NULL;",
@@ -178,8 +204,14 @@ class Person:
         return result
 
     def set_cal(self, discord_guild: int, discord_id: int, cal: str):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             "UPDATE person SET calendar = %s WHERE discord_guild = %s AND discord_id = %s;",
@@ -190,8 +222,14 @@ class Person:
         conn.close()
 
     def get_cal(self, discord_guild: int, discord_id: int):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             """
@@ -211,8 +249,14 @@ class Person:
             return result[0]
 
     def get_cal_by_name(self, discord_guild: int, discord_name: str):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             """
@@ -232,8 +276,14 @@ class Person:
             return result[0]
 
     def set_avatar(self, discord_guild: int, discord_id: int, avatar: str, name: str):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             "UPDATE person SET discord_avatar = %s, discord_name = %s WHERE discord_guild = %s AND discord_id = %s;",
@@ -244,8 +294,14 @@ class Person:
         conn.close()
 
     def get_person_info(self, discord_guild: int, discord_name: str):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             "SELECT * FROM person WHERE discord_guild = %s AND discord_name = %s",
@@ -283,8 +339,14 @@ class Person:
         return info
 
     def get_person_info_by_id(self, discord_guild: int, discord_id: int):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             "SELECT * FROM person WHERE discord_guild = %s AND discord_id = %s",
@@ -322,8 +384,14 @@ class Person:
         return info
 
     def set_timezone(self, discord_guild: int, discord_id: int, timezone: str):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             "UPDATE person SET timezone = %s WHERE discord_guild = %s AND discord_id = %s;",
@@ -334,8 +402,14 @@ class Person:
         conn.close()
 
     def get_timezone(self, discord_guild: int, discord_id: int):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             """
@@ -355,8 +429,14 @@ class Person:
             return result[0]
 
     def set_cal_system(self, discord_guild: int, discord_id: int, cal_system: str):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             "UPDATE person SET cal_system = %s WHERE discord_guild = %s AND discord_id = %s;",
@@ -367,8 +447,14 @@ class Person:
         conn.close()
 
     def get_cal_system(self, discord_guild: int, discord_id: int):
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             """
@@ -391,8 +477,14 @@ class Person:
         person_locale = {}
         person_locale["timezone"] = "Asia/Tehran"
         person_locale["cal_system"] = "Jalali"
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute(
             """

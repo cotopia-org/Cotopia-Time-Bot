@@ -1,13 +1,21 @@
 from datetime import datetime, timedelta
+from os import getenv
 
-from db import PGConnect
+import psycopg2
+from dotenv import load_dotenv
 
 
 class OnlinePattern:
 
     def __init__(self, doer: str) -> None:
-        pgc = PGConnect()
-        conn = pgc.conn
+        load_dotenv()
+        conn = psycopg2.connect(
+            host=getenv("DB_HOST"),
+            dbname=getenv("DB_NAME"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD"),
+            port=getenv("DB_PORT"),
+        )
         cur = conn.cursor()
         cur.execute("SELECT * FROM discord_event WHERE doer = %s ORDER BY ts;", [doer])
         self.data = cur.fetchall()
