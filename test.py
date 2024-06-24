@@ -1,14 +1,4 @@
-from db import PGConnect
+from job_report.report import get_time_spent
 
-pgc = PGConnect()
-conn = pgc.conn
-cur = conn.cursor()
-cur.execute("SELECT id, discord_id, discord_name FROM person;")
-users = cur.fetchall()
 
-for i in users:
-    print(i)
-
-conn.commit()
-cur.close()
-conn.close()
+print(get_time_spent(guild_id=1125764070935638086, discord_id=1240551393551716362, job_id=508))

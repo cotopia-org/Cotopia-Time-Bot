@@ -92,3 +92,30 @@ def gen_user_report(guild_id: int, discord_id: int, start_epoch: int, end_epoch:
         the_dict["time"] = {"From": start_epoch, "To": end_epoch}
         the_dict["user"] = {"guild_id": guild_id, "discord_id": discord_id}
         return the_dict
+
+
+def get_time_spent(guild_id: int, discord_id: int, job_id: int):
+    load_dotenv()
+    conn = psycopg2.connect(
+        host=getenv("DB_HOST"),
+        dbname=getenv("DB_NAME"),
+        user=getenv("DB_USER"),
+        password=getenv("DB_PASSWORD"),
+        port=getenv("DB_PORT"),
+    )
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+                   SELECT SUM(duration)
+                   FROM job_event
+                   WHERE guild_id = %s
+                   AND discord_id = %s
+                   AND job_id = %s
+                   ;""",
+        (guild_id, discord_id, job_id),
+    )
+    result = cursor.fetchone()
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return result[0]
