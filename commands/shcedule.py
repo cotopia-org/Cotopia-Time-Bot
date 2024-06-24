@@ -1,7 +1,7 @@
 import datetime
+from operator import itemgetter
 
 import requests
-from discord import Member
 from discord.ext import commands
 
 import auth
@@ -40,21 +40,24 @@ async def schedule(ctx):
 @commands.hybrid_command(description="Shows @member total shceduled time!")
 async def scheduled_time(
     ctx,
-    member: Member,
     start_yyyy_mm_dd: str,
     end_yyyy_mm_dd: str,
 ):
-    REQUEST_URL = "http://tooljet.cotopia.social:8084/total_hours"
+    REQUEST_URL = "http://tooljet.cotopia.social:8084/total_hours/all"
     params = {
         "id_server": ctx.guild.id,
-        "id_discord": member.id,
         "start_date": start_yyyy_mm_dd,
         "end_date": end_yyyy_mm_dd,
     }
     r = requests.get(url=REQUEST_URL, params=params)
     if r.status_code == 200:
-        text = f"Scheduled Time of {member.mention}\nFrom: {start_yyyy_mm_dd}\nTo: {end_yyyy_mm_dd}\n"
-        text = text + "**" + str(r.json()["total_duration_hours"]) + " Hours**"
+        text = f"Scheduled Time from: `{start_yyyy_mm_dd}` to: `{end_yyyy_mm_dd}`\n"
+        the_list = r.json()["total_duration_hours"]
+        sorted_list = sorted(
+            the_list, key=itemgetter("total_duration_hours"), reverse=True
+        )
+        for i in sorted_list:
+            text = text + f"{i['total_duration_hours']} | <@{i['id_discord']}>\n"
         await ctx.send(text)
     else:
         await ctx.send(
