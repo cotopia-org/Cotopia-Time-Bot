@@ -11,7 +11,7 @@ import auth
 import log_processor
 import report
 from gcal import calcal as GCalSetup
-from job_report.report import gen_user_report
+from job_report.report import gen_user_report, get_time_spent
 from person import Person
 from server import Server
 
@@ -563,6 +563,41 @@ async def jobs_report(request: Request, start: int, end: int, discord_id: int):
     return report
 
 
+@app.get("/jobs/duration")
+async def job_duration(request: Request, job_id: int, discord_id: int):
+    token = request.headers.get("Authorization")
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="You are not logged in!"
+        )
+    else:
+        try:
+            decoded = auth.decode_token(token)
+        except:  # noqa: E722
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Unable to read token!",
+            )
+
+        if decoded is False:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid Token! Login Again!",
+            )
+        else:
+            guild_id = str(decoded["discord_guild"])
+
+    duration = get_time_spent(guild_id=guild_id, discord_id=discord_id, job_id=job_id)
+    d = {
+        "job_id": job_id,
+        "discord_id": discord_id,
+        "guild_id": guild_id,
+        "total_duration": duration,
+    }
+
+    return d
+
+
 @app.get("/detailed_report")
 async def detailed_report(
     request: Request, start_epoch: int, end_epoch: int, in_between: ReportInBetween
@@ -616,6 +651,6 @@ async def detailed_report(
             end = start + duration
             if start > end_epoch:
                 break
-        
+
         result["in_between"] = in_between_list
         return result
