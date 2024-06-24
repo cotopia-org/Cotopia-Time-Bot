@@ -1,6 +1,8 @@
-import discord
+from os import getenv
 
-from db import PGConnect
+import discord
+import psycopg2
+from dotenv import load_dotenv
 
 from .db import Person
 
@@ -17,8 +19,14 @@ class WalletModal(discord.ui.Modal, title="TRC20 Wallet"):
     async def on_submit(self, interaction: discord.Interaction):
         if self.trc20_wallet_addr.default != self.trc20_wallet_addr.value:
             if self.check_addr(self.trc20_wallet_addr.value):
-                pgc = PGConnect()
-                conn = pgc.conn
+                load_dotenv()
+                conn = psycopg2.connect(
+                    host=getenv("DB_HOST"),
+                    dbname=getenv("DB_NAME"),
+                    user=getenv("DB_USER"),
+                    password=getenv("DB_PASSWORD"),
+                    port=getenv("DB_PORT"),
+                )
                 cursor = conn.cursor()
 
                 the_person = Person()

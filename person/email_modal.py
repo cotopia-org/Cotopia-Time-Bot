@@ -1,8 +1,9 @@
 import re
+from os import getenv
 
 import discord
-
-from db import PGConnect
+import psycopg2
+from dotenv import load_dotenv
 
 from .db import Person
 
@@ -25,8 +26,14 @@ class EmailModal(discord.ui.Modal, title="Email"):
     async def on_submit(self, interaction: discord.Interaction):
         if self.email.default != self.email.value:
             if self.check_email(self.email.value):
-                pgc = PGConnect()
-                conn = pgc.conn
+                load_dotenv()
+                conn = psycopg2.connect(
+                    host=getenv("DB_HOST"),
+                    dbname=getenv("DB_NAME"),
+                    user=getenv("DB_USER"),
+                    password=getenv("DB_PASSWORD"),
+                    port=getenv("DB_PORT"),
+                )
                 cursor = conn.cursor()
 
                 the_person = Person()

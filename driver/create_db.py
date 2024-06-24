@@ -1,7 +1,16 @@
-from db import PGConnect
+from os import getenv
 
-pgc = PGConnect()
-conn = pgc.conn
+import psycopg2
+from dotenv import load_dotenv
+
+load_dotenv()
+conn = psycopg2.connect(
+    host=getenv("DB_HOST"),
+    dbname=getenv("DB_NAME"),
+    user=getenv("DB_USER"),
+    password=getenv("DB_PASSWORD"),
+    port=getenv("DB_PORT"),
+)
 cur = conn.cursor()
 cur.execute(
     """CREATE TABLE IF NOT EXISTS driver(
