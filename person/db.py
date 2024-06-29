@@ -4,6 +4,8 @@ import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extensions import cursor
 
+from server import Server
+
 
 class Person:
 
@@ -360,11 +362,21 @@ class Person:
         if result is None:
             return None
 
+        server = Server()
+        try:
+            server_info = server.getter(guild_id=str(result[2]))
+        except:  # noqa: E722
+            server_info = {}
+            server_info["discord_name"] = "N/A"
+            server_info["discord_icon"] = "N/A"
+
         info = {}
         info["id"] = result[0]
         info["active"] = result[7]
         info["created_at"] = result[1]
         info["discord_guild"] = str(result[2])
+        info["guild_name"] = server_info["discord_name"]
+        info["guild_icon"] = server_info["discord_icon"]
         info["discord_id"] = str(result[3])
         info["discord_name"] = result[4]
         info["email"] = result[5]
