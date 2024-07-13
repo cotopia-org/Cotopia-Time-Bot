@@ -24,15 +24,11 @@ from board.the_text import (
 from gcal import calcal as GCalSetup
 from person import Person, my_settings_view
 from server import Server
-from talk_with import TalkWithView
-from utils.utils import play_ring_voice
 
 logger = settings.logging.getLogger("bot")
 
 the_zombie = {}
 last_profile_update = {}
-temp_channels = []
-temp_messages = {}
 
 
 # returns epoch of NOW: int
@@ -144,75 +140,6 @@ def run():
         if member.bot:
             return
 
-        # deleting temp channels
-        # func that does the job after a while
-        task_del_chan = None
-
-        async def del_temp_chan(channel):
-            print("del_temp_chan been called!")
-            print("the channel is:  " + str(channel))
-            await asyncio.sleep(180)  # 3 minutes
-            global temp_channels
-            if len(channel.members) == 0:
-                try:
-                    print("trying to delete channel:    ")
-                    print(channel)
-                    await channel.delete()
-                    temp_channels.remove(channel)
-                    print("channel was removed")
-                except Exception as e:
-                    print("Sorry couldn't delete the temp channel!")
-                    print(e)
-                try:
-                    global temp_messages
-                    # msg = temp_messages[channel]
-                    msg = await temp_messages[channel].channel.fetch_message(
-                        temp_messages[channel].id
-                    )
-                    print("trying to edit text:   ")
-                    print(msg)
-                    msg_content = msg.content
-                    # getting the status part
-                    status_part = msg_content.split("--------------------")[1]
-                    # getting the author mention
-                    author_mention = msg_content.split(">,\n")[1]
-                    author_mention = author_mention.split(" wants to talk with you.")[0]
-                    # calculating the duration of the meeting
-                    msg_created_at = msg.created_at.timestamp()
-                    duration = (
-                        rightnow() - msg_created_at - 180
-                    )  # minus 180 seconds, time of waiting before deleting voice channel
-                    duration = round((duration / 60), 1)
-                    #
-                    # await msg.delete()
-                    # editing the message
-                    new_content = (
-                        author_mention
-                        + "'s meeting ended!\n"
-                        + "Duration: "
-                        + str(duration)
-                        + " minutes"
-                        + "\n--------------------"
-                        + status_part
-                        + "--------------------"
-                    )
-                    await msg.edit(content=new_content, view=None)
-                    del temp_messages[channel]
-                    print("message was edited")
-                except Exception as e:
-                    print("Sorry couldn't edit the /talk_with message!")
-                    print(e)
-
-        # calling the  del_temp_chan(channel) func
-        global temp_channels
-        if before.channel in temp_channels:
-            if len(before.channel.members) == 0:
-                task_del_chan = asyncio.create_task(
-                    del_temp_chan(before.channel),
-                    name=f"deleting temp channel {before.channel.id}",
-                )
-                await task_del_chan
-
         guild = member.guild
         print("this is on_voice_state_update. the server is:")
         print(guild.id)
@@ -270,76 +197,6 @@ def run():
                     )
             except:  # noqa: E722
                 print("could not get cal!")
-
-        # When user joins a /talk_with channel
-        global temp_messages
-        if after.channel in temp_messages:
-            talk_with_msg = await temp_messages[after.channel].channel.fetch_message(
-                temp_messages[after.channel].id
-            )
-            talk_with_text = talk_with_msg.content
-            if (
-                member.mention + ":   :hourglass_flowing_sand: pending"
-                in talk_with_text
-            ):
-                c2 = talk_with_text.replace(
-                    member.mention + ":   :hourglass_flowing_sand: pending",
-                    member.mention
-                    + ":   :green_circle: joined `"
-                    + datetime.datetime.now().strftime("%H:%M:%S")
-                    + "`",
-                    1,
-                )
-            elif member.mention + ":   :red_circle: declined `" in talk_with_text:
-                c2 = talk_with_text.replace(
-                    member.mention + ":   :red_circle: declined",
-                    member.mention + ":   :green_circle: joined",
-                    1,
-                )
-                # now we need to update the timestamp
-                split = c2.split(member.mention + ":   :green_circle: joined `", 1)
-                d0 = split[0]
-                d1 = member.mention + ":   :green_circle: joined `"
-                d2 = datetime.datetime.now().strftime("%H:%M:%S") + "`"
-                d3 = split[1].split("`", 1)[1]
-                c2 = d0 + d1 + d2 + d3
-            elif (
-                member.mention + ":   :orange_circle: will join in 5 mins `"
-                in talk_with_text
-            ):
-                c2 = talk_with_text.replace(
-                    member.mention + ":   :orange_circle: will join in 5 mins",
-                    member.mention + ":   :green_circle: joined",
-                    1,
-                )
-                # now we need to update the timestamp
-                split = c2.split(member.mention + ":   :green_circle: joined `", 1)
-                d0 = split[0]
-                d1 = member.mention + ":   :green_circle: joined `"
-                d2 = datetime.datetime.now().strftime("%H:%M:%S") + "`"
-                d3 = split[1].split("`", 1)[1]
-                c2 = d0 + d1 + d2 + d3
-            elif (
-                member.mention + ":   :orange_circle: will join in 15 mins `"
-                in talk_with_text
-            ):
-                c2 = talk_with_text.replace(
-                    member.mention + ":   :orange_circle: will join in 15 mins",
-                    member.mention + ":   :green_circle: joined",
-                    1,
-                )
-                # now we need to update the timestamp
-                split = c2.split(member.mention + ":   :green_circle: joined `", 1)
-                d0 = split[0]
-                d1 = member.mention + ":   :green_circle: joined `"
-                d2 = datetime.datetime.now().strftime("%H:%M:%S") + "`"
-                d3 = split[1].split("`", 1)[1]
-                c2 = d0 + d1 + d2 + d3
-            else:
-                c2 = "farghi nakarde ke baba"
-
-            if c2 != "farghi nakarde ke baba":
-                await talk_with_msg.edit(content=c2)
 
         #####
         #####
@@ -708,168 +565,17 @@ def run():
         await ctx.send(f"Updated {count} profiles!")
 
     @bot.hybrid_command()
-    async def talk_with(
-        ctx,
-        member: discord.Member,
-        description: str | None = None,
-        member3: discord.Member | None = None,
-        member4: discord.Member | None = None,
-    ):
-
-        category = discord.utils.get(ctx.guild.categories, name="MEETINGS")
-        if category is None:
-            category = await ctx.guild.create_category("MEETINGS")
-
-        overwrites = {
-            ctx.guild.default_role: discord.PermissionOverwrite(connect=False),
-            ctx.author: discord.PermissionOverwrite(connect=True),
-            member: discord.PermissionOverwrite(connect=True),
-        }
-
-        text = (
-            "Hey "
-            + member.mention
-            + ",\n"
-            + ctx.author.mention
-            + " wants to talk with you."
-        )
-        members = []
-        members.append(ctx.author)
-        members.append(member)
-
-        # send bot to their channels and play ring voice
-
-        if member3 is not None:
-            split = text.split(",\n", 1)
-            text = split[0] + ", " + member3.mention + ",\n" + split[1]
-            members.append(member3)
-            overwrites[member3] = discord.PermissionOverwrite(
-                connect=True, view_channel=True
-            )
-
-        if member4 is not None:
-            split = text.split(",\n", 1)
-            text = split[0] + ", " + member4.mention + ",\n" + split[1]
-            members.append(member4)
-            overwrites[member4] = discord.PermissionOverwrite(
-                connect=True, view_channel=True
-            )
-
-        channel = await ctx.guild.create_voice_channel(
-            name=ctx.author.name + "'s meeting",
-            category=category,
-            overwrites=overwrites,
-        )
-        try:
-            await ctx.author.move_to(channel)
-            author_moved = True
-        except:  # noqa: E722
-            print("user is not connected to voice.")
-            author_moved = False
-
-        view = TalkWithView()
-        view.author_id = ctx.author.id
-        view.voice_channel = channel
-
-        global temp_channels
-        temp_channels.append(channel)
-        print("temp_channels:   ")
-        print(temp_channels)
-
-        view.members = members
-
-        members_str = []
-        the_table = "\n\n--------------------"
-        for m in members:
-            members_str.append(str(m))
-            the_table = (
-                the_table + "\n" + m.mention + ":   :hourglass_flowing_sand: pending"
-            )
-        view.members_str = members_str
-
-        if description is not None:
-            text = text + "\n\nDescription:\n" + description
-
-        the_message = await ctx.send(text + "\n\n" + channel.jump_url, view=view)
-
-        # play ring alarm when user sent the command
-
-        await play_ring_voice(discord, bot, ctx, member)
-        if member3 is not None and member3.voice.channel != member.voice.channel:
-            # send bot to their channels and play ring voice
-            await play_ring_voice(discord, bot, ctx, member3)
-
-        if member4 is not None and member4.voice.channel != member.voice.channel:
-            # send bot to their channels and play ring voice
-            await play_ring_voice(discord, bot, ctx, member4)
-
-        global temp_messages
-        temp_messages[channel] = the_message
-        print("temp_messages:   ")
-        print(temp_messages)
-
-        event_note = {}
-        event_note["members"] = members_str
-        event_note["channel"] = {"name": channel.name, "id": channel.id}
-        note = json.dumps(event_note)
-        log_processor.write_event_to_db(
-            driver=ctx.guild.id,
-            epoch=rightnow(),
-            kind="ASK FOR TALK",
-            doer=str(ctx.author.id),
-            isPair=False,
-            note=note,
-        )
-
-        # Now lets edit the message with what habibi wants
-        await the_message.edit(
-            content=the_message.content + the_table + "\n--------------------"
-        )
-
-        if author_moved:
-            talk_with_msg = await ctx.channel.fetch_message(the_message.id)
-            c1 = talk_with_msg.content
-            c2 = c1.replace(
-                ctx.author.mention + ":   :hourglass_flowing_sand: pending",
-                ctx.author.mention
-                + ":   :green_circle: joined `"
-                + datetime.datetime.now().strftime("%H:%M:%S")
-                + "`",
-                1,
-            )
-            await talk_with_msg.edit(content=c2)
-
-        # Handling No Response
-        async def write_no_response(msg_id: int):
-            await asyncio.sleep(180)  # 3 minutes
-            talk_with_msg = await ctx.channel.fetch_message(msg_id)
-            c1 = talk_with_msg.content
-            c2 = c1.replace(
-                ":   :hourglass_flowing_sand: pending", ":   :interrobang: no response"
-            )
-            await talk_with_msg.edit(content=c2)
-
-        task_edit_msg = asyncio.create_task(
-            write_no_response(the_message.id),
-            name=f"editing talk_with msg with no response {the_message.id} at {ctx.guild.id}",
-        )
-        await task_edit_msg
-
-    @bot.hybrid_command()
     async def server_log(ctx):
         if ctx.author.id == 592386692569366559:
             global the_zombie
             # global last_brief_ask
             global last_profile_update
-            global temp_channels
-            global temp_messages
+
             await ctx.send("the_zombie: \n" + str(the_zombie), ephemeral=True)
             # await ctx.send("last_brief_ask: \n" + str(last_brief_ask), ephemeral=True)
             await ctx.send(
                 "last_profile_update: \n" + str(last_profile_update), ephemeral=True
             )
-            await ctx.send("temp_channels: \n" + str(temp_channels), ephemeral=True)
-            await ctx.send("temp_messages: \n" + str(temp_messages), ephemeral=True)
         else:
             await ctx.send("Sorry you connot see this!", ephemeral=True)
 
