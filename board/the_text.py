@@ -10,6 +10,8 @@ from persiantools.jdatetime import JalaliDate, JalaliDateTime, timedelta
 import log_processor
 import report
 
+from .schedule import get_schedules
+
 
 # returns epoch of NOW: int
 def rightnow():
@@ -179,19 +181,25 @@ async def gen_inmaah_board(guild):
     localized_start_dt = pytz.timezone("Asia/Tehran").localize(dt=start_dt)
     start_epoch = int(localized_start_dt.timestamp())
 
+    end_dt = start_dt + timedelta(days=32)
     end_dt = JalaliDateTime(
-        year=emrooz.year,
-        month=emrooz.month,
-        day=emrooz.day,
-        hour=23,
-        minute=59,
-        second=59,
+        year=end_dt.year,
+        month=end_dt.month,
+        day=1,
+        hour=0,
+        minute=0,
+        second=0,
     )
     localized_end_dt = pytz.timezone("Asia/Tehran").localize(dt=end_dt)
     end_epoch = int(localized_end_dt.timestamp()) + 1
 
     the_board = report.make_board(
         driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
+    )
+
+    # get schedules
+    schedules = get_schedules(
+        start_epoch=start_epoch, end_epoch=end_epoch, guild_id=guild.id
     )
 
     title_date = JalaliDate.fromtimestamp(start_epoch).strftime("%Y/%m")
@@ -205,7 +213,13 @@ async def gen_inmaah_board(guild):
         + "`\n------------------------------\n"
     )
     for line in the_board:
-        text = text + str(line[1]) + " | <@" + line[0] + ">\n"
+        try:
+            percent = line[1] / schedules[line[0]] * 100
+            percent = int(round(percent, 0))
+            percent_text = f"{percent}% of {schedules[line[0]]} hours"
+        except:  # noqa: E722
+            percent_text = "N/A"
+        text = text + str(line[1]) + f" | <@{line[0]}>   ({percent_text})\n"
 
     # send the text
     msg = await da_channel.send(text + "‌")
