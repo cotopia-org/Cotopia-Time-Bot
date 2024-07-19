@@ -37,7 +37,7 @@ async def schedule(ctx):
     )
 
 
-@commands.hybrid_command(description="Shows @member total shceduled time!")
+@commands.hybrid_command(description="Shows members total shceduled time!")
 async def scheduled_time(
     ctx,
     start_yyyy_mm_dd: str,
