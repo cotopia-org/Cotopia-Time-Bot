@@ -45,6 +45,11 @@ async def gen_dirooz_board(guild):
         driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
     )
 
+    # get schedules
+    schedules = get_schedules(
+        start_epoch=start_epoch, end_epoch=end_epoch, guild_id=guild.id
+    )
+
     title_date = JalaliDate.fromtimestamp(start_epoch)
     updated_on = JalaliDateTime.now().strftime("%H:%M")
 
@@ -56,7 +61,13 @@ async def gen_dirooz_board(guild):
         + "`\n------------------------------\n"
     )
     for line in the_board:
-        text = text + str(line[1]) + " | <@" + line[0] + ">\n"
+        try:
+            percent = line[1] / schedules[line[0]] * 100
+            percent = int(round(percent, 0))
+            percent_text = f"{percent}% of {schedules[line[0]]} hours"
+        except:  # noqa: E722
+            percent_text = "schedule's not available!"
+        text = text + str(line[1]) + f" | <@{line[0]}>   ({percent_text})\n"
 
     # send the text
     msg = await da_channel.send(text + "‌")
@@ -131,6 +142,11 @@ async def update_dirooz_board(guild):
             driver=str(guild.id), start_epoch=start_epoch, end_epoch=end_epoch
         )
 
+        # get schedules
+        schedules = get_schedules(
+            start_epoch=start_epoch, end_epoch=end_epoch, guild_id=guild.id
+        )
+
         title_date = JalaliDate.fromtimestamp(start_epoch)
         updated_on = JalaliDateTime.now().strftime("%H:%M")
 
@@ -142,7 +158,13 @@ async def update_dirooz_board(guild):
             + "`\n------------------------------\n"
         )
         for line in the_board:
-            text = text + str(line[1]) + " | <@" + line[0] + ">\n"
+            try:
+                percent = line[1] / schedules[line[0]] * 100
+                percent = int(round(percent, 0))
+                percent_text = f"{percent}% of {schedules[line[0]]} hours"
+            except:  # noqa: E722
+                percent_text = "schedule's not available!"
+            text = text + str(line[1]) + f" | <@{line[0]}>   ({percent_text})\n"
 
         # send edit
         await message.edit(content=text + "‌")
@@ -218,7 +240,7 @@ async def gen_inmaah_board(guild):
             percent = int(round(percent, 0))
             percent_text = f"{percent}% of {schedules[line[0]]} hours"
         except:  # noqa: E722
-            percent_text = "N/A"
+            percent_text = "schedule's not available!"
         text = text + str(line[1]) + f" | <@{line[0]}>   ({percent_text})\n"
 
     # send the text
@@ -331,7 +353,7 @@ async def update_inmaah_board(guild):
                 percent = int(round(percent, 0))
                 percent_text = f"{percent}% of {schedules[line[0]]} hours"
             except:  # noqa: E722
-                percent_text = "N/A"
+                percent_text = "schedule's not available!"
             text = text + str(line[1]) + f" | <@{line[0]}>   ({percent_text})\n"
 
         # send edit
